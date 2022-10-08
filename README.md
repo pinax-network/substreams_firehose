@@ -1,2 +1,1 @@
-# eos-blockchain-data-2
-EOS Blockchain Data
+# EOS Blockchain Data
