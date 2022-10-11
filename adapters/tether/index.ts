@@ -1,17 +1,22 @@
 import fs from "node:fs";
 import path from "node:path";
-import { Block } from "../src/firehose.js"
+import { Block } from "../../src/firehose.js"
 import { fileURLToPath } from "node:url";
-import { streamBlocks, get_blocks } from "../src/dfuse.js";
+import { isMain, data_filepath } from "../../src/utils.js";
+import { streamBlocks, get_blocks } from "../../src/dfuse.js";
+import { CHAIN } from "../../src/config.js";
 
 // filters
 const filter_receiver = "tethertether";
 const filter_action = "transfer";
 const include_filter_expr = `receiver == "${filter_receiver}" && action == "${filter_action}"`;
 const exclude_filter_expr = 'action == "*"'
-const cex_accounts = new Set([
+const kucoin_accounts = new Set([
     "qlwzviixzm1h", // KuCoin
     "kucoinrise11", // KuCoin
+])
+const cex_accounts = new Set([
+    ...kucoin_accounts,
     "gateiowallet", // Gate
     "bitfinexcw55", // Bitfinex
     "mxcexdeposit", // MXCEX
@@ -24,19 +29,22 @@ const dex_accounts = new Set([
     "mxcexdeposit", // MXCEX
 ])
 
-// data folder
-const folder = "tether";
+// adapter folder
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const base_path = path.join(__dirname, '..', 'data', folder)
-fs.mkdirSync(base_path, {recursive: true});
+const adapter = path.basename(__dirname);
 
 export default async function main( start_date: string, stop_date: string ) {
     // data containers
     let transfer_volume = 0;
     let transfers = 0;
 
+    let kucoin_transfer_volume = 0;
+    let kucoin_transfers = 0;
+    let kucoin_withdraws = 0;
+
     let cex_transfer_volume = 0;
     let cex_transfers = 0;
+    let cex_withdraws = 0;
 
     let dex_transfer_volume = 0;
     let dex_transfers = 0;
@@ -48,7 +56,7 @@ export default async function main( start_date: string, stop_date: string ) {
 
         // log
         const date = new Date(timestamp * 1000).toISOString().slice(0, 19) + "Z";
-        if ( block_num % 120 == 0 ) console.log(date, folder, JSON.stringify({block_num, transfers }))
+        if ( block_num % 120 == 0 ) console.log(date, adapter, JSON.stringify({block_num}));
 
         //filtering actual trades and duplicated mine actions in a single block
         for ( const { actionTraces } of block.filteredTransactionTraces ) {
@@ -74,12 +82,22 @@ export default async function main( start_date: string, stop_date: string ) {
                     if ( cex_accounts.has( from ) || cex_accounts.has( to ) ) {
                         cex_transfer_volume += amount;
                         cex_transfers += 1;
+
+                        if ( cex_accounts.has( from ) ) cex_withdraws += 1;
                     }
 
                     // dex volume
                     if ( dex_accounts.has( from ) || dex_accounts.has( to ) ) {
                         dex_transfer_volume += amount;
                         dex_transfers += 1;
+                    }
+
+                    // kucoin volume
+                    if ( kucoin_accounts.has( from ) || kucoin_accounts.has( to ) ) {
+                        kucoin_transfer_volume += amount;
+                        kucoin_transfers += 1;
+
+                        if ( kucoin_accounts.has( from ) ) kucoin_withdraws += 1;
                     }
                 }
             }
@@ -93,7 +111,8 @@ export default async function main( start_date: string, stop_date: string ) {
     // save data
     if ( message == "stream.on::end") {
         console.log("[transfers] saving...");
-        fs.writeFileSync(`${base_path}/${folder}-${start_date}.json`, JSON.stringify({
+        const date = start_date.slice(0, 10);
+        fs.writeFileSync(data_filepath(CHAIN, adapter, date), JSON.stringify({
             start_block,
             stop_block,
             transfers,
@@ -102,10 +121,18 @@ export default async function main( start_date: string, stop_date: string ) {
             cex_transfer_volume: Number(cex_transfer_volume.toFixed(4)),
             dex_transfers,
             dex_transfer_volume: Number(dex_transfer_volume.toFixed(4)),
-            hourly_active_accounts: accounts.size,
+            kucoin_transfers,
+            kucoin_transfer_volume: Number(kucoin_transfer_volume.toFixed(4)),
+            daily_active_accounts: accounts.size,
         }, null, 4));
         console.log("[transfers] done!");
     } else {
         console.log("[transfers] exit without saving");
     }
+}
+
+// for testing purposes
+if ( isMain(import.meta.url) ) {
+    const day = process.argv[2] || "01";
+    main(`2022-10-${day}T00:00:00Z`, `2022-10-${day}T23:59:59.5Z`);
 }

@@ -92,5 +92,6 @@ export default async function main( start_date: string, stop_date: string ) {
 
 // for testing purposes
 if ( isMain(import.meta.url) ) {
-    main("2022-10-02T00:00:00Z", "2022-10-02T00:10:00Z");
+    // main("2022-10-02T00:00:00Z", "2022-10-02T00:10:00Z");
+    // main("2021-12-24T15:53:44Z", "2021-12-24T15:53:45Z");
 }
