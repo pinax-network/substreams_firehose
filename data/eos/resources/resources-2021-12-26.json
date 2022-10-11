@@ -1,0 +1,132 @@
+{
+    "start_block": {
+        "id": "0d44f8496caa7807c368bbfc30d333662d54371c13753e554d2b8b407a3e6795",
+        "num": 222623817,
+        "time": "2021-12-26T00:00:00Z"
+    },
+    "stop_block": {
+        "id": "0d479b326dd3590cbe18bb177aa7b78613d97fbc42dd535d14a7dbd1c3916378",
+        "num": 222796594,
+        "time": "2021-12-26T23:59:59Z"
+    },
+    "data": {
+        "rex": {
+            "state": {
+                "rexpool": {
+                    "total_lent": 8242381.3052,
+                    "total_unlent": 50972810.6171,
+                    "total_rent": 3856.154,
+                    "total_lendable": 59215191.9223,
+                    "total_rex": 585269394860.9384,
+                    "namebid_proceeds": 0,
+                    "loan_num": 496561
+                },
+                "rexretpool": {
+                    "last_dist_time": "2021-12-26T23:50:00",
+                    "pending_bucket_time": "2021-12-27T00:00:00",
+                    "oldest_bucket_time": "2021-11-27T00:00:00",
+                    "pending_bucket_proceeds": 1467370,
+                    "current_rate_of_increase": 52037,
+                    "proceeds": 110716407
+                }
+            },
+            "actions": {
+                "deposit": {
+                    "amount": 15259792.375699826,
+                    "actions": 9482
+                },
+                "withdraw": {
+                    "amount": 11907531.480299963,
+                    "actions": 6816
+                },
+                "buyrex": {
+                    "price": 0.00010117595835738121,
+                    "amount": 15320403.930399977,
+                    "actions": 7018
+                },
+                "sellrex": {
+                    "price": 0.00010117595835738121,
+                    "rex": 118717979087.68147,
+                    "actions": 6814
+                },
+                "rentcpu": {
+                    "price": 13215.134945895341,
+                    "loan_payment": 2185.8052999999786,
+                    "loan_fund": 102.6660999999998,
+                    "actions": 2355
+                },
+                "rentnet": {
+                    "price": 13215.134945895341,
+                    "loan_payment": 87.09759999999972,
+                    "loan_fund": 23.32500000000001,
+                    "actions": 472
+                },
+                "unstaketorex": {
+                    "from_net": 65729.3279000001,
+                    "from_cpu": 146564.94149999993,
+                    "actions": 964
+                },
+                "mvtosavings": {
+                    "rex": 6087557589.998196,
+                    "actions": 503
+                },
+                "mvfrsavings": {
+                    "rex": 6741826522.994796,
+                    "actions": 342
+                },
+                "powerup": {
+                    "cpu_frac": 2476777302664582,
+                    "net_frac": 55862854378602,
+                    "actions": 258002
+                },
+                "powupresult": {
+                    "fee": 1000017005.8437008,
+                    "powup_cpu": 1000921102230250900,
+                    "powup_cpu_price": 7329390.121004567,
+                    "powup_net": 1000005194962548700,
+                    "actions": 258003
+                }
+            }
+        },
+        "ram": {
+            "state": {
+                "rammarket": {
+                    "supply": 10000000000,
+                    "base": 202625610987,
+                    "quote": 5892009.8708
+                },
+                "global": {
+                    "max_ram_size": 291486557184,
+                    "total_ram_bytes_reserved": 88860946197,
+                    "total_ram_stake": 48920098708
+                }
+            },
+            "actions": {
+                "buyram": {
+                    "price_kb": 33.58192916093535,
+                    "quant": 63710.93879999584,
+                    "actions": 17346
+                },
+                "buyrambytes": {
+                    "price_kb": 0.02977792,
+                    "bytes": 5426868396,
+                    "actions": 1634334
+                }
+            }
+        },
+        "cpu": {
+            "actions": {
+                "delegatebw": {
+                    "stake_net_quantity": 797791.3624999196,
+                    "stake_cpu_quantity": 4884160.981397102,
+                    "actions": 140207
+                },
+                "undelegatebw": {
+                    "unstake_net_quantity": 2429284.9357992252,
+                    "unstake_cpu_quantity": 4966247.277699722,
+                    "actions": 19573
+                }
+            }
+        }
+    }
+}
