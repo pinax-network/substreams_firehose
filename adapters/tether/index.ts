@@ -133,6 +133,6 @@ export default async function main( start_date: string, stop_date: string ) {
 
 // for testing purposes
 if ( isMain(import.meta.url) ) {
-    const day = process.argv[2] || "01";
-    main(`2022-10-${day}T00:00:00Z`, `2022-10-${day}T23:59:59.5Z`);
+    const date = process.argv[2] || "2022-10-01";
+    main(`${date}T00:00:00Z`, `${date}T23:59:59.5Z`);
 }
