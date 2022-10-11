@@ -1,0 +1,21 @@
+{
+    "start_block": {
+        "id": "1029922b1a544809b6338da82e893aab2621213ff9ff443d0a2a200d0a45f31e",
+        "num": 271159851,
+        "time": "2022-10-03T00:00:00Z"
+    },
+    "stop_block": {
+        "id": "102c34add1e3e6a0e6fb8b0ddade00050eac4a68ca2c537a4474d9fb379ed596",
+        "num": 271332525,
+        "time": "2022-10-03T23:59:59Z"
+    },
+    "transfers": 4269,
+    "transfer_volume": 533612.5305,
+    "cex_transfers": 16,
+    "cex_transfer_volume": 133887.0629,
+    "dex_transfers": 3625,
+    "dex_transfer_volume": 395326.3217,
+    "kucoin_transfers": 13,
+    "kucoin_transfer_volume": 33817.9185,
+    "daily_active_accounts": 286
+}
