@@ -35,11 +35,21 @@ AUTHENTICATION=true
 
 ## Quickstart
 
-```
+```bash
 $ git clone https://github.com/EOS-Nation/eos-blockchain-data.git
 $ cd eos-blockchain-data
+```
+
+### NodeJS
+```bash
 $ npm ci
 $ npm start
+```
+
+### Python
+Edit the `main.py` script variables `account_name`, `period_start` and `period_end` and then run:
+```bash
+$ python main.py
 ```
 
 # EOS Resources
