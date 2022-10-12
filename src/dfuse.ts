@@ -1,3 +1,4 @@
+import fetch from "node-fetch";
 import ws from "ws";
 import * as grpc from "@grpc/grpc-js"
 import ProtoBuf from "protobufjs"

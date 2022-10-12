@@ -1,6 +1,6 @@
 # Logs
 nohup.out
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -103,3 +103,9 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Sublime text 3 project files
+*.sublime*
+
+# Requests cache database
+*.sqlite
