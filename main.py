@@ -15,6 +15,20 @@ from typing import List, Dict
 
 load_dotenv(find_dotenv())
 
+'''
+	TODO
+	====
+
+	- Move hard-coded urls and relevant constants to .env file
+	- Argument parsing
+	- Optimize asyncio workers => Have separate script for measuring the optimal parameters (?) -> How many blocks can I get from the gRPC connection at once ? Or is it one-by-one ?
+	- Enable/Disable logging (file / console)
+	- Documentation
+	- Add opt-in integrity verification (using codec.Block variables)
+	- More customisable data selection from traces (?)
+	- Enable file format selection: Pandas/CSV, json/jsonl (?)
+'''
+
 # Old laptop speed, home internet, 20 workers: ~ 200 blocks/s
 async def run(accounts: List[str], period_start: int, period_end: int):
 	async def stream_blocks(accounts: List[str], period_start: int, period_end: int) -> List[Dict]:
@@ -30,7 +44,7 @@ async def run(accounts: List[str], period_start: int, period_end: int):
 			exclude_filter_expr="action == '*'"
 		)):
 			b = codec_pb2.Block()
-			response.block.Unpack(b)
+			response.block.Unpack(b) # Deserialize google.protobuf.Any to codec.Block (see codec.proto file)
 			logging.info(f'[{asyncio.current_task().get_name()}] Parsing block number #{b.number} ({period_end - b.number} blocks remaining)...')
 			for transaction_trace in b.filtered_transaction_traces:
 				for action_trace in transaction_trace.action_traces:
@@ -67,12 +81,32 @@ async def run(accounts: List[str], period_start: int, period_end: int):
 		logging.info(f'[{asyncio.current_task().get_name()}] Done !\n')
 		return transactions
 
+	session = CachedSession(
+		'jwt_token',
+		expire_after=timedelta(days=1),
+		allowable_methods=['GET', 'POST'],
+	)
+
+	headers = {'Content-Type': 'application/json',}
+	data = f'{{"api_key":"{os.environ.get("DFUSE_TOKEN")}"}}'
+
+	logging.info('Getting JWT token...')
+	# Cache JWT response (for up to 24 hours)
+	response = session.post('https://auth.eosnation.io/v1/auth/issue', headers=headers, data=data)
+	if (response.status_code == 200):
+		logging.debug(response.json())
+		jwt = response.json()['token']
+	else:
+		logging.error(f'Could not load JWT token: {response.text}')
+		exit(-1)
+	logging.info(f'Got JWT token ({"cached" if response.from_cache else "new"}) [SUCCESS]')
+
 	creds = grpc.composite_channel_credentials(grpc.ssl_channel_credentials(), grpc.access_token_call_credentials(jwt))
 	block_diff = period_end - period_start
 	max_tasks = block_diff if block_diff < 20 else 20 # Max 20 workers
 	split = block_diff//max_tasks
 	
-	logging.info(f'Starting streaming {block_diff} blocks for transfer informations related to {accounts} (running {max_tasks} workers)')
+	logging.info(f'Streaming {block_diff} blocks for transfer information related to {accounts} (running {max_tasks} workers)...')
 	console_handler.terminator = '\r'
 
 	async with grpc.aio.secure_channel('eos.firehose.eosnation.io:9000', creds) as secure_channel:
@@ -80,7 +114,7 @@ async def run(accounts: List[str], period_start: int, period_end: int):
 		tasks = []
 
 		for i in range(max_tasks):
-			tasks.append(asyncio.create_task(stream_blocks(accounts, period_start + i*split, period_start + (i+1)*split)))
+			tasks.append(asyncio.create_task(stream_blocks(accounts, period_start + i*split, period_start + (i+1)*split))) # TODO : Accurate splitting
 
 		data = []
 		for t in tasks:
@@ -115,31 +149,9 @@ if __name__ == "__main__":
 	logging.addLevelName(logging.ERROR, '[ERROR]')
 	logging.addLevelName(logging.CRITICAL, '[CRITICAL]')
 
-	session = CachedSession(
-		'jwt_token',
-		expire_after=timedelta(days=1),
-		allowable_methods=['GET', 'POST'],
-	)
-
-	headers = {'Content-Type': 'application/json',}
-	data = f'{{"api_key":"{os.environ.get("DFUSE_TOKEN")}"}}'
-
-	logging.info('Getting JWT token...')
-	# Cache JWT response (for up to 24 hours)
-	response = session.post('https://auth.eosnation.io/v1/auth/issue', headers=headers, data=data)
-	if (response.status_code == 200):
-		logging.debug(response.json())
-		jwt = response.json()['token']
-	else:
-		logging.error(f'Could not load JWT token: {response.text}')
-		exit(-1)
-	logging.info(f'Got JWT token ({"cached" if response.from_cache else "new"}) [SUCCESS]')
-
 	accounts = ['eosio.vpay', 'eosio.bpay']
-	# period_start = 272541202 # 2022-10-11T00:00:00Z
-	# period_end = 272713628 # 2022-10-11T23:59:59Z
 	period_start = 272368521
-	period_end = 272540290
+	period_end = 272368621 # 272540290
 
 	asyncio.run(run(accounts, period_start, period_end))
 
