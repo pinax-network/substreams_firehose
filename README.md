@@ -25,33 +25,35 @@ GRPC_ENDPOINT="eos.firehose.eosnation.io:9000"
 
 ## Quickstart
 
-```bash
-$ git clone git@github.com:Krow10/eos-blockchain-data.git
-$ cd eos-blockchain-data
-eos-blockchain-data$ nano sample.env # Edit sample .env file with editor of your choice and add your DFUSE_API_TOKEN
-eos-blockchain-data$ mv sample.env .env # Rename to .env
+```console
+foo@bar:~$ git clone git@github.com:Krow10/eos-blockchain-data.git
+foo@bar:~$ cd eos-blockchain-data
+foo@bar:~/eos-blockchain-data$ nano sample.env # Edit sample .env file with editor of your choice and add your DFUSE_API_TOKEN
+foo@bar:~/eos-blockchain-data$ mv sample.env .env # Rename to .env
 ```
 
 ### Python
 
-```bash
-eos-blockchain-data$ python3 -m venv .venv # Create virtual environnement
-eos-blockchain-data$ pip install -r requirements.txt # Install dependencies
-eos-blockchain-data$ source .venv/bin/activate # Activate virtual environnement
-(.venv) eos-blockchain-data$ python main.py -h
-usage: main.py [-h] [--debug] [--no-log] accounts [accounts ...] block_start block_end
+```console
+foo@bar:~/eos-blockchain-data$ python3 -m venv .venv # Create virtual environnement
+foo@bar:~/eos-blockchain-data$ pip install -r requirements.txt # Install dependencies
+foo@bar:~/eos-blockchain-data$ source .venv/bin/activate # Activate virtual environnement
+(.venv) foo@bar:~/eos-blockchain-data$ python main.py -h
+usage: main.py [-h] [--max-tasks [MAX_TASKS]] [--debug] [--no-log] accounts [accounts ...] block_start block_end
 
-Firehose account tracker: search the blockchain for transfer transactions targeting specific accounts over a given period.
+Search the blockchain for transfer transactions targeting specific accounts over a given period. Powered by Firehose (https://eos.firehose.eosnation.io/).
 
 positional arguments:
-  accounts     target account(s) (single or space-separated)
-  block_start  starting block number
-  block_end    ending block number
+  accounts              target account(s) (single or space-separated)
+  block_start           starting block number
+  block_end             ending block number
 
 optional arguments:
-  -h, --help   show this help message and exit
-  --debug      log debug information to log file (found in logs/)
-  --no-log     disable console logging
+  -h, --help            show this help message and exit
+  --max-tasks [MAX_TASKS]
+                        maximum number of concurrent tasks running for block streaming (default: 20)
+  --debug               log debug information to log file (found in logs/) (default: False)
+  --no-log              disable console logging (default: False)
 ```
 
 The transactions will be listed in a `.jsonl` file inside the [`jsonl/`](jsonl/) directory.
@@ -60,8 +62,8 @@ The transactions will be listed in a `.jsonl` file inside the [`jsonl/`](jsonl/)
 
 ### Input
 
-```bash
-(.venv) eos-blockchain-data$ python main.py eosio.bpay 272368521 272368621 --debug
+```console
+(.venv) foo@bar:~/eos-blockchain-data$ python main.py eosio.bpay 272368521 272368621 --debug
 ```
 
 ### Output (jsonl/eosio.bpay_272368521_to_272368621.jsonl)
@@ -73,7 +75,7 @@ The transactions will be listed in a `.jsonl` file inside the [`jsonl/`](jsonl/)
 
 ### Log file sample (logs/{datetime}.log)
 
-```bash
+```
 T+306   [DEBUG] Using selector: EpollSelector
 T+306   [DEBUG] Initializing backend: None jwt_token
 T+306   [DEBUG] Initializing SQLitePickleDict with serializer: <requests_cache.serializers.pipeline.SerializerPipeline object at 0x7d5c7f5ea940>
