@@ -1,8 +1,8 @@
 # EOS - Blockchain Data for Analytics
 
-[![Firehose](https://github.com/EOS-Nation/eos-blockchain-data/actions/workflows/firehose.yml/badge.svg)](https://github.com/EOS-Nation/eos-blockchain-data/actions/workflows/firehose.yml) [![Node.js CI](https://github.com/EOS-Nation/eos-blockchain-data/actions/workflows/test.yml/badge.svg)](https://github.com/EOS-Nation/eos-blockchain-data/actions/workflows/test.yml)
+[![Firehose](https://github.com/EOS-Nation/eos-blockchain-data/actions/workflows/firehose.yml/badge.svg)](https://github.com/EOS-Nation/eos-blockchain-data/actions/workflows/firehose.yml)
 
-> Aggregates historical EOS blockchain data & outputs result into JSON format (using [dfuse **Firehose**](https://dfuse.eosnation.io/))
+> Aggregates historical EOS blockchain data & outputs result into JSONL format (using [dfuse **Firehose**](https://dfuse.eosnation.io/))
 
 ## Chains
 
@@ -13,354 +13,131 @@
 
 ## Environment variables
 
+[Sample `.env` file](sample.env):
 ```env
-# Required, authentication
-DFUSE_TOKEN="<DFUSE_TOKEN>"
+# [REQUIRED] Authentication to Firehose endpoint (see https://docs.dfuse.eosnation.io/platform/dfuse-cloud/authentication/)
+DFUSE_TOKEN=<DFUSE_API_TOKEN>
 
-# Optional, data
-CHAIN="eos"
-ADAPTERS="resources"
-REVERSE=true
-
-# Optional, networking
-DFUSE_FIREHOSE_NETWORK="eos.firehose.eosnation.io"
-TIMEOUT_MS=3000
-CONCURRENCY=1
-MAX_TASKS=1
-
-# Optional, use localhost Firehose API endpoint
-SECURE=true
-AUTHENTICATION=true
+# [OPTIONAL] Defines endpoints for getting authentication token and streaming blocks through gRPC connection
+AUTH_ENDPOINT="https://auth.eosnation.io/v1/auth/issue"
+GRPC_ENDPOINT="eos.firehose.eosnation.io:9000"
 ```
 
 ## Quickstart
 
 ```bash
-$ git clone https://github.com/EOS-Nation/eos-blockchain-data.git
+$ git clone git@github.com:Krow10/eos-blockchain-data.git
 $ cd eos-blockchain-data
-```
-
-### NodeJS
-```bash
-$ npm ci
-$ npm start
+eos-blockchain-data$ nano sample.env # Edit sample .env file with editor of your choice and add your DFUSE_API_TOKEN
+eos-blockchain-data$ mv sample.env .env # Rename to .env
 ```
 
 ### Python
-Edit the `main.py` script variables `account_name`, `period_start` and `period_end` and then run:
+
 ```bash
-$ python main.py
+eos-blockchain-data$ python3 -m venv .venv # Create virtual environnement
+eos-blockchain-data$ pip install -r requirements.txt # Install dependencies
+eos-blockchain-data$ source .venv/bin/activate # Activate virtual environnement
+(.venv) eos-blockchain-data$ python main.py -h
+usage: main.py [-h] [--debug] [--no-log] accounts [accounts ...] block_start block_end
+
+Firehose account tracker: search the blockchain for transfer transactions targeting specific accounts over a given period.
+
+positional arguments:
+  accounts     target account(s) (single or space-separated)
+  block_start  starting block number
+  block_end    ending block number
+
+optional arguments:
+  -h, --help   show this help message and exit
+  --debug      log debug information to log file (found in logs/)
+  --no-log     disable console logging
 ```
 
-# EOS Resources
-
-## `.rex` (REX Resource Exchange)
-
-### `.state`
-
-- [x] `.rexpool`
-
-    <details>
-
-    ```js
-    {
-        "total_lent": 3006004.5507, // total amount of CORE_SYMBOL in open rex_loans
-        "total_unlent": 49428573.1574, // total amount of CORE_SYMBOL available to be lent (connector),
-        "total_rent": 3478.0901, // fees received in exchange for lent  (connector),
-        "total_lendable": 52434577.7081, // total amount of CORE_SYMBOL that have been lent (total_unlent + total_lent),
-        "total_rex": 517222889551.6919, // total number of REX shares allocated to contributors to total_lendable,
-        "namebid_proceeds": 0, // the amount of CORE_SYMBOL to be transferred from namebids to REX pool,
-        "loan_num": 500607 // increments with each new loan
-    }
-    ```
-
-    </details>
-
-- [x] `.rexretpool`
-
-    <details>
-
-    ```js
-    {
-        "last_dist_time": "2022-10-01T05:40:00", // the last time proceeds from renting, ram fees, and name bids were added to the rex pool
-        "pending_bucket_time": "2022-10-01T12:00:00", // timestamp of the pending 12-hour return bucket
-        "oldest_bucket_time": "2022-09-01T12:00:00", // cached timestamp of the oldest 12-hour return bucket
-        "pending_bucket_proceeds": 163198, // proceeds in the pending 12-hour return bucket
-        "current_rate_of_increase": 24067, // the current rate per dist_interval at which proceeds are added to the rex pool
-        "proceeds": 49371744 // the maximum amount of proceeds that can be added to the rex pool at any given time
-    }
-    ```
-    </details>
-
-### `.actions`
-
-- [x] `.powerup`
-    <details>
-
-    ```js
-    {
-        "cpu_frac": 635429833093, // fraction of cpu (100% = 10^15) managed by this market
-        "net_frac": 27497451847, // fraction of net (100% = 10^15) managed by this market
-        "actions": 315
-    }
-    ```
-    Powerup NET and CPU resources by percentage
-    </details>
-
-- [x] `.powupresult`
-    <details>
-
-    ```js
-    {
-        "fee": 4.289700000000008, // powerup fee amount
-        "powup_cpu": 242617351084, // amount of powup CPU tokens
-        "powup_cpu_price": 5837903.778625954,
-        "powup_net": 2624742481, // amount of powup NET tokens
-        "actions": 315
-    }
-    ```
-    The action `powupresult` is a no-op.
-    It is added as an inline convenience action to `powerup` reservation.
-    This inline convenience action does not have any effect, however, its data includes the result of the parent action and appears in its trace.
-    </details>
-
-- [x] `.deposit`
-    <details>
-
-    ```js
-    {
-        "amount": 7317.905500000001, // tokens to be deposited.
-        "actions": 8
-    }
-    ```
-
-    Deposit to REX fund action. Deposits core tokens to user REX fund. All proceeds and expenses related to REX are added to or taken out of this fund. An inline transfer from 'owner' liquid balance is executed. All REX-related costs and proceeds are deducted from and added to 'owner' REX fund, with one exception being buying REX using staked tokens.
-    </details>
-
-- [x] `.withdraw`
-
-    <details>
-
-    ```js
-    {
-        "amount": 197.3181, // amount of tokens to be withdrawn.
-        "actions": 8
-    }
-    ```
-    Withdraw from REX fund action, withdraws core tokens from user REX fund.
-    </details>
-
-- [x] `.buyrex`
-
-    <details>
-
-    ```js
-    {
-        "price": 0.00010137714081746883,
-        "amount": 7317.905500000001, // amount of tokens taken out of 'from' REX fund.
-        "actions": 8
-    }
-    ```
-    Buyrex action, buys REX in exchange for tokens taken out of user's REX fund by transferring core tokens from user REX fund and converts them to REX stake. By buying REX, user is lending tokens in order to be rented as CPU or NET resources.
-
-    @pre A voting requirement must be satisfied before action can be executed.
-    @pre User must vote for at least 21 producers or delegate vote to proxy before buying REX.
-
-    @post User votes are updated following this action.
-    @post Tokens used in purchase are added to user's voting power.
-    @post Bought REX cannot be sold before 4 days counting from end of day of purchase.
-    </details>
-
-- [x] `.sellrex`
-
-    <details>
-
-    ```js
-    {
-        "price": 0.00010137714081746883,
-        "rex": 1946385.7086999998, // amount of REX to be sold.
-        "actions": 8
-    }
-    ```
-    Sellrex action, sells REX in exchange for core tokens by converting REX stake back into core tokens at current exchange rate. If order cannot be processed, it gets queued until there is enough in REX pool to fill order, and will be processed within 30 days at most. If successful, user votes are updated, that is, proceeds are deducted from user's voting power. In case sell order is queued, storage change is billed to 'from' account.
-    </details>
-
-- [x] `.rentcpu` (DEPRECATED in favor of `powerup`)
-
-    <details>
-    ```js
-    {
-        "price": 14207.327700136308,
-        "loan_payment": 0, // tokens paid for the loan
-        "loan_fund": 0, // Loan balance represents a reserve that is used at expiration for automatic loan renewal.
-        "actions": 0
-    }
-    ```
-    Rentcpu action, uses payment to rent as many SYS tokens as possible as determined by market price and stake them for CPU for the benefit of receiver, after 30 days the rented core delegation of CPU will expire. At expiration, if balance is greater than or equal to `loan_payment`, `loan_payment` is taken out of loan balance and used to renew the loan. Otherwise, the loan is closed and user is refunded any remaining balance.
-    </details>
-
-- [x] `.rentnet` (DEPRECATED in favor of `powerup`)
-
-    <details>
-
-    ```js
-    {
-        "price": 14207.327700136308,
-        "loan_payment": 0, // tokens paid for the loan
-        "loan_fund": 0, // Loan balance represents a reserve that is used at expiration for automatic loan renewal.
-        "actions": 0
-    }
-    ```
-    Rentnet action, uses payment to rent as many SYS tokens as possible as determined by market price and stake them for NET for the benefit of receiver, after 30 days the rented core delegation of NET will expire. At expiration, if balance is greater than or equal to `loan_payment`, `loan_payment` is taken out of loan balance and used to renew the loan. Otherwise, the loan is closed and user is refunded any remaining balance.
-    </details>
-
-- [x] `.unstaketorex` (uncommon user action)
-
-    <details>
-
-    ```js
-    {
-        "from_net": 0, // amount of tokens to be unstaked from NET bandwidth and used for REX purchase,
-        "from_cpu": 0, // amount of tokens to be unstaked from CPU bandwidth and used for REX purchase.
-        "actions": 0
-    }
-    ```
-
-    Unstaketorex action, uses staked core tokens to buy REX.
-
-    @pre A voting requirement must be satisfied before action can be executed.
-    @pre User must vote for at least 21 producers or delegate vote to proxy before buying REX.
-
-    @post User votes are updated following this action.
-    @post Tokens used in purchase are added to user's voting power.
-    @post Bought REX cannot be sold before 4 days counting from end of day of purchase.
-    </details>
-
-- [x] `.mvtosavings` (uncommon user action)
-
-    <details>
-
-    ```js
-    {
-        "rex": 98641.5893, // amount of REX to be moved.
-        "actions": 1
-    }
-    ```
-    Mvtosavings action, moves a specified amount of REX into savings bucket. REX savings bucket never matures. In order for it to be sold, it has to be moved explicitly out of that bucket. Then the moved amount will have the regular maturity period of 4 days starting from the end of the day.
-    </details>
-
-- [x] `.mvfrsavings` (uncommon user action)
-
-    <details>
-
-    ```js
-    {
-        "rex": 0, // amount of REX to be moved.
-        "actions": 0
-    }
-    ```
-    Mvfrsavings action, moves a specified amount of REX out of savings bucket. The moved amount will have the regular REX maturity period of 4 days.
-    </details>
-
-## `.ram` (RAM as a resource)
-
-### `.state`
-
-- [x] `.rammarket`
-    <details>
-
-    ```js
-    {
-        "supply": 10000000000, // total RAMCORE supply
-        "base": 275577060482, // 50/50 connector of RAM balance
-        "quote": 5386227.986 // 50/50 connector of EOS balance
-    }
-    ```
-    Uses Bancor math to create a 50/50 relay between two asset types.
-    </details>
-
-- [x] `.global`
-    <details>
-
-    ```js
-    {
-        "max_ram_size": 340685116416, // the amount of ram supply
-        "total_ram_bytes_reserved": 65121421398, // total RAM bytes reserved
-        "total_ram_stake": 43862146590 // total RAM reserved for smart contract utility
-    }
-    ```
-    Uses Bancor math to create a 50/50 relay between two asset types.
-    </details>
-
-### `.actions`
-
-- [x] `.buyram`
-    <details>
-
-    ```js
-    {
-        "price_kb": 49.95204603580562, // price in KB
-        "quant": 9.0393, // the quantity of tokens to buy ram with.
-        "actions": 10
-    }
-    ```
-    Buy ram action, increases receiver's ram quota based upon current price and quantity of tokens provided.
-    </details>
-
-- [x] `.buyrambytes`
-    <details>
-
-    ```js
-    {
-        "price_kb": 0.0200192,
-        "bytes": 424555, // the quantity of ram to buy specified in bytes.
-        "actions": 288
-    }
-    ```
-    Buy a specific amount of ram bytes action. Increases receiver's ram in quantity of bytes provided.
-    </details>
-
-### `.cpu` (CPU & NET as a resource)
-
-### `.actions`
-
-- [x] `.delegatebw` (DEPRECATED in favor of `powerup`)
-    <details>
-
-    ```js
-    {
-        "stake_net_quantity": 8.078099999999933, // tokens staked for NET bandwidth,
-        "stake_cpu_quantity": 72.00140000000007, // tokens staked for CPU bandwidth,
-        "actions": 321
-    }
-    ```
-    Delegate bandwidth and/or cpu action. Stakes SYS from the balance of `from` for the benefit of `receiver`.
-
-    @post All producers `from` account has voted for will have their votes updated immediately.
-    </details>
-
-
-- [x] `.undelegatebw` (DEPRECATED in favor of `powerup`)
-    <details>
-
-    ```js
-    {
-        "unstake_net_quantity": 1.05, // tokens to be unstaked from NET bandwidth
-        "unstake_cpu_quantity": 11.3825, // tokens to be unstaked from CPU bandwidth
-        "actions": 3
-    }
-    ```
-    Undelegate bandwidth action, decreases the total tokens delegated by `from` to `receiver` and/or frees the memory associated with the delegation if there is nothing left to delegate.
-
-    This will cause an immediate reduction in net/cpu bandwidth of the
-    receiver.
-
-    A transaction is scheduled to send the tokens back to `from` after the staking period has passed. If existing transaction is scheduled, it will be canceled and a new transaction issued that has the combined undelegated amount.
-
-    The `from` account loses voting power as a result of this call and all producer tallies are updated.
-
-    @post Unstaked tokens are transferred to `from` liquid balance via a deferred transaction with a delay of 3 days.
-    @post If called during the delay period of a previous `undelegatebw` action, pending action is canceled and timer is reset.
-    @post All producers `from` account has voted for will have their votes updated immediately.
-    @post Bandwidth and storage for the deferred transaction are billed to `from`.
-    </details>
+The transactions will be listed in a `.jsonl` file inside the [`jsonl/`](jsonl/) directory.
+
+## Example
+
+### Input
+
+```bash
+(.venv) eos-blockchain-data$ python main.py eosio.bpay 272368521 272368621 --debug
+```
+
+### Output (jsonl/eosio.bpay_272368521_to_272368621.jsonl)
+
+```jsonl
+{"account": "eosio.bpay", "date": 1665360012, "amount": "40.1309", "token": "EOS", "amountCAD": 0, "token/CAD": 0, "from": "eosio", "to": "eosio.bpay", "blockNum": 272368521, "trxID": "e34893fbf5c1ed8bd639b4b395fa546102b6708fbd45e4dcd0d9c2a3fc144b75", "memo": "fund per-block bucket", "contract": "eosio.token", "action": "transfer"}
+{"account": "eosio.bpay", "date": 1665360012, "amount": "343.8791", "token": "EOS", "amountCAD": 0, "token/CAD": 0, "from": "eosio.bpay", "to": "aus1genereos", "blockNum": 272368521, "trxID": "e34893fbf5c1ed8bd639b4b395fa546102b6708fbd45e4dcd0d9c2a3fc144b75", "memo": "producer block pay", "contract": "eosio.token", "action": "transfer"}
+```
+
+### Log file sample (logs/{datetime}.log)
+
+```bash
+T+306   [DEBUG] Using selector: EpollSelector
+T+306   [DEBUG] Initializing backend: None jwt_token
+T+306   [DEBUG] Initializing SQLitePickleDict with serializer: <requests_cache.serializers.pipeline.SerializerPipeline object at 0x7d5c7f5ea940>
+T+306   [DEBUG] Opening connection to /home/user/Documents/eos-blockchain-data/jwt_token.sqlite:responses
+T+307   [DEBUG] Initializing SQLiteDict with serializer: <requests_cache.serializers.pipeline.SerializerPipeline object at 0x7d5c7f5ea940>
+T+307   [DEBUG] Opening connection to /home/user/Documents/eos-blockchain-data/jwt_token.sqlite:redirects
+T+307   [*] Getting JWT token...
+T+310   [DEBUG] Cache directives from request headers: {}
+T+314   [DEBUG] {'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiaHR0cHM6Ly9kZnVzZS5lb3NuYXRpb24uaW8vIl0sImV4cCI6MTY2NjAyNTA4NiwiaWF0IjoxNjY1OTM4Njg2LCJpc3MiOiJodHRwczovL2FwaS5kZnVzZS5lb3NuYXRpb24uaW8vdjEvIiwic3ViIjoidWlkOjU1NDIzMjMuZW9zbiIsImFwaV9rZXlfaWQiOiIxNjY1NTE2MDU2NTYwIiwicXVvdGEiOjEyMCwicmF0ZSI6MTAsIm5ldHdvcmtzIjpbeyJuYW1lIjoiZW9zIiwicXVvdGEiOjEyMCwicmF0ZSI6MTB9LHsibmFtZSI6IndheCIsInF1b3RhIjoxMjAsInJhdGUiOjEwfSx7Im5hbWUiOiJreWxpbiIsInF1b3RhIjoxMjAsInJhdGUiOjEwfSx7Im5hbWUiOiJqdW5nbGU0IiwicXVvdGEiOjEyMCwicmF0ZSI6MTB9LHsibmFtZSI6IndheHRlc3QiLCJxdW90YSI6MTIwLCJyYXRlIjoxMH0seyJuYW1lIjoib3JlIiwicXVvdGEiOjEyMCwicmF0ZSI6MTB9LHsibmFtZSI6Im9yZXN0YWdlIiwicXVvdGEiOjEyMCwicmF0ZSI6MTB9LHsibmFtZSI6InRlc3RuZXQiLCJxdW90YSI6MTIwLCJyYXRlIjoxMH0seyJuYW1lIjoidGVsb3MiLCJxdW90YSI6MTIwLCJyYXRlIjoxMH0seyJuYW1lIjoidGVsb3N0ZXN0IiwicXVvdGEiOjEyMCwicmF0ZSI6MTB9XX0.fGF356vGsMZc2vlCagC4f8ZXMpQcPXtiOsDjW2-i6iE', 'expires_at': 1666025086}
+T+314   [*] Got JWT token (cached) [SUCCESS]
+T+315   [*] Streaming 100 blocks for transfer information related to ['eosio.bpay'] (running 20 workers)...
+T+315   [DEBUG] Using AsyncIOEngine.POLLER as I/O engine
+T+316   [DEBUG] [Task-2] Starting streaming blocks from 272368521 to 272368526...
+T+317   [DEBUG] [Task-3] Starting streaming blocks from 272368526 to 272368531...
+T+317   [DEBUG] [Task-4] Starting streaming blocks from 272368531 to 272368536...
+T+317   [DEBUG] [Task-5] Starting streaming blocks from 272368536 to 272368541...
+T+317   [DEBUG] [Task-6] Starting streaming blocks from 272368541 to 272368546...
+T+317   [DEBUG] [Task-7] Starting streaming blocks from 272368546 to 272368551...
+T+317   [DEBUG] [Task-8] Starting streaming blocks from 272368551 to 272368556...
+T+318   [DEBUG] [Task-9] Starting streaming blocks from 272368556 to 272368561...
+T+318   [DEBUG] [Task-10] Starting streaming blocks from 272368561 to 272368566...
+T+318   [DEBUG] [Task-11] Starting streaming blocks from 272368566 to 272368571...
+T+318   [DEBUG] [Task-12] Starting streaming blocks from 272368571 to 272368576...
+T+318   [DEBUG] [Task-13] Starting streaming blocks from 272368576 to 272368581...
+T+318   [DEBUG] [Task-14] Starting streaming blocks from 272368581 to 272368586...
+T+318   [DEBUG] [Task-15] Starting streaming blocks from 272368586 to 272368591...
+T+318   [DEBUG] [Task-16] Starting streaming blocks from 272368591 to 272368596...
+T+318   [DEBUG] [Task-17] Starting streaming blocks from 272368596 to 272368601...
+T+318   [DEBUG] [Task-18] Starting streaming blocks from 272368601 to 272368606...
+T+319   [DEBUG] [Task-19] Starting streaming blocks from 272368606 to 272368611...
+T+319   [DEBUG] [Task-20] Starting streaming blocks from 272368611 to 272368616...
+T+319   [DEBUG] [Task-21] Starting streaming blocks from 272368616 to 272368621...
+T+1138  [*] [Task-21] Parsing block number #272368616 (5 blocks remaining)...
+T+1138  [*] [Task-2] Parsing block number #272368521 (5 blocks remaining)...
+T+1150  [DEBUG] [Task-2] action_trace=receiver: "eosio"
+receipt {
+  receiver: "eosio"
+  digest: "bd12f2112f822a408d33fdef62e1d882ac823d8c37908c91254afe9d347a3b01"
+  global_sequence: 356879133833
+  auth_sequence {
+    account_name: "aus1genereos"
+    sequence: 1059537
+  }
+  recv_sequence: 346189547
+  code_sequence: 18
+  abi_sequence: 19
+}
+action {
+  account: "eosio"
+  name: "claimrewards"
+  authorization {
+    actor: "aus1genereos"
+    permission: "claimer"
+  }
+  json_data: "{\"owner\":\"aus1genereos\"}"
+  raw_data: "\200\251\272j*\026\2606"
+}
+elapsed: 230
+transaction_id: "e34893fbf5c1ed8bd639b4b395fa546102b6708fbd45e4dcd0d9c2a3fc144b75"
+block_num: 272368521
+producer_block_id: "103c03898849d5d54fe2174119c6ae34d4cb5772328e64bee85da1c39eb583ba"
+block_time {
+  seconds: 1665360012
+}
+action_ordinal: 1
+[...]
+```

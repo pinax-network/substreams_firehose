@@ -1,3 +1,4 @@
+import argparse
 import asyncio
 import grpc
 import json
@@ -19,38 +20,73 @@ load_dotenv(find_dotenv())
 	TODO
 	====
 
-	- Move hard-coded urls and relevant constants to .env file
-	- Argument parsing
 	- Optimize asyncio workers => Have separate script for measuring the optimal parameters (?) -> How many blocks can I get from the gRPC connection at once ? Or is it one-by-one ?
-	- Enable/Disable logging (file / console)
-	- Documentation
+	- Expand to other chains
 	- Add opt-in integrity verification (using codec.Block variables)
 	- More customisable data selection from traces (?)
 	- Enable file format selection: Pandas/CSV, json/jsonl (?)
+	- More argument parsing (?)
 '''
 
-# Old laptop speed, home internet, 20 workers: ~ 200 blocks/s
 async def run(accounts: List[str], period_start: int, period_end: int):
-	async def stream_blocks(accounts: List[str], period_start: int, period_end: int) -> List[Dict]:
+	"""
+	Write a `.jsonl` file containing relevant transactions related to a list of accounts on the EOS chain for a given period.
+
+	Args:
+		accounts: The accounts to look for as either recipient or sender of a transaction.
+		period_start: The first block number of the targeted period.
+		period_end: The last block number of the targeted period.
+	"""
+	async def stream_blocks(start: int, end: int) -> List[Dict]:
+		"""
+		Return a subset of transactions between `start` and `end` filtered by targeted accounts.
+
+		Args:
+			start: The Firehose stream's starting block 
+			end: The Firehose stream's ending block
+
+		Returns:
+			A list of dictionaries describing the matching transactions. For example:
+			[
+				{
+					'account': 'eosio.bpay',
+					'date': 1665360012,
+					'amount': '343.8791',
+					'token': 'EOS',
+					'amountCAD': 0,
+					'token/CAD': 0,
+					'from': 'eosio.bpay',
+					'to': 'aus1genereos',
+					'blockNum': 272368521,
+					'trxID': 'e34893fbf5c1ed8bd639b4b395fa546102b6708fbd45e4dcd0d9c2a3fc144b75',
+					'memo': 'producer block pay',
+					'contract': 'eosio.token',
+					'action': 'transfer'
+				},
+				...
+			]
+		"""
 		transactions = []
 		filter_exp = ' '.join(["receiver == '" + account + ("' ||" if accounts.index(account) + 1 - len(accounts) else "'") for account in accounts]) # Example: receiver == "a" || receiver == "b"
 		
-		logging.debug(f'[{asyncio.current_task().get_name()}] Starting streaming blocks from {period_start} to {period_end}...')
+		logging.debug(f'[{asyncio.current_task().get_name()}] Starting streaming blocks from {start} to {end}...')
 		async for response in stub.Blocks(bstream_pb2.BlocksRequestV2(
-			start_block_num=period_start,
-			stop_block_num=period_end,
+			start_block_num=start,
+			stop_block_num=end,
 			fork_steps=["STEP_IRREVERSIBLE"],
 			include_filter_expr=f"({filter_exp}) && action == 'transfer'", # TODO: Figure out if filter is really working
 			exclude_filter_expr="action == '*'"
 		)):
 			b = codec_pb2.Block()
 			response.block.Unpack(b) # Deserialize google.protobuf.Any to codec.Block (see codec.proto file)
-			logging.info(f'[{asyncio.current_task().get_name()}] Parsing block number #{b.number} ({period_end - b.number} blocks remaining)...')
+			
+			logging.info(f'[{asyncio.current_task().get_name()}] Parsing block number #{b.number} ({end - b.number} blocks remaining)...')
 			for transaction_trace in b.filtered_transaction_traces:
 				for action_trace in transaction_trace.action_traces:
 					logging.debug(f'[{asyncio.current_task().get_name()}] action_trace={action_trace}')
 					
 					action = action_trace.action
+					
 					try:
 						json_data = json.loads(action.json_data)
 					except Exception as e:
@@ -63,21 +99,25 @@ async def run(accounts: List[str], period_start: int, period_end: int):
 					if action_trace.receiver not in accounts: # Filter only transfers involving target accounts
 						continue
 
-					data = {}
-					data['account'] = action_trace.receiver
-					data['date'] = action_trace.block_time.seconds # TODO: Convert UNIX to Date
-					data['amount'], data['token'] = json_data['quantity'].split(' ')
-					data['amountCAD'] = 0
-					data['token/CAD'] = 0
-					data['from'] = json_data['from']
-					data['to'] = json_data['to']
-					data['blockNum'] = transaction_trace.block_num
-					data['trxID'] = action_trace.transaction_id
-					data['memo'] = json_data['memo']
-					data['contract'] = action.account
-					data['action'] = action.name
+					data = {
+						'account': action_trace.receiver,
+						'date': action_trace.block_time.seconds, # TODO: Convert UNIX to Date
+						'amount': json_data['quantity'].split(' ')[0],
+						'token': json_data['quantity'].split(' ')[1],
+						'amountCAD': 0,
+						'token/CAD': 0,
+						'from': json_data['from'],
+						'to': json_data['to'],
+						'blockNum': transaction_trace.block_num,
+						'trxID': action_trace.transaction_id,
+						'memo': json_data['memo'],
+						'contract': action.account,
+						'action': action.name,
+					}
 
 					transactions.append(data)
+					logging.debug(f'{data}')
+		
 		logging.info(f'[{asyncio.current_task().get_name()}] Done !\n')
 		return transactions
 
@@ -92,7 +132,7 @@ async def run(accounts: List[str], period_start: int, period_end: int):
 
 	logging.info('Getting JWT token...')
 	# Cache JWT response (for up to 24 hours)
-	response = session.post('https://auth.eosnation.io/v1/auth/issue', headers=headers, data=data)
+	response = session.post(os.environ.get("AUTH_ENDPOINT"), headers=headers, data=data)
 	if (response.status_code == 200):
 		logging.debug(response.json())
 		jwt = response.json()['token']
@@ -109,18 +149,18 @@ async def run(accounts: List[str], period_start: int, period_end: int):
 	logging.info(f'Streaming {block_diff} blocks for transfer information related to {accounts} (running {max_tasks} workers)...')
 	console_handler.terminator = '\r'
 
-	async with grpc.aio.secure_channel('eos.firehose.eosnation.io:9000', creds) as secure_channel:
+	async with grpc.aio.secure_channel(os.environ.get("GRPC_ENDPOINT"), creds) as secure_channel:
 		stub = bstream_pb2_grpc.BlockStreamV2Stub(secure_channel)
 		tasks = []
 
 		for i in range(max_tasks):
-			tasks.append(asyncio.create_task(stream_blocks(accounts, period_start + i*split, period_start + (i+1)*split))) # TODO : Accurate splitting
+			tasks.append(asyncio.create_task(stream_blocks(period_start + i*split, period_start + (i+1)*split))) # TODO : Accurate splitting
 
 		data = []
 		for t in tasks:
 			data += await t
 		
-	filename = f'jsonl\\{"_".join(accounts)}_{period_start}_to_{period_end}.jsonl'
+	filename = f'jsonl/{"_".join(accounts)}_{period_start}_to_{period_end}.jsonl'
 	with open(filename, 'w') as f:
 		for entry in data:
 			json.dump(entry, f)
@@ -130,59 +170,39 @@ async def run(accounts: List[str], period_start: int, period_end: int):
 	logging.info(f'Finished streaming, wrote {len(data)} rows of data to {filename} [SUCCESS]')
 
 if __name__ == "__main__":
-	# file_handler = logging.FileHandler("logs\\" + datetime.today().strftime('%Y-%m-%d_%H-%M-%S') + ".log", mode='w') # Unique log files
-	file_handler = logging.FileHandler("logs\\" + datetime.today().strftime('%Y-%m-%d') + ".log", mode='w') # Daily log files
+	arg_parser = argparse.ArgumentParser(description='Firehose account tracker: search the blockchain for transfer transactions targeting specific accounts over a given period.')
+	arg_parser.add_argument('accounts', nargs='+', type=str, help='target account(s) (single or space-separated)')
+	arg_parser.add_argument('block_start', type=int, help='starting block number')
+	arg_parser.add_argument('block_end', type=int, help='ending block number')
+	arg_parser.add_argument('--debug', action='store_true', help='log debug information to log file (found in logs/)')
+	arg_parser.add_argument('--no-log', action='store_true', help='disable console logging')
+
+	args = arg_parser.parse_args()
+	if args.block_end < args.block_start:
+		arg_parser.error('block_start must be less than or equal to block_end')
+
+	handlers = []
+	if args.debug:
+		handlers.append(logging.FileHandler("logs/" + datetime.today().strftime('%Y-%m-%d_%H-%M-%S') + ".log", mode='w')) # Unique log files
 
 	console_handler = logging.StreamHandler()
 	console_handler.setLevel(logging.INFO)
+	handlers.append(console_handler)
+	
+	if args.no_log:
+		logging.disable(logging.WARNING) # Keep only errors and critical messages
 
 	logging.basicConfig(
-		handlers=[file_handler, console_handler],
+		handlers=handlers,
 		level=logging.DEBUG,
 		format='T+%(relativeCreated)d\t%(levelname)s %(message)s',
 		force=True
 	)
-
+	
 	logging.addLevelName(logging.DEBUG, '[DEBUG]')
 	logging.addLevelName(logging.INFO, '[*]')
 	logging.addLevelName(logging.WARNING, '[!]')
 	logging.addLevelName(logging.ERROR, '[ERROR]')
 	logging.addLevelName(logging.CRITICAL, '[CRITICAL]')
 
-	accounts = ['eosio.vpay', 'eosio.bpay']
-	period_start = 272368521
-	period_end = 272368621 # 272540290
-
-	asyncio.run(run(accounts, period_start, period_end))
-
-	"""
-		Pandas dataframe
-		================
-
-		Account | Date | Amount | Token | AmountCAD | Token/CAD | From | To | BlockNum | TrxID | Memo | Contract | Action | Data 
-		-------------------------------------------------------------------------------------------------------------------------
-	"""
-
-	# results = response.json()['data']['searchTransactionsBackward']['results']
-	# rows = []
-	# for r in results:
-	# 	row = {}
-	# 	for t in r['trace']['matchingActions']:
-	# 		row['Account'] = account_name
-	# 		row['Date'] = r['trace']['block']['timestamp'] # TODO: Format date
-	# 		row['Amount'], row['Token'] = t['json']['quantity'].split(' ')
-	# 		row['AmountCAD'] = 0 # TODO: Calculate price from pair quote
-	# 		row['Token/CAD'] = 0 # TODO: Fetch historical price from API
-	# 		row['From'] = t['json']['from']
-	# 		row['To'] = t['json']['to']
-	# 		row['BlockNum'] = r['trace']['block']['num']
-	# 		row['TrxID'] = r['trace']['id']
-	# 		row['Memo'] = t['json']['memo']
-	# 		row['Contract'] = t['account']
-	# 		row['Action'] = t['name']
-	# 		row['Data'] = '' # TODO: Use ?
-	# 		rows.append(row)
-
-	# df = pd.DataFrame(rows)
-	# print(df)
-	# df.to_csv(f'csv\\{account_name}_{period_start.split("T")[0]}_to_{period_end.split("T")[0]}.csv', index=False)
+	asyncio.run(run(args.accounts, args.block_start, args.block_end))

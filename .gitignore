@@ -1,7 +1,6 @@
 # Logs
 nohup.out
 logs/
-csv/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -110,3 +109,12 @@ dist
 
 # Requests cache database
 *.sqlite
+
+# Python virtual environnement
+.venv/
+
+# Python cache
+__pycache__/
+
+# Helper script for running program
+run.sh
