@@ -57,8 +57,6 @@ def eos_block_processor(block: codec_pb2.Block) -> Dict:
 				'timestamp': action_trace.block_time.seconds,
 				'amount': json_data['quantity'].split(' ')[0],
 				'token': json_data['quantity'].split(' ')[1],
-				'amountCAD': 0,
-				'token/CAD': 0,
 				'from': json_data['from'],
 				'to': json_data['to'],
 				'block_num': transaction_trace.block_num,

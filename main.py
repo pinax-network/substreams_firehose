@@ -4,6 +4,7 @@ import argparse
 import asyncio
 import grpc
 import importlib
+import inspect
 import json
 import logging
 import os
@@ -26,9 +27,7 @@ load_dotenv(find_dotenv())
 	- Add opt-in integrity verification (using codec.Block variables)
 	- Investigate functools and other more abstract modules for block processor modularity 
 		- Possibility of 3 stages: pre-processing (e.g. load some API data), process (currently implemented), post-processing (e.g. adding more data to transactions)
-	- More customisable data selection from traces (?)
 	- Enable file format selection: Pandas/CSV, json/jsonl (?)
-	- More argument parsing (?)
 '''
 
 async def run(accounts: List[str], period_start: int, period_end: int, block_processor: Callable[[codec_pb2.Block], Dict], chain: str = 'eos', 
@@ -93,7 +92,7 @@ async def run(accounts: List[str], period_start: int, period_end: int, block_pro
 			response.block.Unpack(b) # Deserialize google.protobuf.Any to codec.Block
 
 			logging.info(f'[{asyncio.current_task().get_name()}] Parsing block number #{b.number} ({end - b.number} blocks remaining)...')
-			for t in block_processor(b):
+			for t in block_processor(b): # TODO: Add exception handling
 				transactions.append(t)
 		
 		logging.info(f'[{asyncio.current_task().get_name()}] Done !\n')
@@ -149,7 +148,7 @@ async def run(accounts: List[str], period_start: int, period_end: int, block_pro
 	filename = f'jsonl/{chain}_{"_".join(accounts)}_{period_start}_to_{period_end}.jsonl'
 	with open(filename, 'w') as f:
 		for entry in data:
-			json.dump(entry, f)
+			json.dump(entry, f) # TODO: Add exception handling
 			f.write('\n')
 	
 	console_handler.terminator = '\n'
@@ -163,27 +162,28 @@ if __name__ == '__main__':
 	arg_parser.add_argument('accounts', nargs='+', type=str, help='target account(s) (single or space-separated)')
 	arg_parser.add_argument('block_start', type=int, help='starting block number')
 	arg_parser.add_argument('block_end', type=int, help='ending block number')
-	arg_parser.add_argument('--chain', nargs='?', choices=['eos', 'wax', 'kylin', 'jungle4'], const='eos', default='eos', help='target blockchain')
-	arg_parser.add_argument('--custom-include-expr', nargs='?', type=str, help='filter for the Firehose stream to tag included transactions')
-	arg_parser.add_argument('--custom-exclude-expr', nargs='?', type=str, help='filter for the Firehose stream to exclude transactions')
-	arg_parser.add_argument('--custom-processor', nargs='?', type=str, help='relative import path to a custom block processing function located in the "block_processors" module')
-	arg_parser.add_argument('--max-tasks', nargs='?', type=int, const=20, default=20, help='maximum number of concurrent tasks running for block streaming')
-	arg_parser.add_argument('--debug', action='store_true', help='log debug information to log file (found in logs/)')
-	arg_parser.add_argument('--no-log', action='store_true', help='disable console logging')
+	arg_parser.add_argument('-c', '--chain', nargs='?', choices=['eos', 'wax', 'kylin', 'jungle4'], const='eos', default='eos', help='target blockchain')
+	arg_parser.add_argument('-n', '--max-tasks', nargs='?', type=int, const=20, default=20, help='maximum number of concurrent tasks running for block streaming')
+	arg_parser.add_argument('-l', '--log', nargs='?', type=str, const='logs/{datetime}.log', default=None, help='log debug information to log file (can specify the full path)')
+	arg_parser.add_argument('-q', '--quiet', action='store_true', help='disable console logging')
+	arg_parser.add_argument('-x', '--custom-exclude-expr', nargs='?', type=str, const='', help='custom filter for the Firehose stream to exclude transactions')
+	arg_parser.add_argument('-i', '--custom-include-expr', nargs='?', type=str, const='', help='custom filter for the Firehose stream to tag included transactions')
+	arg_parser.add_argument('-p', '--custom-processor', nargs='?', type=str, help='relative import path to a custom block processing function located in the "block_processors" module')
 
 	args = arg_parser.parse_args()
 	if args.block_end < args.block_start:
 		arg_parser.error('block_start must be less than or equal to block_end')
 
 	handlers = []
-	if args.debug:
-		handlers.append(logging.FileHandler('logs/' + datetime.today().strftime('%Y-%m-%d_%H-%M-%S') + '.log', mode='w')) # Unique log files
+	if args.log: 
+		log_filename = 'logs/' + datetime.today().strftime('%Y-%m-%d_%H-%M-%S') + '.log' if args.log == 'logs/{datetime}.log' else args.log
+		handlers.append(logging.FileHandler(log_filename, mode='a+'))
 
 	console_handler = logging.StreamHandler()
 	console_handler.setLevel(logging.INFO)
 	handlers.append(console_handler)
 	
-	if args.no_log:
+	if args.quiet:
 		logging.disable(logging.WARNING) # Keep only errors and critical messages
 
 	logging.basicConfig(
@@ -204,15 +204,32 @@ if __name__ == '__main__':
 		module, function = args.custom_processor.rsplit('.', 1)
 		module = f'block_processors.{module}'
 
-	asyncio.run(
-		run(
-			accounts=args.accounts, 
-			period_start=args.block_start, 
-			period_end=args.block_end, 
-			block_processor=getattr(importlib.import_module(module), function), 
-			chain=args.chain, 
-			max_tasks=args.max_tasks,
-			custom_include_expr=args.custom_include_expr,
-			custom_exclude_expr=args.custom_exclude_expr,
+	try:
+		block_processor = getattr(importlib.import_module(module), function)
+		
+		signature = inspect.signature(block_processor)
+		parameters_annotations = [p_type.annotation for (_, p_type) in signature.parameters.items()]
+		
+		if (signature.return_annotation == signature.empty 
+			or (not parameters_annotations and signature.parameters) # If there are parameters and none are annotated
+			or any([t == inspect.Parameter.empty for t in parameters_annotations]) # If some parameters are not annotated
+		):
+			logging.warning('Could not check block processing function signature (make sure parameters and return value have type hinting annotations)')
+		elif not codec_pb2.Block in parameters_annotations or signature.return_annotation != Dict or not inspect.isgeneratorfunction(block_processor):
+			raise TypeError(f'Incompatible block processing function signature: {signature} should be <generator>(block: codec_pb2.Block) -> Dict')
+	except Exception as e:
+		logging.critical(f'Could not load block processing function: {e}')
+		exit(-1)
+	else:
+		asyncio.run(
+			run(
+				accounts=args.accounts, 
+				period_start=args.block_start, 
+				period_end=args.block_end, 
+				block_processor=block_processor, 
+				chain=args.chain, 
+				max_tasks=args.max_tasks,
+				custom_include_expr=args.custom_include_expr,
+				custom_exclude_expr=args.custom_exclude_expr,
+			)
 		)
-	)
