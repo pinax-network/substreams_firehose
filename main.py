@@ -24,7 +24,9 @@ load_dotenv(find_dotenv())
 	====
 
 	- Optimize asyncio workers => Have separate script for measuring the optimal parameters (?) -> How many blocks can I get from the gRPC connection at once ? Or is it one-by-one ?
+	- Error-checking for input arguments
 	- Add opt-in integrity verification (using codec.Block variables)
+	- Investigate functools and other more abstract modules for block processor modularity
 	- More customisable data selection from traces (?)
 	- Enable file format selection: Pandas/CSV, json/jsonl (?)
 	- More argument parsing (?)
@@ -79,7 +81,7 @@ async def run(accounts: List[str], period_start: int, period_end: int, block_pro
 		"""
 		transactions = []
 		
-		logging.debug(f'[{asyncio.current_task().get_name()}] Starting streaming blocks from {start} to {end}...')
+		logging.debug(f'[{asyncio.current_task().get_name()}] Starting streaming blocks from {start} to {end} using "{block_processor.__name__}"...')
 		async for response in stub.Blocks(bstream_pb2.BlocksRequestV2(
 			start_block_num=start,
 			stop_block_num=end,
@@ -123,7 +125,7 @@ async def run(accounts: List[str], period_start: int, period_end: int, block_pro
 	max_tasks = block_diff if block_diff < max_tasks else max_tasks # Prevent having more tasks than block needing processing
 	split = block_diff//max_tasks
 	
-	logging.info(f'Streaming {block_diff} blocks for transfer information related to {accounts} (running {max_tasks} concurrent tasks)...')
+	logging.info(f'Streaming {block_diff} blocks on {chain.upper()} chain for transfer information related to {accounts} (running {max_tasks} concurrent tasks)...')
 	console_handler.terminator = '\r'
 
 	async with grpc.aio.secure_channel(f'{chain}.firehose.eosnation.io:9000', creds) as secure_channel:
@@ -162,6 +164,7 @@ if __name__ == '__main__':
 	arg_parser.add_argument('block_start', type=int, help='starting block number')
 	arg_parser.add_argument('block_end', type=int, help='ending block number')
 	arg_parser.add_argument('--chain', nargs='?', choices=['eos', 'wax', 'kylin', 'jungle4'], const='eos', default='eos', help='target blockchain')
+	arg_parser.add_argument('--custom-processor', nargs='?', type=str, help='relative import path to a custom block processing function located in the "block_processors" module')
 	arg_parser.add_argument('--max-tasks', nargs='?', type=int, const=20, default=20, help='maximum number of concurrent tasks running for block streaming')
 	arg_parser.add_argument('--debug', action='store_true', help='log debug information to log file (found in logs/)')
 	arg_parser.add_argument('--no-log', action='store_true', help='disable console logging')
@@ -194,6 +197,18 @@ if __name__ == '__main__':
 	logging.addLevelName(logging.ERROR, '[ERROR]')
 	logging.addLevelName(logging.CRITICAL, '[CRITICAL]')
 
-	block_processor = getattr(importlib.import_module(f'block_processors.default'), f'{args.chain}_block_processor')
+	module, function = ('block_processors.default', f'{args.chain}_block_processor')
+	if args.custom_processor:
+		module, function = args.custom_processor.rsplit('.', 1)
+		module = f'block_processors.{module}'
 
-	asyncio.run(run(args.accounts, args.block_start, args.block_end, block_processor, args.chain, args.max_tasks))
+	asyncio.run(
+		run(
+			accounts=args.accounts, 
+			period_start=args.block_start, 
+			period_end=args.block_end, 
+			block_processor=getattr(importlib.import_module(module), function), 
+			chain=args.chain, 
+			max_tasks=args.max_tasks
+		)
+	)

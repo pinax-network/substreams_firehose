@@ -7,8 +7,10 @@
 ## Chains
 
 - [x] EOS
+- [x] Jungle4
+- [x] Kylin
+- [x] WAX
 - [ ] Telos
-- [ ] WAX
 - [ ] UX
 
 ## Environment variables
@@ -39,7 +41,8 @@ foo@bar:~/eos-blockchain-data$ python3 -m venv .venv # Create virtual environnem
 foo@bar:~/eos-blockchain-data$ pip install -r requirements.txt # Install dependencies
 foo@bar:~/eos-blockchain-data$ source .venv/bin/activate # Activate virtual environnement
 (.venv) foo@bar:~/eos-blockchain-data$ python main.py -h
-usage: main.py [-h] [--max-tasks [MAX_TASKS]] [--debug] [--no-log] accounts [accounts ...] block_start block_end
+usage: main.py [-h] [--chain [{eos,wax,kylin,jungle4}]] [--custom-processor [CUSTOM_PROCESSOR]] [--max-tasks [MAX_TASKS]] [--debug] [--no-log]
+               accounts [accounts ...] block_start block_end
 
 Search the blockchain for transfer transactions targeting specific accounts over a given period. Powered by Firehose (https://eos.firehose.eosnation.io/).
 
@@ -50,6 +53,10 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
+  --chain [{eos,wax,kylin,jungle4}]
+                        target blockchain (default: eos)
+  --custom-processor [CUSTOM_PROCESSOR]
+                        relative import path to a custom block processing function located in the "block_processors" module (default: None)
   --max-tasks [MAX_TASKS]
                         maximum number of concurrent tasks running for block streaming (default: 20)
   --debug               log debug information to log file (found in logs/) (default: False)
@@ -57,6 +64,43 @@ optional arguments:
 ```
 
 The transactions will be listed in a `.jsonl` file inside the [`jsonl/`](jsonl/) directory.
+
+### Protobuf
+
+To communicate with the gRPC endpoint, Python object are generated through the use of `.proto` file templates that describes the kind of data the client and server are going to manipulate. Those Python object are already provided in the [`proto/`](proto/) folder, however if you want to generate them yourself, you can run the following commands:
+```console
+(.venv) foo@bar:~/eos-blockchain-data$ pip install grpcio-tools
+(.venv) foo@bar:~/eos-blockchain-data$ python -m grpc_tools.protoc -Iproto --python_out=proto/ --grpc_python_out=proto/ proto/*.proto
+```
+
+## Writing custom block processors
+
+The extraction process uses a modular approach for manipulating `Block` objects coming from the Firehose gRPC stream. A block processing function is provided for extracting the data into `Dict` objects that are later stored in a `.jsonl` file at the end of the process. The default behavior is documented in the [`eos_block_processor`](block_processors/default.py#L15) function.
+
+In order to write custom block processing functions, some conditions must be respected:
+- The function signature should strictly follow the following model: `func(codec_pb2.Block) -> Dict`
+- The function should act as a **generator** using the `yield` keyword to return the dictionary data.
+- The function should be placed inside a seperate `.py` file in the [`block_processors`](block_processors/) module.
+
+A typical template for parsing the block data would look like the following:
+```python
+for transaction_trace in block.filtered_transaction_traces: # Gets every filtered TransactionTrace from a Block
+  for action_trace in transaction_trace.action_traces: # Gets every ActionTrace within a TransactionTrace
+    if not action_trace.filtering_matched: # Only keep 'transfer' actions that concerns the targeted accounts
+      continue
+
+    data = {}
+    
+    # Process the data...
+
+    yield data
+```
+
+For documentation about `Block`, `TransactionTrace`, `ActionTrace` or other objects and their properties, please refer to the [`codec.proto`](proto/codec.proto) file.
+
+You can then use custom block processors through the command-line using the `--custom-processor` argument and providing the relative import path **from the `block_processors` module**. 
+
+For example, let's say you've implemented a custom function `my_block_processor` in `custom.py`. The `custom.py` script should reside at the root or in a subdirectory inside the `block_processors` folder (let's say it's at the root for this example). You would then pass the `--custom-processor` argument as `--custom-processor custom.my_block_processor`. The script will locate it inside the `block_processors` module and use the `my_block_processor` function to parse block data and extract it to the `.jsonl` file.
 
 ## Example
 
