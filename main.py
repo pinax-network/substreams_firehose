@@ -1,6 +1,9 @@
+#!/usr/bin/env python3
+
 import argparse
 import asyncio
 import grpc
+import importlib
 import json
 import logging
 import multiprocessing
@@ -20,85 +23,30 @@ load_dotenv(find_dotenv())
 	TODO
 	====
 
-	- Adapter pattern for processing block data (l84-l120)
 	- Optimize asyncio workers => Have separate script for measuring the optimal parameters (?) -> How many blocks can I get from the gRPC connection at once ? Or is it one-by-one ?
-	- Expand to other chains
 	- Add opt-in integrity verification (using codec.Block variables)
 	- More customisable data selection from traces (?)
 	- Enable file format selection: Pandas/CSV, json/jsonl (?)
 	- More argument parsing (?)
 '''
 
-def eos_block_processing(block: codec_pb2.Block) -> Dict:
-	"""
-	Yield a processed transaction from a block returning relevant properties.
-
-	The signature of the function is crucial: it must take a `Block` object (properties defined in the `proto/codec.proto` file) and return a dict
-	containing the desired properties for later storing in the `.jsonl` file. The basic template for processing transactions should look like this:
-	```
-		for transaction_trace in block.filtered_transaction_traces: # Gets every filtered TransactionTrace from the Block
-			for action_trace in transaction_trace.action_traces: # Gets every ActionTrace within the TransactionTrace
-				if not action_trace.filtering_matched: # Only keep 'transfer' actions that concerns the targeted accounts
-					continue
-
-				data = {}
-				
-				# Process the data...
-
-				yield data
-	```
-	See `proto/codec.proto` file for a full list of available objects and properties.
-
-	Args:
-		block: The block to process transaction from.
-	"""
-	for transaction_trace in block.filtered_transaction_traces:
-		for action_trace in transaction_trace.action_traces:
-			logging.debug(f'[{asyncio.current_task().get_name()}] action_trace={action_trace}')
-			
-			if not action_trace.filtering_matched:
-				continue
-
-			action = action_trace.action
-			try:
-				json_data = json.loads(action.json_data)
-			except Exception as e:
-				logging.warning(f'Could not parse action (trxid={action_trace.transaction_id}): {e}\n')
-				continue
-
-			data = {
-				'account': action_trace.receiver,
-				'date': datetime.utcfromtimestamp(action_trace.block_time.seconds).strftime('%Y-%m-%d %H:%M:%S'),
-				'amount': json_data['quantity'].split(' ')[0],
-				'token': json_data['quantity'].split(' ')[1],
-				'amountCAD': 0,
-				'token/CAD': 0,
-				'from': json_data['from'],
-				'to': json_data['to'],
-				'blockNum': transaction_trace.block_num,
-				'trxID': action_trace.transaction_id,
-				'memo': json_data['memo'],
-				'contract': action.account,
-				'action': action.name,
-			}
-
-			logging.debug(f'{data}')
-			yield data
-
-async def run(accounts: List[str], period_start: int, period_end: int, block_processor: Callable[[codec_pb2.Block], Dict], max_tasks: int = 20):
+async def run(accounts: List[str], period_start: int, period_end: int, block_processor: Callable[[codec_pb2.Block], Dict], chain: str = 'eos', 
+			  max_tasks: int = 20):
 	"""
 	Write a `.jsonl` file containing relevant transactions related to a list of accounts for a given period.
 
 	It firsts obtains a JWT token from the `AUTH_ENDPOINT` defined in the `.env` file and uses this token to 
-	authenticate with the Firehose gRPC service defined by `GRPC_ENDPOINT`. Then splits the block range into
-	smaller ranges to process blocks in parallel using the `block_processor` function. Finally, it compiles
-	all recorded transactions into a single `.jsonl` file in the `jsonl/` folder.
+	authenticate with the Firehose gRPC service associated with the given chain. Then splits the block range 
+	into smaller ranges to process blocks in parallel using the `block_processor` function. Finally, it 
+	compiles all recorded transactions into a single `.jsonl` file in the `jsonl/` folder.
 
 	Args:
 		accounts: The accounts to look for as either recipient or sender of a transaction.
 		period_start: The first block number of the targeted period.
 		period_end: The last block number of the targeted period.
-		block_processor: A generator function extracting relevant properties from a block. 
+		block_processor: A generator function extracting relevant properties from a block.
+		chain: The target blockchain.
+		max_tasks: Maximum number of concurrent tasks for streaming blocks.
 	"""
 	async def stream_blocks(start: int, end: int) -> List[Dict]:
 		"""
@@ -178,7 +126,7 @@ async def run(accounts: List[str], period_start: int, period_end: int, block_pro
 	logging.info(f'Streaming {block_diff} blocks for transfer information related to {accounts} (running {max_tasks} concurrent tasks)...')
 	console_handler.terminator = '\r'
 
-	async with grpc.aio.secure_channel(os.environ.get('GRPC_ENDPOINT'), creds) as secure_channel:
+	async with grpc.aio.secure_channel(f'{chain}.firehose.eosnation.io:9000', creds) as secure_channel:
 		stub = bstream_pb2_grpc.BlockStreamV2Stub(secure_channel)
 		tasks = []
 
@@ -196,7 +144,7 @@ async def run(accounts: List[str], period_start: int, period_end: int, block_pro
 		for t in tasks:
 			data += await t
 		
-	filename = f'jsonl/{"_".join(accounts)}_{period_start}_to_{period_end}.jsonl'
+	filename = f'jsonl/{chain}_{"_".join(accounts)}_{period_start}_to_{period_end}.jsonl'
 	with open(filename, 'w') as f:
 		for entry in data:
 			json.dump(entry, f)
@@ -213,6 +161,7 @@ if __name__ == '__main__':
 	arg_parser.add_argument('accounts', nargs='+', type=str, help='target account(s) (single or space-separated)')
 	arg_parser.add_argument('block_start', type=int, help='starting block number')
 	arg_parser.add_argument('block_end', type=int, help='ending block number')
+	arg_parser.add_argument('--chain', nargs='?', choices=['eos', 'wax', 'kylin', 'jungle4'], const='eos', default='eos', help='target blockchain')
 	arg_parser.add_argument('--max-tasks', nargs='?', type=int, const=20, default=20, help='maximum number of concurrent tasks running for block streaming')
 	arg_parser.add_argument('--debug', action='store_true', help='log debug information to log file (found in logs/)')
 	arg_parser.add_argument('--no-log', action='store_true', help='disable console logging')
@@ -245,4 +194,6 @@ if __name__ == '__main__':
 	logging.addLevelName(logging.ERROR, '[ERROR]')
 	logging.addLevelName(logging.CRITICAL, '[CRITICAL]')
 
-	asyncio.run(run(args.accounts, args.block_start, args.block_end, eos_block_processing, args.max_tasks))
+	block_processor = getattr(importlib.import_module(f'block_processors.default'), f'{args.chain}_block_processor')
+
+	asyncio.run(run(args.accounts, args.block_start, args.block_end, block_processor, args.chain, args.max_tasks))
