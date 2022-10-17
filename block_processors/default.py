@@ -41,8 +41,6 @@ def eos_block_processor(block: codec_pb2.Block) -> Dict:
 	logging.debug(f'[{get_current_task_name()}] block={block}')
 	for transaction_trace in block.filtered_transaction_traces:
 		for action_trace in transaction_trace.action_traces:
-			logging.debug(f'[{get_current_task_name()}] action_trace={action_trace}')
-			
 			if not action_trace.filtering_matched:
 				continue
 
@@ -56,14 +54,15 @@ def eos_block_processor(block: codec_pb2.Block) -> Dict:
 			data = {
 				'account': action_trace.receiver,
 				'date': datetime.utcfromtimestamp(action_trace.block_time.seconds).strftime('%Y-%m-%d %H:%M:%S'),
+				'timestamp': action_trace.block_time.seconds,
 				'amount': json_data['quantity'].split(' ')[0],
 				'token': json_data['quantity'].split(' ')[1],
 				'amountCAD': 0,
 				'token/CAD': 0,
 				'from': json_data['from'],
 				'to': json_data['to'],
-				'blockNum': transaction_trace.block_num,
-				'trxID': action_trace.transaction_id,
+				'block_num': transaction_trace.block_num,
+				'transaction_id': action_trace.transaction_id,
 				'memo': json_data['memo'],
 				'contract': action.account,
 				'action': action.name,

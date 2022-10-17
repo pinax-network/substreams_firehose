@@ -6,9 +6,7 @@ import grpc
 import importlib
 import json
 import logging
-import multiprocessing
 import os
-import pandas as pd
 import requests
 
 from datetime import datetime, timedelta
@@ -26,7 +24,8 @@ load_dotenv(find_dotenv())
 	- Optimize asyncio workers => Have separate script for measuring the optimal parameters (?) -> How many blocks can I get from the gRPC connection at once ? Or is it one-by-one ?
 	- Error-checking for input arguments
 	- Add opt-in integrity verification (using codec.Block variables)
-	- Investigate functools and other more abstract modules for block processor modularity
+	- Investigate functools and other more abstract modules for block processor modularity 
+		- Possibility of 3 stages: pre-processing (e.g. load some API data), process (currently implemented), post-processing (e.g. adding more data to transactions)
 	- More customisable data selection from traces (?)
 	- Enable file format selection: Pandas/CSV, json/jsonl (?)
 	- More argument parsing (?)
@@ -62,19 +61,20 @@ async def run(accounts: List[str], period_start: int, period_end: int, block_pro
 			A list of dictionaries describing the matching transactions. For example:
 			[
 				{
-					'account': 'eosio.bpay',
-					'date': 1665360012,
-					'amount': '343.8791',
-					'token': 'EOS',
-					'amountCAD': 0,
-					'token/CAD': 0,
-					'from': 'eosio.bpay',
-					'to': 'aus1genereos',
-					'blockNum': 272368521,
-					'trxID': 'e34893fbf5c1ed8bd639b4b395fa546102b6708fbd45e4dcd0d9c2a3fc144b75',
-					'memo': 'producer block pay',
-					'contract': 'eosio.token',
-					'action': 'transfer'
+					"account": "eosio.bpay",
+					"date": "2022-10-10 00:00:12",
+					"timestamp": 1665360012,
+					"amount": "40.1309",
+					"token": "EOS",
+					"amountCAD": 0,
+					"token/CAD": 0,
+					"from": "eosio",
+					"to": "eosio.bpay",
+					"block_num": 272368521, 
+					"transaction_id": "e34893fbf5c1ed8bd639b4b395fa546102b6708fbd45e4dcd0d9c2a3fc144b75", 
+					"memo": "fund per-block bucket", 
+					"contract": "eosio.token", 
+					"action": "transfer"
 				},
 				...
 			]
@@ -137,7 +137,7 @@ async def run(accounts: List[str], period_start: int, period_end: int, block_pro
 				asyncio.create_task(
 					stream_blocks(
 						period_start + i*split, 
-						period_start + (i+1)*split if i < max_tasks-1 else period_end # Gives the remaining blocks to the last task in case the work can't be split equally
+						period_start + (i+1)*split if i < max_tasks-1 else period_end # Gives the remaining blocks to the last task in case the work can't be splitted equally
 					)
 				)
 			)
@@ -153,7 +153,7 @@ async def run(accounts: List[str], period_start: int, period_end: int, block_pro
 			f.write('\n')
 	
 	console_handler.terminator = '\n'
-	logging.info(f'Finished streaming, wrote {len(data)} rows of data to {filename} [SUCCESS]')
+	logging.info(f'Finished block streaming, wrote {len(data)} rows of data to {filename} [SUCCESS]')
 
 if __name__ == '__main__':
 	arg_parser = argparse.ArgumentParser(
