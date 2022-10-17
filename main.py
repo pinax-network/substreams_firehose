@@ -32,7 +32,7 @@ load_dotenv(find_dotenv())
 '''
 
 async def run(accounts: List[str], period_start: int, period_end: int, block_processor: Callable[[codec_pb2.Block], Dict], chain: str = 'eos', 
-			  max_tasks: int = 20):
+			  max_tasks: int = 20, custom_include_expr: str = None, custom_exclude_expr: str = None):
 	"""
 	Write a `.jsonl` file containing relevant transactions related to a list of accounts for a given period.
 
@@ -86,8 +86,8 @@ async def run(accounts: List[str], period_start: int, period_end: int, block_pro
 			start_block_num=start,
 			stop_block_num=end,
 			fork_steps=['STEP_IRREVERSIBLE'],
-			include_filter_expr=f'receiver in {accounts} && action == "transfer"',
-			exclude_filter_expr='action == "*"'
+			include_filter_expr=custom_include_expr if custom_include_expr else f'receiver in {accounts} && action == "transfer"',
+			exclude_filter_expr=custom_exclude_expr if custom_exclude_expr else 'action == "*"'
 		)):
 			b = codec_pb2.Block()
 			response.block.Unpack(b) # Deserialize google.protobuf.Any to codec.Block
@@ -157,13 +157,15 @@ async def run(accounts: List[str], period_start: int, period_end: int, block_pro
 
 if __name__ == '__main__':
 	arg_parser = argparse.ArgumentParser(
-		description='Search the blockchain for transfer transactions targeting specific accounts over a given period. Powered by Firehose (https://eos.firehose.eosnation.io/).',
+		description='Search the blockchain for transactions targeting specific accounts over a given period. Powered by Firehose (https://eos.firehose.eosnation.io/).',
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 	)
 	arg_parser.add_argument('accounts', nargs='+', type=str, help='target account(s) (single or space-separated)')
 	arg_parser.add_argument('block_start', type=int, help='starting block number')
 	arg_parser.add_argument('block_end', type=int, help='ending block number')
 	arg_parser.add_argument('--chain', nargs='?', choices=['eos', 'wax', 'kylin', 'jungle4'], const='eos', default='eos', help='target blockchain')
+	arg_parser.add_argument('--custom-include-expr', nargs='?', type=str, help='filter for the Firehose stream to tag included transactions')
+	arg_parser.add_argument('--custom-exclude-expr', nargs='?', type=str, help='filter for the Firehose stream to exclude transactions')
 	arg_parser.add_argument('--custom-processor', nargs='?', type=str, help='relative import path to a custom block processing function located in the "block_processors" module')
 	arg_parser.add_argument('--max-tasks', nargs='?', type=int, const=20, default=20, help='maximum number of concurrent tasks running for block streaming')
 	arg_parser.add_argument('--debug', action='store_true', help='log debug information to log file (found in logs/)')
@@ -209,6 +211,8 @@ if __name__ == '__main__':
 			period_end=args.block_end, 
 			block_processor=getattr(importlib.import_module(module), function), 
 			chain=args.chain, 
-			max_tasks=args.max_tasks
+			max_tasks=args.max_tasks,
+			custom_include_expr=args.custom_include_expr,
+			custom_exclude_expr=args.custom_exclude_expr,
 		)
 	)

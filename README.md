@@ -41,10 +41,11 @@ foo@bar:~/eos-blockchain-data$ python3 -m venv .venv # Create virtual environnem
 foo@bar:~/eos-blockchain-data$ pip install -r requirements.txt # Install dependencies
 foo@bar:~/eos-blockchain-data$ source .venv/bin/activate # Activate virtual environnement
 (.venv) foo@bar:~/eos-blockchain-data$ python main.py -h
-usage: main.py [-h] [--chain [{eos,wax,kylin,jungle4}]] [--custom-processor [CUSTOM_PROCESSOR]] [--max-tasks [MAX_TASKS]] [--debug] [--no-log]
+usage: main.py [-h] [--chain [{eos,wax,kylin,jungle4}]] [--custom-include-expr [CUSTOM_INCLUDE_EXPR]] [--custom-exclude-expr [CUSTOM_EXCLUDE_EXPR]]
+               [--custom-processor [CUSTOM_PROCESSOR]] [--max-tasks [MAX_TASKS]] [--debug] [--no-log]
                accounts [accounts ...] block_start block_end
 
-Search the blockchain for transfer transactions targeting specific accounts over a given period. Powered by Firehose (https://eos.firehose.eosnation.io/).
+Search the blockchain for transactions targeting specific accounts over a given period. Powered by Firehose (https://eos.firehose.eosnation.io/).
 
 positional arguments:
   accounts              target account(s) (single or space-separated)
@@ -55,6 +56,10 @@ optional arguments:
   -h, --help            show this help message and exit
   --chain [{eos,wax,kylin,jungle4}]
                         target blockchain (default: eos)
+  --custom-include-expr [CUSTOM_INCLUDE_EXPR]
+                        filter for the Firehose stream to tag included transactions (default: None)
+  --custom-exclude-expr [CUSTOM_EXCLUDE_EXPR]
+                        filter for the Firehose stream to exclude transactions (default: None)
   --custom-processor [CUSTOM_PROCESSOR]
                         relative import path to a custom block processing function located in the "block_processors" module (default: None)
   --max-tasks [MAX_TASKS]
@@ -73,9 +78,27 @@ To communicate with the gRPC endpoint, Python object are generated through the u
 (.venv) foo@bar:~/eos-blockchain-data$ python -m grpc_tools.protoc -Iproto --python_out=proto/ --grpc_python_out=proto/ proto/*.proto
 ```
 
+## Using custom filters
+
+By default, the script will look for all 'transfer' actions with the targeted accounts as the contract's 'receiver' (which can be different from the recipient of the transaction) meaning that all transactions 'from' and 'to' those adresses will be accounted for.
+
+Let's say you just wanted outgoing transactions from certain accounts. You could use the `--custom-include-expr` argument like so:
+```console
+(.venv) foo@bar:~/eos-blockchain-data$ python main.py $TARGET $START $END --custom-include-expr "receiver == '${TARGET}' && data['from'] == '${TARGET}' && action == 'transfer'"
+```
+This specifies that only 'transfer' transactions 'from' the `TARGET` should be included in the resulting `.jsonl` file.
+
+You could also write it using the `--custom-exclude-expr` taking advantage of the default transaction inclusion behavior:
+```console
+(.venv) foo@bar:~/eos-blockchain-data$ python main.py $TARGET $START $END --custom-exclude-expr "data['to'] == '${TARGET}'"
+```
+For reference about the default behavior, see [`main.py`](main.py#L89-L90).
+
+For full documentation about the syntax and variables available in the filter expressions, see the [Firehose documentation](https://github.com/streamingfast/playground-firehose-eosio-go#query-language).
+
 ## Writing custom block processors
 
-The extraction process uses a modular approach for manipulating `Block` objects coming from the Firehose gRPC stream. A block processing function is provided for extracting the data into `Dict` objects that are later stored in a `.jsonl` file at the end of the process. The default behavior is documented in the [`eos_block_processor`](block_processors/default.py#L15) function.
+For even more control over the data extracted, the extraction process uses a modular approach for manipulating `Block` objects coming from the Firehose gRPC stream. A block processing function is used for extracting the data into `Dict` objects that are later stored in a `.jsonl` file at the end of the process. Customizing which data is extracted is the objective of writing a custom block processor. The default behavior is documented in the [`eos_block_processor`](block_processors/default.py#L15) function.
 
 In order to write custom block processing functions, some conditions must be respected:
 - The function signature should strictly follow the following model: `func(codec_pb2.Block) -> Dict`
@@ -100,7 +123,7 @@ For documentation about `Block`, `TransactionTrace`, `ActionTrace` or other obje
 
 You can then use custom block processors through the command-line using the `--custom-processor` argument and providing the relative import path **from the `block_processors` module**. 
 
-For example, let's say you've implemented a custom function `my_block_processor` in `custom.py`. The `custom.py` script should reside at the root or in a subdirectory inside the `block_processors` folder (let's say it's at the root for this example). You would then pass the `--custom-processor` argument as `--custom-processor custom.my_block_processor`. The script will locate it inside the `block_processors` module and use the `my_block_processor` function to parse block data and extract it to the `.jsonl` file.
+For example, let's say you've implemented a custom function `my_block_processor` in `custom.py`. The `custom.py` script should reside at the root or in a subdirectory inside the `block_processors` folder (let's say it's at the root for this example). You would then pass the argument as `--custom-processor custom.my_block_processor`. The script will locate it inside the `block_processors` module and use the `my_block_processor` function to parse block data and extract it to the `.jsonl` file.
 
 ## Example
 
