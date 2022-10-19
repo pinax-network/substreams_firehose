@@ -51,12 +51,13 @@ def eos_block_processor(block: codec_pb2.Block) -> Dict:
 				logging.warning(f'[{get_current_task_name()}] Could not parse action (trxid={action_trace.transaction_id}): {e}\n')
 				continue
 
+			amount, token = json_data['quantity'].split(' ')
 			data = {
 				'account': action_trace.receiver,
 				'date': datetime.utcfromtimestamp(action_trace.block_time.seconds).strftime('%Y-%m-%d %H:%M:%S'),
 				'timestamp': action_trace.block_time.seconds,
-				'amount': json_data['quantity'].split(' ')[0],
-				'token': json_data['quantity'].split(' ')[1],
+				'amount': amount,
+				'token': token,
 				'from': json_data['from'],
 				'to': json_data['to'],
 				'block_num': transaction_trace.block_num,
