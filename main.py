@@ -9,6 +9,7 @@ import json
 import logging
 import os
 import requests
+import sys
 
 from datetime import datetime, timedelta
 from dotenv import load_dotenv, find_dotenv
@@ -115,7 +116,7 @@ async def run(accounts: List[str], period_start: int, period_end: int, block_pro
 		jwt = response.json()['token']
 	else:
 		logging.error(f'Could not load JWT token: {response.text}')
-		exit(-1)
+		sys.exit(1)
 
 	logging.info(f'Got JWT token ({"cached" if response.from_cache else "new"}) [SUCCESS]')
 
@@ -169,6 +170,7 @@ if __name__ == '__main__':
 	arg_parser.add_argument('-x', '--custom-exclude-expr', nargs='?', type=str, const='', help='custom filter for the Firehose stream to exclude transactions')
 	arg_parser.add_argument('-i', '--custom-include-expr', nargs='?', type=str, const='', help='custom filter for the Firehose stream to tag included transactions')
 	arg_parser.add_argument('-p', '--custom-processor', nargs='?', type=str, help='relative import path to a custom block processing function located in the "block_processors" module')
+	arg_parser.add_argument('--disable-signature-check', action='store_true', help='disable signature checking for the custom block processing function')
 
 	args = arg_parser.parse_args()
 	if args.block_end < args.block_start:
@@ -207,19 +209,20 @@ if __name__ == '__main__':
 	try:
 		block_processor = getattr(importlib.import_module(module), function)
 		
-		signature = inspect.signature(block_processor)
-		parameters_annotations = [p_type.annotation for (_, p_type) in signature.parameters.items()]
-		
-		if (signature.return_annotation == signature.empty 
-			or (not parameters_annotations and signature.parameters) # If there are parameters and none are annotated
-			or any([t == inspect.Parameter.empty for t in parameters_annotations]) # If some parameters are not annotated
-		):
-			logging.warning('Could not check block processing function signature (make sure parameters and return value have type hinting annotations)')
-		elif not codec_pb2.Block in parameters_annotations or signature.return_annotation != Dict or not inspect.isgeneratorfunction(block_processor):
-			raise TypeError(f'Incompatible block processing function signature: {signature} should be <generator>(block: codec_pb2.Block) -> Dict')
+		if not args.disable_signature_check:
+			signature = inspect.signature(block_processor)
+			parameters_annotations = [p_type.annotation for (_, p_type) in signature.parameters.items()]
+			
+			if (signature.return_annotation == signature.empty 
+				or (not parameters_annotations and signature.parameters) # If there are parameters and none are annotated
+				or any([t == inspect.Parameter.empty for t in parameters_annotations]) # If some parameters are not annotated
+			):
+				logging.warning('Could not check block processing function signature (make sure parameters and return value have type hinting annotations)')
+			elif not codec_pb2.Block in parameters_annotations or signature.return_annotation != Dict or not inspect.isgeneratorfunction(block_processor):
+				raise TypeError(f'Incompatible block processing function signature: {signature} should be <generator>(block: codec_pb2.Block) -> Dict')
 	except Exception as e:
 		logging.critical(f'Could not load block processing function: {e}')
-		exit(-1)
+		sys.exit(1)
 	else:
 		asyncio.run(
 			run(
