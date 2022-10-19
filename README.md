@@ -41,7 +41,7 @@ foo@bar:~/eos-blockchain-data$ python3 -m venv .venv # Create virtual environnem
 foo@bar:~/eos-blockchain-data$ pip install -r requirements.txt # Install dependencies
 foo@bar:~/eos-blockchain-data$ source .venv/bin/activate # Activate virtual environnement
 (.venv) foo@bar:~/eos-blockchain-data$ python main.py -h
-usage: main.py [-h] [-c [{eos,wax,kylin,jungle4}]] [-n [MAX_TASKS]] [-l [LOG]] [-q] [-x [CUSTOM_EXCLUDE_EXPR]] [-i [CUSTOM_INCLUDE_EXPR]] [-p [CUSTOM_PROCESSOR]]
+usage: main.py [-h] [-c {eos,wax,kylin,jungle4}] [-n MAX_TASKS] [-o OUT_FILE] [-l [LOG]] [-q] [-x CUSTOM_EXCLUDE_EXPR] [-i CUSTOM_INCLUDE_EXPR] [-p CUSTOM_PROCESSOR]
                [--disable-signature-check]
                accounts [accounts ...] block_start block_end
 
@@ -54,18 +54,20 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -c [{eos,wax,kylin,jungle4}], --chain [{eos,wax,kylin,jungle4}]
+  -c {eos,wax,kylin,jungle4}, --chain {eos,wax,kylin,jungle4}
                         target blockchain (default: eos)
-  -n [MAX_TASKS], --max-tasks [MAX_TASKS]
+  -n MAX_TASKS, --max-tasks MAX_TASKS
                         maximum number of concurrent tasks running for block streaming (default: 20)
+  -o OUT_FILE, --out-file OUT_FILE
+                        output file path (default: jsonl/{chain}_{accounts}_{start}_to_{end}.jsonl)
   -l [LOG], --log [LOG]
-                        log debug information to log file (can specify the full path) (default: None)
+                        log debug information to log file (can specify the full path) (default: logs/{datetime}.log)
   -q, --quiet           disable console logging (default: False)
-  -x [CUSTOM_EXCLUDE_EXPR], --custom-exclude-expr [CUSTOM_EXCLUDE_EXPR]
+  -x CUSTOM_EXCLUDE_EXPR, --custom-exclude-expr CUSTOM_EXCLUDE_EXPR
                         custom filter for the Firehose stream to exclude transactions (default: None)
-  -i [CUSTOM_INCLUDE_EXPR], --custom-include-expr [CUSTOM_INCLUDE_EXPR]
+  -i CUSTOM_INCLUDE_EXPR, --custom-include-expr CUSTOM_INCLUDE_EXPR
                         custom filter for the Firehose stream to tag included transactions (default: None)
-  -p [CUSTOM_PROCESSOR], --custom-processor [CUSTOM_PROCESSOR]
+  -p CUSTOM_PROCESSOR, --custom-processor CUSTOM_PROCESSOR
                         relative import path to a custom block processing function located in the "block_processors" module (default: None)
   --disable-signature-check
                         disable signature checking for the custom block processing function (default: False)

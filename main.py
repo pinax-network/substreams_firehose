@@ -26,12 +26,37 @@ load_dotenv(find_dotenv())
 	- Optimize asyncio workers => Have separate script for measuring the optimal parameters (?) -> How many blocks can I get from the gRPC connection at once ? Or is it one-by-one ?
 	- Error-checking for input arguments
 	- Add opt-in integrity verification (using codec.Block variables)
-	- Investigate functools and other more abstract modules for block processor modularity 
+	- Investigate functools and other more abstract modules for block processor modularity (?)
 		- Possibility of 3 stages: pre-processing (e.g. load some API data), process (currently implemented), post-processing (e.g. adding more data to transactions)
-	- Enable file format selection: Pandas/CSV, json/jsonl (?)
 '''
 
-async def run(accounts: List[str], period_start: int, period_end: int, block_processor: Callable[[codec_pb2.Block], Dict], chain: str = 'eos', 
+def parse_arguments() -> argparse.Namespace:
+	"""
+	Setup the command line interface and return the parsed arguments.
+
+	Returns:
+		A Namespace object containing the parsed arguments.
+	"""
+	arg_parser = argparse.ArgumentParser(
+		description='Search the blockchain for transactions targeting specific accounts over a given period. Powered by Firehose (https://eos.firehose.eosnation.io/).',
+		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+	)
+	arg_parser.add_argument('accounts', nargs='+', type=str, help='target account(s) (single or space-separated)')
+	arg_parser.add_argument('block_start', type=int, help='starting block number')
+	arg_parser.add_argument('block_end', type=int, help='ending block number')
+	arg_parser.add_argument('-c', '--chain', nargs=1, choices=['eos', 'wax', 'kylin', 'jungle4'], default='eos', help='target blockchain')
+	arg_parser.add_argument('-n', '--max-tasks', nargs=1, type=int, default=20, help='maximum number of concurrent tasks running for block streaming')
+	arg_parser.add_argument('-o', '--out-file', type=str, default='jsonl/{chain}_{accounts}_{start}_to_{end}.jsonl', help='output file path')
+	arg_parser.add_argument('-l', '--log', nargs='?', type=str, const=None, default='logs/{datetime}.log', help='log debug information to log file (can specify the full path)')
+	arg_parser.add_argument('-q', '--quiet', action='store_true', help='disable console logging')
+	arg_parser.add_argument('-x', '--custom-exclude-expr', nargs=1, type=str, help='custom filter for the Firehose stream to exclude transactions')
+	arg_parser.add_argument('-i', '--custom-include-expr', nargs=1, type=str, help='custom filter for the Firehose stream to tag included transactions')
+	arg_parser.add_argument('-p', '--custom-processor', nargs=1, type=str, help='relative import path to a custom block processing function located in the "block_processors" module')
+	arg_parser.add_argument('--disable-signature-check', action='store_true', help='disable signature checking for the custom block processing function')
+
+	return arg_parser.parse_args()
+
+async def run(accounts: List[str], period_start: int, period_end: int, block_processor: Callable[[codec_pb2.Block], Dict], out_file: str, chain: str = 'eos', 
 			  max_tasks: int = 20, custom_include_expr: str = None, custom_exclude_expr: str = None):
 	"""
 	Write a `.jsonl` file containing relevant transactions related to a list of accounts for a given period.
@@ -146,50 +171,48 @@ async def run(accounts: List[str], period_start: int, period_end: int, block_pro
 		for t in tasks:
 			data += await t
 		
-	filename = f'jsonl/{chain}_{"_".join(accounts)}_{period_start}_to_{period_end}.jsonl'
-	with open(filename, 'w') as f:
+	with open(out_file, 'w') as f:
 		for entry in data:
 			json.dump(entry, f) # TODO: Add exception handling
 			f.write('\n')
 	
 	console_handler.terminator = '\n'
-	logging.info(f'Finished block streaming, wrote {len(data)} rows of data to {filename} [SUCCESS]')
+	logging.info(f'Finished block streaming, wrote {len(data)} rows of data to {out_file} [SUCCESS]')
 
 if __name__ == '__main__':
-	arg_parser = argparse.ArgumentParser(
-		description='Search the blockchain for transactions targeting specific accounts over a given period. Powered by Firehose (https://eos.firehose.eosnation.io/).',
-		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-	)
-	arg_parser.add_argument('accounts', nargs='+', type=str, help='target account(s) (single or space-separated)')
-	arg_parser.add_argument('block_start', type=int, help='starting block number')
-	arg_parser.add_argument('block_end', type=int, help='ending block number')
-	arg_parser.add_argument('-c', '--chain', nargs='?', choices=['eos', 'wax', 'kylin', 'jungle4'], const='eos', default='eos', help='target blockchain')
-	arg_parser.add_argument('-n', '--max-tasks', nargs='?', type=int, const=20, default=20, help='maximum number of concurrent tasks running for block streaming')
-	arg_parser.add_argument('-l', '--log', nargs='?', type=str, const='logs/{datetime}.log', default=None, help='log debug information to log file (can specify the full path)')
-	arg_parser.add_argument('-q', '--quiet', action='store_true', help='disable console logging')
-	arg_parser.add_argument('-x', '--custom-exclude-expr', nargs='?', type=str, const='', help='custom filter for the Firehose stream to exclude transactions')
-	arg_parser.add_argument('-i', '--custom-include-expr', nargs='?', type=str, const='', help='custom filter for the Firehose stream to tag included transactions')
-	arg_parser.add_argument('-p', '--custom-processor', nargs='?', type=str, help='relative import path to a custom block processing function located in the "block_processors" module')
-	arg_parser.add_argument('--disable-signature-check', action='store_true', help='disable signature checking for the custom block processing function')
+	args = parse_arguments()
+	logging_handlers = []
+	
+	# === Arguments checking ===
 
-	args = arg_parser.parse_args()
 	if args.block_end < args.block_start:
 		arg_parser.error('block_start must be less than or equal to block_end')
 
-	handlers = []
-	if args.log: 
-		log_filename = 'logs/' + datetime.today().strftime('%Y-%m-%d_%H-%M-%S') + '.log' if args.log == 'logs/{datetime}.log' else args.log
-		handlers.append(logging.FileHandler(log_filename, mode='a+'))
+	out_file = f'jsonl/{args.chain}_{"_".join(args.accounts)}_{args.block_start}_to_{args.block_end}.jsonl'
+	if args.out_file != 'jsonl/{chain}_{accounts}_{start}_to_{end}.jsonl':
+		out_file = args.out_file
+
+	log_filename = 'logs/' + datetime.today().strftime('%Y-%m-%d_%H-%M-%S') + '.log'
+	if args.log and args.log != 'logs/{datetime}.log':
+		log_filename = args.log
+	logging_handlers.append(logging.FileHandler(log_filename, mode='a+'))
+
+	if args.quiet:
+		logging.disable(logging.WARNING) # Keep only errors and critical messages
+	
+	module, function = ('block_processors.default', f'{args.chain}_block_processor')
+	if args.custom_processor:
+		module, function = args.custom_processor.rsplit('.', 1)
+		module = f'block_processors.{module}'
+
+	# === Logging setup ===
 
 	console_handler = logging.StreamHandler()
 	console_handler.setLevel(logging.INFO)
-	handlers.append(console_handler)
+	logging_handlers.append(console_handler)
 	
-	if args.quiet:
-		logging.disable(logging.WARNING) # Keep only errors and critical messages
-
 	logging.basicConfig(
-		handlers=handlers,
+		handlers=logging_handlers,
 		level=logging.DEBUG,
 		format='T+%(relativeCreated)d\t%(levelname)s %(message)s',
 		force=True
@@ -201,10 +224,7 @@ if __name__ == '__main__':
 	logging.addLevelName(logging.ERROR, '[ERROR]')
 	logging.addLevelName(logging.CRITICAL, '[CRITICAL]')
 
-	module, function = ('block_processors.default', f'{args.chain}_block_processor')
-	if args.custom_processor:
-		module, function = args.custom_processor.rsplit('.', 1)
-		module = f'block_processors.{module}'
+	# === Block processor loading and startup ===
 
 	try:
 		block_processor = getattr(importlib.import_module(module), function)
@@ -229,7 +249,8 @@ if __name__ == '__main__':
 				accounts=args.accounts, 
 				period_start=args.block_start, 
 				period_end=args.block_end, 
-				block_processor=block_processor, 
+				block_processor=block_processor,
+				out_file=out_file,
 				chain=args.chain, 
 				max_tasks=args.max_tasks,
 				custom_include_expr=args.custom_include_expr,
