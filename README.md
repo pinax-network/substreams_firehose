@@ -42,6 +42,7 @@ foo@bar:~/eos-blockchain-data$ pip install -r requirements.txt # Install depende
 foo@bar:~/eos-blockchain-data$ source .venv/bin/activate # Activate virtual environnement
 (.venv) foo@bar:~/eos-blockchain-data$ python main.py -h
 usage: main.py [-h] [-c [{eos,wax,kylin,jungle4}]] [-n [MAX_TASKS]] [-l [LOG]] [-q] [-x [CUSTOM_EXCLUDE_EXPR]] [-i [CUSTOM_INCLUDE_EXPR]] [-p [CUSTOM_PROCESSOR]]
+               [--disable-signature-check]
                accounts [accounts ...] block_start block_end
 
 Search the blockchain for transactions targeting specific accounts over a given period. Powered by Firehose (https://eos.firehose.eosnation.io/).
@@ -66,6 +67,8 @@ optional arguments:
                         custom filter for the Firehose stream to tag included transactions (default: None)
   -p [CUSTOM_PROCESSOR], --custom-processor [CUSTOM_PROCESSOR]
                         relative import path to a custom block processing function located in the "block_processors" module (default: None)
+  --disable-signature-check
+                        disable signature checking for the custom block processing function (default: False)
 ```
 
 The transactions will be listed in a `.jsonl` file inside the [`jsonl/`](jsonl/) directory.
