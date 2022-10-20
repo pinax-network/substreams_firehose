@@ -20,9 +20,10 @@
 # [REQUIRED] Authentication to Firehose endpoint (see https://docs.dfuse.eosnation.io/platform/dfuse-cloud/authentication/)
 DFUSE_TOKEN=<DFUSE_API_TOKEN>
 
-# [OPTIONAL] Defines endpoints for getting authentication token and streaming blocks through gRPC connection
+# [OPTIONAL] Endpoint for getting authentication token
 AUTH_ENDPOINT="https://auth.eosnation.io/v1/auth/issue"
-GRPC_ENDPOINT="eos.firehose.eosnation.io:9000"
+# [OPTIONAL] Endpoint for querying block numbers from date
+DFUSE_GRAPHQL_ENDPOINT="https://eos.dfuse.eosnation.io/graphql"
 ```
 
 ## Quickstart
@@ -43,14 +44,14 @@ foo@bar:~/eos-blockchain-data$ source .venv/bin/activate # Activate virtual envi
 (.venv) foo@bar:~/eos-blockchain-data$ python main.py -h
 usage: main.py [-h] [-c {eos,wax,kylin,jungle4}] [-n MAX_TASKS] [-o OUT_FILE] [-l [LOG]] [-q] [-x CUSTOM_EXCLUDE_EXPR] [-i CUSTOM_INCLUDE_EXPR] [-p CUSTOM_PROCESSOR]
                [--disable-signature-check]
-               accounts [accounts ...] block_start block_end
+               accounts [accounts ...] start end
 
 Search the blockchain for transactions targeting specific accounts over a given period. Powered by Firehose (https://eos.firehose.eosnation.io/).
 
 positional arguments:
   accounts              target account(s) (single or space-separated)
-  block_start           starting block number
-  block_end             ending block number
+  start                 period start as a date (iso format) or a block number
+  end                   period end as a date (iso format) or a block number
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -73,7 +74,8 @@ optional arguments:
                         disable signature checking for the custom block processing function (default: False)
 ```
 
-The transactions will be listed in a `.jsonl` file inside the [`jsonl/`](jsonl/) directory.
+Specify one or more accounts by separating them with a space. The period's *start* and *end* accepts either a block number or a [ISO-like formatted date time](https://docs.python.org/3/library/datetime.html#datetime.datetime.isoformat).
+By default, the extracted data will be stored in a `.jsonl` file inside the [`jsonl/`](jsonl/) directory.
 
 ### Protobuf
 

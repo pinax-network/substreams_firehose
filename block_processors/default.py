@@ -36,7 +36,29 @@ def eos_block_processor(block: codec_pb2.Block) -> Dict:
 	See `proto/codec.proto` file for a full list of available objects and properties.
 
 	Args:
-		block: The block to process transaction from.
+		block:
+			The block to process transaction from.
+
+	Yields:
+		A dictionary containing the extracted block data. 
+
+		Example:
+			{
+				"account": "eosio.bpay",
+				"date": "2022-10-10 00:00:12",
+				"timestamp": 1665360012,
+				"amount": "40.1309",
+				"token": "EOS",
+				"amountCAD": 0,
+				"token/CAD": 0,
+				"from": "eosio",
+				"to": "eosio.bpay",
+				"block_num": 272368521, 
+				"transaction_id": "e34893fbf5c1ed8bd639b4b395fa546102b6708fbd45e4dcd0d9c2a3fc144b75", 
+				"memo": "fund per-block bucket", 
+				"contract": "eosio.token", 
+				"action": "transfer"
+			}
 	"""
 	logging.debug(f'[{get_current_task_name()}] block={block}')
 	for transaction_trace in block.filtered_transaction_traces:
@@ -71,10 +93,19 @@ def eos_block_processor(block: codec_pb2.Block) -> Dict:
 			yield data
 
 def wax_block_processor(block: codec_pb2.Block) -> Dict:
+	"""
+	Same as eos_block_processor.
+	"""
 	return eos_block_processor(block)
 
 def kylin_block_processor(block: codec_pb2.Block) -> Dict:
+	"""
+	Same as eos_block_processor.
+	"""
 	return eos_block_processor(block)
 
 def jungle4_block_processor(block: codec_pb2.Block) -> Dict:
+	"""
+	Same as eos_block_processor.
+	"""
 	return eos_block_processor(block)

@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv, find_dotenv
 from proto import bstream_pb2, bstream_pb2_grpc, codec_pb2
 from requests_cache import CachedSession
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Union
 
 load_dotenv(find_dotenv())
 
@@ -26,6 +26,7 @@ load_dotenv(find_dotenv())
 	- Optimize asyncio workers => Have separate script for measuring the optimal parameters (?) -> How many blocks can I get from the gRPC connection at once ? Or is it one-by-one ?
 	- Error-checking for input arguments
 	- Add opt-in integrity verification (using codec.Block variables)
+	- Add more examples to README
 	- Investigate functools and other more abstract modules for block processor modularity (?)
 		- Possibility of 3 stages: pre-processing (e.g. load some API data), process (currently implemented), post-processing (e.g. adding more data to transactions)
 '''
@@ -42,8 +43,8 @@ def parse_arguments() -> argparse.Namespace:
 		formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 	)
 	arg_parser.add_argument('accounts', nargs='+', type=str, help='target account(s) (single or space-separated)')
-	arg_parser.add_argument('block_start', type=int, help='starting block number')
-	arg_parser.add_argument('block_end', type=int, help='ending block number')
+	arg_parser.add_argument('start', type=str, help='period start as a date (iso-like format) or a block number')
+	arg_parser.add_argument('end', type=str, help='period end as a date (iso-like format) or a block number')
 	arg_parser.add_argument('-c', '--chain', nargs=1, choices=['eos', 'wax', 'kylin', 'jungle4'], default='eos', help='target blockchain')
 	arg_parser.add_argument('-n', '--max-tasks', nargs=1, type=int, default=20, help='maximum number of concurrent tasks running for block streaming')
 	arg_parser.add_argument('-o', '--out-file', type=str, default='jsonl/{chain}_{accounts}_{start}_to_{end}.jsonl', help='output file path')
@@ -56,8 +57,92 @@ def parse_arguments() -> argparse.Namespace:
 
 	return arg_parser.parse_args()
 
-async def run(accounts: List[str], period_start: int, period_end: int, block_processor: Callable[[codec_pb2.Block], Dict], out_file: str, chain: str = 'eos', 
-			  max_tasks: int = 20, custom_include_expr: str = None, custom_exclude_expr: str = None):
+def get_auth_token() -> str:
+	"""
+	Fetch a JWT authorization token from the AUTH_ENDPOINT defined in .env. Cache the token for 24-hour use.
+
+	Returns:
+		The JWT token or an empty string if the request failed.
+	"""
+	session = CachedSession(
+		'jwt_token',
+		expire_after=timedelta(days=1), # Cache JWT token (for up to 24 hours)
+		allowable_methods=['GET', 'POST'],
+	)
+
+	headers = {'Content-Type': 'application/json',}
+	data = f'{{"api_key":"{os.environ.get("DFUSE_TOKEN")}"}}'
+
+	logging.info('Getting JWT token...')
+
+	jwt = ''
+	response = session.post(os.environ.get('AUTH_ENDPOINT'), headers=headers, data=data)
+	
+	if (response.status_code == 200):
+		logging.debug(f'JWT response: {response.json()}')
+		jwt = response.json()['token']
+		logging.info(f'Got JWT token ({"cached" if response.from_cache else "new"}) [SUCCESS]')
+	else:
+		logging.error(f'Could not load JWT token: {response.text}') # TODO: Raise exception
+
+	return jwt
+
+def date_to_block_num(date: datetime, jwt: str = None) -> int:
+	"""
+	Queries the GraphQL API of the DFUSE_GRAPHQL_ENDPOINT specified in the .env file for the block number associated with a given date time.
+
+	Args:
+		date:
+			A date to retrieve the associated block number.
+		jwt:
+			A JWT token used for authenticating with the GraphQL API (will be fetched automatically if not specified).
+
+	Returns:
+		The block number associated with the given date time.
+	"""
+	if not jwt:
+		jwt = get_auth_token() # TODO: Catch exception
+
+	headers = {'Authorization': f'Bearer {jwt}'}
+	session = CachedSession(
+		'graphql_rest',
+		expire_after=timedelta(days=30),
+		allowable_methods=['GET', 'POST'],
+	)
+
+	query = '''
+	query ($date: Time!) {
+		block: blockIDByTime(time: $date) {
+			num
+		}
+	}
+	'''
+
+	variables = {
+		'date': date.strftime('%Y-%m-%dT%H:%M:%SZ'),
+	}
+
+	data = {
+		'query': query,
+		'variables': variables
+	}
+
+	logging.info(f'Querying block number for {date}...')
+	
+	response = session.post(os.environ.get('DFUSE_GRAPHQL_ENDPOINT'), headers=headers, data=json.dumps(data))
+	block_num = 0
+
+	if response.status_code == 200:
+		logging.debug(f'Block number query response: {response.json()}')
+		block_num = response.json()['data']['block']['num']
+		logging.info(f'Got response: block number #{block_num} [SUCCESS]')
+	else:
+		logging.warning(f'Could not fetch block number data ({response.status_code})') # TODO: Raise exception
+
+	return block_num
+
+async def run(accounts: List[str], period_start: Union[int, datetime], period_end: Union[int, datetime], block_processor: Callable[[codec_pb2.Block], Dict],
+			  out_file: str, chain: str = 'eos', max_tasks: int = 20, custom_include_expr: str = None, custom_exclude_expr: str = None):
 	"""
 	Write a `.jsonl` file containing relevant transactions related to a list of accounts for a given period.
 
@@ -67,20 +152,34 @@ async def run(accounts: List[str], period_start: int, period_end: int, block_pro
 	compiles all recorded transactions into a single `.jsonl` file in the `jsonl/` folder.
 
 	Args:
-		accounts: The accounts to look for as either recipient or sender of a transaction.
-		period_start: The first block number of the targeted period.
-		period_end: The last block number of the targeted period.
-		block_processor: A generator function extracting relevant properties from a block.
-		chain: The target blockchain.
-		max_tasks: Maximum number of concurrent tasks for streaming blocks.
+		accounts:
+			The accounts to look for as either recipient or sender of a transaction.
+		period_start:
+			The first block number or starting date of the targeted period.
+		period_end:
+			The last block number or ending date of the targeted period.
+		block_processor:
+			A generator function extracting relevant properties from a block.
+		out_file:
+			The path or filename for the output data file.
+		chain:
+			The target blockchain.
+		max_tasks:
+			The maximum number of concurrent tasks for streaming blocks.
+		custom_include_expr:
+			A custom Firehose filter for tagging blocks as included.
+		custom_exclude_expr:
+			A custom Firehose filter for excluding blocks from the results.
 	"""
 	async def stream_blocks(start: int, end: int) -> List[Dict]:
 		"""
 		Return a subset of transactions for blocks between `start` and `end` filtered by targeted accounts.
 
 		Args:
-			start: The Firehose stream's starting block 
-			end: The Firehose stream's ending block
+			start:
+				The Firehose stream's starting block 
+			end:
+				The Firehose stream's ending block
 
 		Returns:
 			A list of dictionaries describing the matching transactions. For example:
@@ -124,30 +223,25 @@ async def run(accounts: List[str], period_start: int, period_end: int, block_pro
 		logging.info(f'[{asyncio.current_task().get_name()}] Done !\n')
 		return transactions
 
-	session = CachedSession(
-		'jwt_token',
-		expire_after=timedelta(days=1), # Cache JWT token (for up to 24 hours)
-		allowable_methods=['GET', 'POST'],
-	)
-
-	headers = {'Content-Type': 'application/json',}
-	data = f'{{"api_key":"{os.environ.get("DFUSE_TOKEN")}"}}'
-
-	logging.info('Getting JWT token...')
-
-	response = session.post(os.environ.get('AUTH_ENDPOINT'), headers=headers, data=data)
-	if (response.status_code == 200):
-		logging.debug(response.json())
-		jwt = response.json()['token']
-	else:
-		logging.error(f'Could not load JWT token: {response.text}')
+	jwt = get_auth_token()
+	if not jwt:
 		sys.exit(1)
 
-	logging.info(f'Got JWT token ({"cached" if response.from_cache else "new"}) [SUCCESS]')
+	if isinstance(period_start, datetime):
+		period_start = date_to_block_num(period_start, jwt)
+	if isinstance(period_end, datetime):
+		period_end = date_to_block_num(period_end, jwt)
+
+	if not (period_start and period_end):
+		logging.error(f'Invalid period: start={period_start}, end={period_end}')
+		sys.exit(1)
+	elif period_end < period_start:
+		logging.error('period_start must be less than or equal to period_end')
+		sys.exit(1)
 
 	creds = grpc.composite_channel_credentials(grpc.ssl_channel_credentials(), grpc.access_token_call_credentials(jwt))
 	block_diff = period_end - period_start
-	max_tasks = block_diff if block_diff < max_tasks else max_tasks # Prevent having more tasks than block needing processing
+	max_tasks = block_diff if block_diff < max_tasks else max_tasks # Prevent having more tasks than the amount of blocks to process
 	split = block_diff//max_tasks
 	
 	logging.info(f'Streaming {block_diff} blocks on {chain.upper()} chain for transfer information related to {accounts} (running {max_tasks} concurrent tasks)...')
@@ -185,17 +279,25 @@ if __name__ == '__main__':
 	
 	# === Arguments checking ===
 
-	if args.block_end < args.block_start:
-		arg_parser.error('block_start must be less than or equal to block_end')
+	try:
+		args.start = int(args.start)
+	except ValueError:
+		args.start = datetime.fromisoformat(args.start)
 
-	out_file = f'jsonl/{args.chain}_{"_".join(args.accounts)}_{args.block_start}_to_{args.block_end}.jsonl'
+	try:
+		args.end = int(args.end)
+	except ValueError:
+		args.end = datetime.fromisoformat(args.end)
+
+	out_file = f'jsonl/{args.chain}_{"_".join(args.accounts)}_{args.start}_to_{args.end}.jsonl'
 	if args.out_file != 'jsonl/{chain}_{accounts}_{start}_to_{end}.jsonl':
 		out_file = args.out_file
 
 	log_filename = 'logs/' + datetime.today().strftime('%Y-%m-%d_%H-%M-%S') + '.log'
-	if args.log and args.log != 'logs/{datetime}.log':
-		log_filename = args.log
-	logging_handlers.append(logging.FileHandler(log_filename, mode='a+'))
+	if args.log != 'logs/{datetime}.log':
+		if args.log:
+			log_filename = args.log
+		logging_handlers.append(logging.FileHandler(log_filename, mode='a+'))
 
 	if args.quiet:
 		logging.disable(logging.WARNING) # Keep only errors and critical messages
@@ -247,8 +349,8 @@ if __name__ == '__main__':
 		asyncio.run(
 			run(
 				accounts=args.accounts, 
-				period_start=args.block_start, 
-				period_end=args.block_end, 
+				period_start=args.start, 
+				period_end=args.end, 
 				block_processor=block_processor,
 				out_file=out_file,
 				chain=args.chain, 
