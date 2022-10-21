@@ -26,6 +26,8 @@ AUTH_ENDPOINT="https://auth.eosnation.io/v1/auth/issue"
 DFUSE_GRAPHQL_ENDPOINT="https://eos.dfuse.eosnation.io/graphql"
 ```
 
+Follow the instructions on the [dFuse documentation website](https://docs.dfuse.eosnation.io/platform/dfuse-cloud/authentication/#types-of-keys) to generate an API key and copy it to your `.env` file (the JWT token authentication is handled by the [script](utils.py#L70) itself).
+
 ## Quickstart
 
 ```console
@@ -103,19 +105,19 @@ To communicate with the gRPC endpoint, Python object are generated through the u
 
 ## Using custom filters
 
-By default, the script will look for all 'transfer' actions with the targeted accounts as the contract's 'receiver' (which can be different from the recipient of the transaction) meaning that all transactions 'from' and 'to' those adresses will be accounted for.
+By default, the script will look for all *transfer* actions with the targeted accounts as the contract's *receiver* (which can be different from the recipient of the transaction) meaning that all transactions *from* and *to* those adresses will be accounted for.
 
 Let's say you just wanted outgoing transactions from certain accounts. You could use the `--custom-include-expr` argument like so:
 ```console
 (.venv) foo@bar:~/eos-blockchain-data$ python main.py $TARGET $START $END --custom-include-expr "receiver == '${TARGET}' && data['from'] == '${TARGET}' && action == 'transfer'"
 ```
-This specifies that only 'transfer' transactions 'from' the `TARGET` should be included in the resulting `.jsonl` file.
+This specifies that only *transfer* transactions *from* the `TARGET` should be included in the resulting `.jsonl` file.
 
-You could also write it using the `--custom-exclude-expr` taking advantage of the default transaction inclusion behavior:
+You could also write it using the `--custom-exclude-expr` argument, taking advantage of the default transaction inclusion behavior:
 ```console
 (.venv) foo@bar:~/eos-blockchain-data$ python main.py $TARGET $START $END --custom-exclude-expr "data['to'] == '${TARGET}'"
 ```
-For reference about the default behavior, see [`main.py`](main.py#L89-L90).
+For reference about the default behavior, see [`main.py`](main.py#L124-L125).
 
 For full documentation about the syntax and variables available in the filter expressions, see the [Firehose documentation](https://github.com/streamingfast/playground-firehose-eosio-go#query-language).
 
