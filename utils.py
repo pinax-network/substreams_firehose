@@ -121,9 +121,9 @@ def parse_arguments() -> argparse.Namespace:
                             help='period start as a date (iso-like format) or a block number')
     arg_parser.add_argument('end', type=str,
                             help='period end as a date (iso-like format) or a block number')
-    arg_parser.add_argument('-c', '--chain', nargs=1, choices=['eos', 'wax', 'kylin', 'jungle4'], default='eos',
+    arg_parser.add_argument('-c', '--chain', choices=['eos', 'wax', 'kylin', 'jungle4'], default='eos',
                             help='target blockchain')
-    arg_parser.add_argument('-n', '--max-tasks', nargs=1, type=int, default=20,
+    arg_parser.add_argument('-n', '--max-tasks', type=int, default=20,
                             help='maximum number of concurrent tasks running for block streaming')
     arg_parser.add_argument('-o', '--out-file', type=str, default='jsonl/{chain}_{accounts}_{start}_to_{end}.jsonl',
                             help='output file path')
@@ -131,11 +131,11 @@ def parse_arguments() -> argparse.Namespace:
                             help='log debug information to log file (can specify the full path)')
     arg_parser.add_argument('-q', '--quiet', action='store_true',
                             help='disable console logging')
-    arg_parser.add_argument('-x', '--custom-exclude-expr', nargs=1, type=str,
+    arg_parser.add_argument('-x', '--custom-exclude-expr', type=str,
                             help='custom filter for the Firehose stream to exclude transactions')
-    arg_parser.add_argument('-i', '--custom-include-expr', nargs=1, type=str,
+    arg_parser.add_argument('-i', '--custom-include-expr', type=str,
                             help='custom filter for the Firehose stream to tag included transactions')
-    arg_parser.add_argument('-p', '--custom-processor', nargs=1, type=str,
+    arg_parser.add_argument('-p', '--custom-processor', type=str,
                             help='relative import path to a custom block processing function located in the "block_processors" module')
     arg_parser.add_argument('--disable-signature-check', action='store_true',
                             help='disable signature checking for the custom block processing function')
