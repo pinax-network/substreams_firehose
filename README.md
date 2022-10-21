@@ -74,8 +74,24 @@ optional arguments:
                         disable signature checking for the custom block processing function (default: False)
 ```
 
-Specify one or more accounts by separating them with a space. The period's *start* and *end* accepts either a block number or a [ISO-like formatted date time](https://docs.python.org/3/library/datetime.html#datetime.datetime.isoformat).
-By default, the extracted data will be stored in a `.jsonl` file inside the [`jsonl/`](jsonl/) directory.
+Specify one or more accounts by separating them with a space. The period's *start* and *end* accepts either a block number or a [ISO-like formatted date time](https://docs.python.org/3/library/datetime.html#datetime.datetime.isoformat). By default, the extracted data will be stored in a `.jsonl` file inside the [`jsonl/`](jsonl/) directory.
+
+A [`.pylintrc`](.pylintrc) file is provided if you want to run [Pylint](https://pypi.org/project/pylint/):
+```console
+(.venv) foo@bar:~/eos-blockchain-data$ pylint ./main.py ./utils.py ./block_processors/default.py 
+************* Module utils
+utils.py:30:26: W0511: TODO: Catch exception (fixme)
+utils.py:66:83: W0511: TODO: Raise exception (fixme)
+utils.py:96:64: W0511: TODO: Raise exception (fixme)
+************* Module main
+main.py:124:0: C0301: Line too long (121/120) (line-too-long)
+main.py:137:47: W0511: TODO: Add exception handling (fixme)
+main.py:196:26: W0511: TODO: Add exception handling (fixme)
+main.py:31:0: W0105: String statement has no effect (pointless-string-statement)
+
+------------------------------------------------------------------
+Your code has been rated at 9.64/10 (previous run: 9.58/10, +0.06)
+```
 
 ### Protobuf
 
