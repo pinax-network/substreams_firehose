@@ -99,16 +99,16 @@ def wax_block_processor(block: codec_pb2.Block) -> Dict:
     """
     Same as eos_block_processor.
     """
-    return eos_block_processor(block)
+    yield from eos_block_processor(block)
 
 def kylin_block_processor(block: codec_pb2.Block) -> Dict:
     """
     Same as eos_block_processor.
     """
-    return eos_block_processor(block)
+    yield from eos_block_processor(block)
 
 def jungle4_block_processor(block: codec_pb2.Block) -> Dict:
     """
     Same as eos_block_processor.
     """
-    return eos_block_processor(block)
+    yield from eos_block_processor(block)
