@@ -39,8 +39,8 @@ foo@bar:~/eos-blockchain-data$ mv sample.env .env # Rename to .env
 
 ```console
 foo@bar:~/eos-blockchain-data$ python3 -m venv .venv # Create virtual environnement
-foo@bar:~/eos-blockchain-data$ pip install -r requirements.txt # Install dependencies
 foo@bar:~/eos-blockchain-data$ source .venv/bin/activate # Activate virtual environnement
+foo@bar:~/eos-blockchain-data$ pip install -r requirements.txt # Install dependencies
 (.venv) foo@bar:~/eos-blockchain-data$ python main.py -h
 usage: main.py [-h] [-c {eos,wax,kylin,jungle4}] [-n MAX_TASKS] [-o OUT_FILE] [-l [LOG]] [-q] [-x CUSTOM_EXCLUDE_EXPR] [-i CUSTOM_INCLUDE_EXPR] [-p CUSTOM_PROCESSOR]
                [--disable-signature-check]
