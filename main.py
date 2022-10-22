@@ -34,6 +34,7 @@ load_dotenv(find_dotenv())
 
     - Optimize asyncio workers: have separate script for measuring the optimal parameters (?)
         - How many blocks can I get from the gRPC connection at once ? Or is it one-by-one ?
+        - Detect when running slow and reset connection (resuming work)
     - Error-checking for input arguments
     - Add opt-in integrity verification (using codec.Block variables)
     - Add more examples to README.md
@@ -46,7 +47,7 @@ load_dotenv(find_dotenv())
 
 async def asyncio_main(accounts: List[str], period_start: Union[int, datetime], period_end: Union[int, datetime], #pylint: disable=too-many-arguments, too-many-locals
               block_processor: Callable[[codec_pb2.Block], Dict], out_file: str, chain: str = 'eos',
-              max_tasks: int = 20, custom_include_expr: str = None, custom_exclude_expr: str = None):
+              max_tasks: int = 20, custom_include_expr: str = '', custom_exclude_expr: str = ''):
     """
     Write a `.jsonl` file containing relevant transactions related to a list of accounts for a given period.
 
@@ -256,6 +257,8 @@ def main():
     logging.addLevelName(logging.WARNING, '[!]')
     logging.addLevelName(logging.ERROR, '[ERROR]')
     logging.addLevelName(logging.CRITICAL, '[CRITICAL]')
+
+    logging.debug('Script arguments: %s', args)
 
     # === Block processor loading and startup ===
 
