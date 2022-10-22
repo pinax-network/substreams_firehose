@@ -101,7 +101,10 @@ def get_current_task_name() -> str:
     """
     Helper function for generating a unique task id from an asyncio task.
     """
-    return asyncio.current_task().get_name()
+    prefix, task_id = asyncio.current_task().get_name().rsplit('-')
+
+    # Add leading zeroes for single digit task ids to prevent display flickering with '\r' in the console
+    return f'{prefix}-{task_id.zfill(2)}'
 
 def parse_arguments() -> argparse.Namespace:
     """
