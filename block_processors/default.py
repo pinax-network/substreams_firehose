@@ -45,17 +45,15 @@ def eos_block_processor(block: codec_pb2.Block) -> Dict:
         Example:
             {
                 "account": "eosio.bpay",
-                "date": "2022-10-10 00:00:12",
-                "timestamp": 1665360012,
-                "amount": "40.1309",
+                "date": "2022-10-21 00:03:31",
+                "timestamp": 1666310611,
+                "amount": "344.5222",
                 "token": "EOS",
-                "amountCAD": 0,
-                "token/CAD": 0,
-                "from": "eosio",
-                "to": "eosio.bpay",
-                "block_num": 272368521,
-                "transaction_id": "e34893fbf5c1ed8bd639b4b395fa546102b6708fbd45e4dcd0d9c2a3fc144b75",
-                "memo": "fund per-block bucket",
+                "from": "eosio.bpay",
+                "to": "newdex.bp",
+                "block_num": 274268407,
+                "transaction_id": "353555074901da28cd6dd64b0b64e73f12fdc86a91c8ad5e25b68952979aeed0",
+                "memo": "producer block pay",
                 "contract": "eosio.token",
                 "action": "transfer"
             }
