@@ -200,7 +200,7 @@ async def asyncio_main(accounts: List[str], period_start: Union[int, datetime], 
                     stream_blocks(
                         period_start + i*split,
                         # Gives the remaining blocks to the last task in case the work can't be splitted equally
-                        period_start + (i+1)*split if i < max_tasks-1 else period_end
+                        period_start + (i+1)*split - 1 if i < max_tasks-1 else period_end
                     )
                 )
             )
