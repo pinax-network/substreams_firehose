@@ -9,6 +9,8 @@ import importlib
 import inspect
 import json
 import logging
+import os
+import os.path
 import sys
 from datetime import datetime
 from typing import Callable, Dict, List, Union
@@ -109,34 +111,49 @@ async def asyncio_main(accounts: List[str], period_start: Union[int, datetime], 
             ]
         """
         transactions = []
+        current_block_number = start
         stub = bstream_pb2_grpc.BlockStreamV2Stub(secure_channel)
 
-        logging.debug('[%s] Starting streaming blocks from %i to %i using "%s"...',
+        logging.debug('[%s] Starting streaming blocks from #%i to #%i using "%s"...',
             get_current_task_name(),
             start,
             end,
             block_processor.__name__
         )
 
-        async for response in stub.Blocks(bstream_pb2.BlocksRequestV2(
-            start_block_num=start,
-            stop_block_num=end,
-            fork_steps=['STEP_IRREVERSIBLE'],
-            include_filter_expr=custom_include_expr if custom_include_expr else f'receiver in {accounts} && action == "transfer"',
-            exclude_filter_expr=custom_exclude_expr if custom_exclude_expr else 'action == "*"'
-        )):
-            block = codec_pb2.Block()
-            # Deserialize google.protobuf.Any to codec.Block
-            response.block.Unpack(block)
+        try:
+            async for response in stub.Blocks(bstream_pb2.BlocksRequestV2(
+                start_block_num=start,
+                stop_block_num=end,
+                fork_steps=['STEP_IRREVERSIBLE'],
+                include_filter_expr=custom_include_expr if custom_include_expr else f'receiver in {accounts} && action == "transfer"',
+                exclude_filter_expr=custom_exclude_expr if custom_exclude_expr else 'action == "*"'
+            )):
+                block = codec_pb2.Block()
+                # Deserialize google.protobuf.Any to codec.Block
+                response.block.Unpack(block)
+                current_block_number = block.number
 
-            logging.info('[%s] Parsing block number #%i (%i blocks remaining)...',
+                logging.info('[%s] Parsing block number #%i (%i blocks remaining)...',
+                    get_current_task_name(),
+                    current_block_number,
+                    end - current_block_number
+                )
+
+                for transaction in block_processor(block): # TODO: Add exception handling
+                    transactions.append(transaction)
+        except grpc.aio.AioRpcError as error:
+            logging.error('[%s] Failed to parse block number #%i: %s',
                 get_current_task_name(),
-                block.number,
-                end - block.number
+                current_block_number,
+                error
             )
-
-            for transaction in block_processor(block): # TODO: Add exception handling
-                transactions.append(transaction)
+            logging.warning('[%s] Resuming block streaming from #%i to #%i',
+                get_current_task_name(),
+                current_block_number,
+                end
+            )
+            transactions += await stream_blocks(current_block_number, end)
 
         logging.info('[%s] Done !\n', get_current_task_name())
         return transactions
@@ -192,6 +209,7 @@ async def asyncio_main(accounts: List[str], period_start: Union[int, datetime], 
         for task in tasks:
             data += await task
 
+    os.makedirs(os.path.dirname(out_file), exist_ok=True)
     with open(out_file, 'w', encoding='utf8') as out:
         for entry in data:
             json.dump(entry, out) # TODO: Add exception handling
