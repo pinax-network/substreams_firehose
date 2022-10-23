@@ -34,12 +34,13 @@ load_dotenv(find_dotenv())
     TODO
     ====
 
-    - Optimize asyncio workers: have separate script for measuring the optimal parameters (?)
-        - How many blocks can I get from the gRPC connection at once ? Or is it one-by-one ?
-        - Detect when running slow and reset connection (resuming work)
     - Error-checking for input arguments
     - Add opt-in integrity verification (using codec.Block variables)
     - Add more examples to README.md
+    - Drop the generator requirement for block processors (?)
+    - Optimize asyncio workers: have separate script for measuring the optimal parameters (?)
+        - How many blocks can I get from the gRPC connection at once ? Or is it one-by-one ?
+        - Detect when running slow and reset connection (resuming work)
     - Investigate functools and other more abstract modules for block processor modularity (?)
         - Possibility of 3 stages:
             - Pre-processing (e.g. load some API data)

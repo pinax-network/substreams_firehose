@@ -117,7 +117,7 @@ You could also write it using the `--custom-exclude-expr` argument, taking advan
 ```console
 (.venv) foo@bar:~/eos-blockchain-data$ python main.py $TARGET $START $END --custom-exclude-expr "data['to'] == '${TARGET}'"
 ```
-For reference about the default behavior, see [`main.py`](main.py#L124-L125).
+For reference about the default behavior, see [`main.py`](main.py#L127-L128).
 
 For full documentation about the syntax and variables available in the filter expressions, see the [Firehose documentation](https://github.com/streamingfast/playground-firehose-eosio-go#query-language).
 
@@ -126,29 +126,29 @@ For full documentation about the syntax and variables available in the filter ex
 For even more control over the data extracted, the extraction process uses a modular approach for manipulating `Block` objects coming from the Firehose gRPC stream. A block processing function is used for extracting the data into `Dict` objects that are later stored in a `.jsonl` file at the end of the process. Customizing which data is extracted is the objective of writing a custom block processor. The default behavior is documented in the [`eos_block_processor`](block_processors/default.py#L15) function.
 
 In order to write custom block processing functions, some conditions must be respected:
-- The function signature should strictly follow the following model: `func(codec_pb2.Block) -> Dict`
-- The function should act as a **generator** using the `yield` keyword to return the dictionary data.
+- The function signature should strictly follow the following model: `func(codec_pb2.Block) -> Dict` (you can disable the signature check with the `--disable-signature-check` flag, however this is not recommended and might break the script if your function isn't parsing the block data as expected).
+- The function should act as a **generator** (using the `yield` keyword) to return the dictionary data.
 - The function should be placed inside a seperate `.py` file in the [`block_processors`](block_processors/) module.
 
 A typical template for parsing the block data would look like the following:
 ```python
 for transaction_trace in block.filtered_transaction_traces: # Gets every filtered TransactionTrace from a Block
   for action_trace in transaction_trace.action_traces: # Gets every ActionTrace within a TransactionTrace
-    if not action_trace.filtering_matched: # Only keep 'transfer' actions that concerns the targeted accounts
+    if not action_trace.filtering_matched: # Only keep 'transfer' actions that matched the filters
       continue
 
     data = {}
     
     # Process the data...
 
-    yield data
+    yield data # Make the function act as a generator
 ```
 
 For documentation about `Block`, `TransactionTrace`, `ActionTrace` or other objects and their properties, please refer to the [`codec.proto`](proto/codec.proto) file.
 
 You can then use custom block processors through the command-line using the `--custom-processor` argument and providing the relative import path **from the `block_processors` module**. 
 
-For example, let's say you've implemented a custom function `my_block_processor` in `custom.py`. The `custom.py` script should reside at the root or in a subdirectory inside the `block_processors` folder (let's say it's at the root for this example). You would then pass the argument as `--custom-processor custom.my_block_processor`. The script will locate it inside the `block_processors` module and use the `my_block_processor` function to parse block data and extract it to the `.jsonl` file.
+For example, let's say you've implemented a custom function `my_block_processor` in `custom.py`. The `custom.py` script should reside at the root or in a subdirectory inside the `block_processors` folder (let's say it's at the root for this example). You would then pass the argument as `--custom-processor custom.my_block_processor`. The script will locate it inside the `block_processors` module and use the `my_block_processor` function to parse block data and extract it to the output file.
 
 ## Example
 

@@ -24,7 +24,7 @@ def eos_block_processor(block: codec_pb2.Block) -> Dict:
     ```
         for transaction_trace in block.filtered_transaction_traces: # Gets every filtered TransactionTrace from a Block
             for action_trace in transaction_trace.action_traces: # Gets every ActionTrace within a TransactionTrace
-                if not action_trace.filtering_matched: # Only keep 'transfer' actions that concerns the targeted accounts
+                if not action_trace.filtering_matched: # Only keep 'transfer' actions that matched the filters
                     continue
 
                 data = {}
