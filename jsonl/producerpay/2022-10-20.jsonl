@@ -1,0 +1,1 @@
+{"account": "eosio.bpay", "date": "2022-10-20 00:03:31", "timestamp": 1666249411, "amount": "1000", "token": "EOS", "from": "eosio.bpay", "to": "test", "block_num": 274268407, "transaction_id": "353555074901da28cd6dd64b0b64e73f12fdc86a91c8ad5e25b68952979aeed0", "memo": "producer block pay", "contract": "eosio.token", "action": "transfer"}
