@@ -1,5 +1,5 @@
 # Simple workflow for deploying static content to GitHub Pages
-name: Deploy static website
+name: Deploy Website
 
 on:
   # Runs on pushes targeting the default branch
@@ -7,7 +7,7 @@ on:
     branches: ["main"]
     paths: [site/**]
   workflow_run:
-    workflows: ["Update index notebook"]
+    workflows: ["Update Index"]
     types:
       - completed
 

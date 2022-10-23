@@ -1,4 +1,4 @@
-name: Firehose daily extraction
+name: Extract Firehose
 
 on:
   schedule:

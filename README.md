@@ -1,6 +1,7 @@
 # EOS - Blockchain Data for Analytics (Python version)
 
 [![Firehose daily extraction](https://github.com/Krow10/eos-blockchain-data/actions/workflows/firehose_daily_extraction.yml/badge.svg)](https://github.com/Krow10/eos-blockchain-data/actions/workflows/firehose_daily_extraction.yml)
+[![Update index notebook](https://github.com/Krow10/eos-blockchain-data/actions/workflows/update_index_notebook.yml/badge.svg)](https://github.com/Krow10/eos-blockchain-data/actions/workflows/update_index_notebook.yml)
 [![Deploy static website](https://github.com/Krow10/eos-blockchain-data/actions/workflows/static.yml/badge.svg)](https://github.com/Krow10/eos-blockchain-data/actions/workflows/static.yml)
 
 > Aggregates historical EOS blockchains data & outputs result into JSONL format (using [dfuse **Firehose**](https://dfuse.eosnation.io/))

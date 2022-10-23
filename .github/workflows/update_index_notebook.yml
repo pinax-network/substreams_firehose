@@ -1,4 +1,4 @@
-name: Update index notebook
+name: Update Index
 
 on:
   push:
