@@ -118,3 +118,6 @@ __pycache__/
 
 # Helper script for running program
 run.sh
+
+# Jupyer notebook cache
+.ipynb_checkpoints
