@@ -79,7 +79,7 @@ async def asyncio_main(accounts: List[str], period_start: Union[int, datetime], 
         custom_exclude_expr:
             A custom Firehose filter for excluding blocks from the results.
     """
-    async def stream_blocks(start: int, end: int) -> List[Dict]:
+    async def stream_blocks(start: int, end: int, retries=3) -> List[Dict]:
         """
         Return a subset of transactions for blocks between `start` and `end` filtered by targeted accounts.
 
@@ -147,12 +147,20 @@ async def asyncio_main(accounts: List[str], period_start: Union[int, datetime], 
                 current_block_number,
                 error
             )
-            logging.warning('[%s] Resuming block streaming from #%i to #%i',
+
+            logging.warning('[%s] Resuming block streaming from #%i to #%i (%i retries remaining)',
                 get_current_task_name(),
                 current_block_number,
-                end
+                end,
+                retries
             )
-            transactions += await stream_blocks(current_block_number, end) # TODO: Add max retries
+
+            if retries:
+                transactions += await stream_blocks(current_block_number, end, retries - 1)
+            else:
+                logging.warning('[%s] Max retries reached, aborting task !',
+                    get_current_task_name()
+                )
 
         logging.info('[%s] Done !\n', get_current_task_name())
         return transactions
