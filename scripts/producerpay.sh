@@ -2,16 +2,24 @@
 
 # Extracts daily transactions emitted from EOSNation block producer's addresses
 ACCOUNTS=("eosio.bpay" "eosio.vpay")
-YESTERDAY=`date +"%Y-%m-%dT%H:%M:%S%:z" -d "yesterday 0"`
-TODAY=`date +"%Y-%m-%dT%H:%M:%S%:z" -d "today 0"`
+YESTERDAY=$(date +"%Y-%m-%dT%H:%M:%S%:z" -d "yesterday 0")
+TODAY=$(date +"%Y-%m-%dT%H:%M:%S%:z" -d "today 0")
 
-echo "bash -- Extracting data for '${ACCOUNTS[@]}' between ${YESTERDAY} and ${TODAY}"
+FILENAME=$(date +"%Y-%m-%d" -d "yesterday 0")
+OUTFILE="jsonl/producerpay/$FILENAME.jsonl"
 
-# Activate python environnement
-source .venv/bin/activate
+if [ ! -f "$OUTFILE" ]
+then
+	echo "bash -- Extracting data for '${ACCOUNTS[@]}' between ${YESTERDAY} and ${TODAY}"
 
-# Uses Bash expansion to add the list of account as a JSON-like array to the filter.
-time python3 main.py "${ACCOUNTS[@]}" $YESTERDAY $TODAY \
-	-x "data['to'] in [$( printf "'%s'," "${ACCOUNTS[@]}" )]" \
-	-o "jsonl/producerpay/$(date +"%Y-%m-%d" -d "yesterday 0").jsonl"\
-	"$@"
+	# Activate python environnement
+	source .venv/bin/activate
+
+	# Uses Bash expansion to add the list of accounts as a JSON-like array to the filter, excluding those accounts from transactions destination.
+	time python3 main.py "${ACCOUNTS[@]}" $YESTERDAY $TODAY \
+		-x "data['to'] in [$( printf "'%s'," "${ACCOUNTS[@]}" )]" \
+		-o "$OUTFILE"\
+		"$@"
+else
+	echo "Data already extracted for $FILENAME (see $OUTFILE)"
+fi
