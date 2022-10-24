@@ -4,6 +4,11 @@ on:
   push:
     branches: ["main"]
     paths: [jsonl/**]
+    
+  workflow_run:
+    workflows: ["Extract Firehose"]
+    types:
+      - completed
 
   workflow_dispatch:
 
