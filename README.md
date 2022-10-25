@@ -6,8 +6,7 @@
 
 > Aggregates historical EOS blockchains data & outputs result into JSONL format (using [dfuse **Firehose**](https://dfuse.eosnation.io/))
 
-## Chains
-
+**Supported chains:**
 - [x] EOS
 - [x] Jungle4
 - [x] Kylin
@@ -15,7 +14,24 @@
 - [ ] Telos
 - [ ] UX
 
-## Environment variables
+## Github Actions workflow
+
+This repo uses Github actions to automatically fetch transactions related to EOS block producer's (BP) addresses payments, parse them and generate a [Sankey chart](https://en.wikipedia.org/wiki/Sankey_diagram) for visualizing the flow of funds. Below is a flow diagram showing what the actual pipeline looks like:
+
+![Github actions workflow pipeline](github_actions_workflow.png)
+
+You can see the rendered chart [here](https://krow10.github.io/eos-blockchain-data/) at the bottom of the page.
+
+## Quickstart
+
+```console
+foo@bar:~$ git clone git@github.com:Krow10/eos-blockchain-data.git
+foo@bar:~$ cd eos-blockchain-data
+foo@bar:~/eos-blockchain-data$ nano sample.env # Edit sample .env file with editor of your choice and add your DFUSE_API_TOKEN
+foo@bar:~/eos-blockchain-data$ mv sample.env .env # Rename to .env
+```
+
+### Environment variables
 
 [Sample `.env` file](sample.env):
 ```env
@@ -29,15 +45,6 @@ DFUSE_GRAPHQL_ENDPOINT="https://eos.dfuse.eosnation.io/graphql"
 ```
 
 Follow the instructions on the [dFuse documentation website](https://docs.dfuse.eosnation.io/platform/dfuse-cloud/authentication/#types-of-keys) to generate an API key and copy it to your `.env` file (the JWT token authentication is handled by the [script](utils.py#L70) itself).
-
-## Quickstart
-
-```console
-foo@bar:~$ git clone git@github.com:Krow10/eos-blockchain-data.git
-foo@bar:~$ cd eos-blockchain-data
-foo@bar:~/eos-blockchain-data$ nano sample.env # Edit sample .env file with editor of your choice and add your DFUSE_API_TOKEN
-foo@bar:~/eos-blockchain-data$ mv sample.env .env # Rename to .env
-```
 
 ### Python
 

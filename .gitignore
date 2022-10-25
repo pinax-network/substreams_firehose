@@ -121,3 +121,6 @@ run.sh
 
 # Jupyer notebook cache
 .ipynb_checkpoints
+
+# Drawio
+*.drawio
