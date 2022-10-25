@@ -19,6 +19,7 @@ then
 	time python3 main.py "${ACCOUNTS[@]}" $YESTERDAY $TODAY \
 		-x "data['to'] in [$( printf "'%s'," "${ACCOUNTS[@]}" )]" \
 		-o "$OUTFILE"\
+		-n 10
 		"$@"
 else
 	echo "Data already extracted for $FILENAME (see $OUTFILE)"
