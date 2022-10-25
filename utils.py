@@ -126,7 +126,7 @@ def parse_arguments() -> argparse.Namespace:
                             help='period end as a date (iso-like format) or a block number')
     arg_parser.add_argument('-c', '--chain', choices=['eos', 'wax', 'kylin', 'jungle4'], default='eos',
                             help='target blockchain')
-    arg_parser.add_argument('-n', '--max-tasks', type=int, default=20,
+    arg_parser.add_argument('-n', '--max-tasks', type=int, default=10,
                             help='maximum number of concurrent tasks running for block streaming')
     arg_parser.add_argument('-o', '--out-file', type=str, default='jsonl/{chain}_{accounts}_{start}_to_{end}.jsonl',
                             help='output file path')
