@@ -55,3 +55,8 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
+      - name: Commit HTML static file
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Automated static HTML page update for BP accounts
+          file_pattern: '*.html'
