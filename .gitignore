@@ -124,3 +124,6 @@ run.sh
 
 # Drawio
 *.drawio
+
+# Pylint local resource file
+.pylintrc
