@@ -11,7 +11,6 @@ import json
 import logging
 import os
 import os.path
-import sys
 from datetime import datetime
 from typing import Callable, Dict, List, Union
 
@@ -62,7 +61,7 @@ load_dotenv(find_dotenv())
 
 async def asyncio_main(accounts: List[str], period_start: Union[int, datetime], period_end: Union[int, datetime], #pylint: disable=too-many-arguments, too-many-locals, too-many-statements
               block_processor: Callable[[codec_pb2.Block], Dict], out_file: str, chain: str = 'eos',
-              max_tasks: int = 20, max_retries = 3, custom_include_expr: str = '', custom_exclude_expr: str = ''):
+              max_tasks: int = 20, max_retries = 3, custom_include_expr: str = '', custom_exclude_expr: str = '') -> int:
     """
     Write a `.jsonl` file containing relevant transactions related to a list of accounts for a given period.
 
@@ -189,7 +188,7 @@ async def asyncio_main(accounts: List[str], period_start: Union[int, datetime], 
 
     jwt = get_auth_token()
     if not jwt:
-        sys.exit(1)
+        return 1
 
     if isinstance(period_start, datetime):
         period_start = date_to_block_num(period_start, jwt)
@@ -198,10 +197,10 @@ async def asyncio_main(accounts: List[str], period_start: Union[int, datetime], 
 
     if not (period_start and period_end):
         logging.error('Invalid period: start=%i, end=%i', period_start, period_end)
-        sys.exit(1)
-    elif period_end < period_start:
+        return 1
+    if period_end < period_start:
         logging.error('period_start must be less than or equal to period_end')
-        sys.exit(1)
+        return 1
 
     creds = grpc.composite_channel_credentials(
         grpc.ssl_channel_credentials(),
@@ -256,7 +255,9 @@ async def asyncio_main(accounts: List[str], period_start: Union[int, datetime], 
         out_file
     )
 
-def main():
+    return 0
+
+def main() -> int:
     """
     Main function for parsing arguments, setting up logging and running asyncio `run` function.
     """
@@ -338,9 +339,9 @@ def main():
                                 f' {signature} should be <generator>(block: codec_pb2.Block) -> Dict')
     except (AttributeError, TypeError) as exception: # TODO: Use exception group
         logging.critical('Could not load block processing function: %s', exception)
-        sys.exit(1)
+        return 1
     else:
-        asyncio.run(
+        return asyncio.run(
             asyncio_main(
                 accounts=args.accounts,
                 period_start=args.start,
