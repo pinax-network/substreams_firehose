@@ -1,12 +1,12 @@
 # EOS - Blockchain Data for Analytics (Python version)
 
+> Aggregates historical EOS blockchains data & outputs result into JSONL format (using [dfuse **Firehose**](https://dfuse.eosnation.io/))
+
 [![Pylint](https://github.com/Krow10/eos-blockchain-data/actions/workflows/pylint.yml/badge.svg)](https://github.com/Krow10/eos-blockchain-data/actions/workflows/pylint.yml)
 
 [![Extract Firehose](https://github.com/Krow10/eos-blockchain-data/actions/workflows/firehose_daily_extraction.yml/badge.svg)](https://github.com/Krow10/eos-blockchain-data/actions/workflows/firehose_daily_extraction.yml)
 [![Update Index](https://github.com/Krow10/eos-blockchain-data/actions/workflows/update_index_notebook.yml/badge.svg)](https://github.com/Krow10/eos-blockchain-data/actions/workflows/update_index_notebook.yml)
 [![Deploy Website](https://github.com/Krow10/eos-blockchain-data/actions/workflows/static.yml/badge.svg)](https://github.com/Krow10/eos-blockchain-data/actions/workflows/static.yml)
-
-> Aggregates historical EOS blockchains data & outputs result into JSONL format (using [dfuse **Firehose**](https://dfuse.eosnation.io/))
 
 **Supported chains:**
 - [x] EOS
@@ -91,19 +91,13 @@ Specify one or more accounts by separating them with a space. The period's *star
 
 A [`.pylintrc`](.pylintrc) file is provided if you want to run [Pylint](https://pypi.org/project/pylint/):
 ```console
-(.venv) foo@bar:~/eos-blockchain-data$ pylint ./main.py ./utils.py ./block_processors/default.py 
-************* Module utils
-utils.py:30:26: W0511: TODO: Catch exception (fixme)
-utils.py:66:83: W0511: TODO: Raise exception (fixme)
-utils.py:96:64: W0511: TODO: Raise exception (fixme)
+(.venv) user@dev-eosnation:~/Documents/eos-blockchain-data$ pylint $(git ls-files '*.py') --rcfile=.pylintrc
 ************* Module main
-main.py:124:0: C0301: Line too long (121/120) (line-too-long)
-main.py:137:47: W0511: TODO: Add exception handling (fixme)
-main.py:196:26: W0511: TODO: Add exception handling (fixme)
-main.py:31:0: W0105: String statement has no effect (pointless-string-statement)
+main.py:132:0: C0301: Line too long (122/120) (line-too-long)
+main.py:34:0: W0105: String statement has no effect (pointless-string-statement)
 
 ------------------------------------------------------------------
-Your code has been rated at 9.64/10 (previous run: 9.58/10, +0.06)
+Your code has been rated at 9.91/10 (previous run: 9.49/10, +0.41)
 ```
 
 ### Protobuf

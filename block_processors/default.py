@@ -74,6 +74,7 @@ def eos_block_processor(block: codec_pb2.Block) -> Dict:
                 )
                 continue
 
+            # TODO: Handle exceptions for missing keys in json_data
             amount, token = json_data['quantity'].split(' ')
             data = {
                 'account': action_trace.receiver,

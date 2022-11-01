@@ -19,6 +19,7 @@ import grpc
 from dotenv import load_dotenv
 from dotenv import find_dotenv
 
+from exceptions import BlockStreamException
 from proto import bstream_pb2
 from proto import bstream_pb2_grpc
 from proto import codec_pb2
@@ -35,12 +36,23 @@ load_dotenv(find_dotenv())
     ====
 
     - Error-checking for input arguments
+        - Move it to its own file using arparse 'type=' as input validators
     - Add opt-in integrity verification (using codec.Block variables)
     - Add more examples to README.md
     - Drop the generator requirement for block processors (?)
     - Optimize asyncio workers: have separate script for measuring the optimal parameters (?)
         - How many blocks can I get from the gRPC connection at once ? Or is it one-by-one ?
         - Detect when running slow and reset connection (resuming work)
+        - Change the model:
+            - Pool of blocks available for tasks
+            - Startup X workers initially getting block ranges from the pool
+            - Try to add more workers periodically
+                - If exception from one of the workers, timeout and restart it until threshold
+                - If exception from last added worker, stop adding worker to this channel and create new one
+                - If channel fails, stop adding more workers
+            - Tasks return results and `done_callback` startup new task to continue processing (if needed)
+            - Any failed task notify with exception and return non-processed blocks to pool
+            - Algorithm determines best pool ranges for performance (?)
     - Investigate functools and other more abstract modules for block processor modularity (?)
         - Possibility of 3 stages:
             - Pre-processing (e.g. load some API data)
@@ -48,9 +60,9 @@ load_dotenv(find_dotenv())
             - Post-processing (e.g. adding more data to transactions)
 '''
 
-async def asyncio_main(accounts: List[str], period_start: Union[int, datetime], period_end: Union[int, datetime], #pylint: disable=too-many-arguments, too-many-locals
+async def asyncio_main(accounts: List[str], period_start: Union[int, datetime], period_end: Union[int, datetime], #pylint: disable=too-many-arguments, too-many-locals, too-many-statements
               block_processor: Callable[[codec_pb2.Block], Dict], out_file: str, chain: str = 'eos',
-              max_tasks: int = 20, custom_include_expr: str = '', custom_exclude_expr: str = ''):
+              max_tasks: int = 20, max_retries = 3, custom_include_expr: str = '', custom_exclude_expr: str = ''):
     """
     Write a `.jsonl` file containing relevant transactions related to a list of accounts for a given period.
 
@@ -74,96 +86,106 @@ async def asyncio_main(accounts: List[str], period_start: Union[int, datetime], 
             The target blockchain.
         max_tasks:
             The maximum number of concurrent tasks for streaming blocks.
+        max_retries:
+            The total maximum number of retries for failed block streaming tasks.
         custom_include_expr:
             A custom Firehose filter for tagging blocks as included.
         custom_exclude_expr:
             A custom Firehose filter for excluding blocks from the results.
     """
-    async def stream_blocks(start: int, end: int, retries=3) -> List[Dict]:
-        """
-        Return a subset of transactions for blocks between `start` and `end` filtered by targeted accounts.
+    async def _block_streaming_task(start: int, end: int) -> List[Dict]:
+        async def _stream_blocks(start: int, end: int) -> List[Dict]:
+            """
+            Return a subset of transactions for blocks between `start` and `end` filtered by targeted accounts.
 
-        Args:
-            start:
-                The Firehose stream's starting block
-            end:
-                The Firehose stream's ending block
+            Args:
+                start:
+                    The Firehose stream's starting block.
+                end:
+                    The Firehose stream's ending block.
 
-        Returns:
-            A list of dictionaries describing the matching transactions. For example:
-            [
-                {
-                    "account": "eosio.bpay",
-                    "date": "2022-10-21 00:03:31",
-                    "timestamp": 1666310611,
-                    "amount": "344.5222",
-                    "token": "EOS",
-                    "from": "eosio.bpay",
-                    "to": "newdex.bp",
-                    "block_num": 274268407,
-                    "transaction_id": "353555074901da28cd6dd64b0b64e73f12fdc86a91c8ad5e25b68952979aeed0",
-                    "memo": "producer block pay",
-                    "contract": "eosio.token",
-                    "action": "transfer"
-                },
-                ...
-            ]
-        """
-        transactions = []
-        current_block_number = start
-        stub = bstream_pb2_grpc.BlockStreamV2Stub(secure_channel)
+            Returns:
+                A list of dictionaries describing the matching transactions. For example:
+                [
+                    {
+                        "account": "eosio.bpay",
+                        "date": "2022-10-21 00:03:31",
+                        "timestamp": 1666310611,
+                        "amount": "344.5222",
+                        "token": "EOS",
+                        "from": "eosio.bpay",
+                        "to": "newdex.bp",
+                        "block_num": 274268407,
+                        "transaction_id": "353555074901da28cd6dd64b0b64e73f12fdc86a91c8ad5e25b68952979aeed0",
+                        "memo": "producer block pay",
+                        "contract": "eosio.token",
+                        "action": "transfer"
+                    },
+                    ...
+                ]
+            """
+            transactions = []
+            current_block_number = start
+            stub = bstream_pb2_grpc.BlockStreamV2Stub(secure_channel)
 
-        logging.debug('[%s] Starting streaming blocks from #%i to #%i using "%s"...',
-            get_current_task_name(),
-            start,
-            end,
-            block_processor.__name__
-        )
+            logging.debug('[%s] Starting streaming blocks from #%i to #%i using "%s"...',
+                get_current_task_name(),
+                start,
+                end,
+                block_processor.__name__
+            )
 
-        try:
-            async for response in stub.Blocks(bstream_pb2.BlocksRequestV2(
-                start_block_num=start,
-                stop_block_num=end,
-                fork_steps=['STEP_IRREVERSIBLE'],
-                include_filter_expr=custom_include_expr if custom_include_expr else f'receiver in {accounts} && action == "transfer"',
-                exclude_filter_expr=custom_exclude_expr if custom_exclude_expr else 'action == "*"'
-            )):
-                block = codec_pb2.Block()
-                # Deserialize google.protobuf.Any to codec.Block
-                response.block.Unpack(block)
-                current_block_number = block.number
+            try:
+                async for response in stub.Blocks(bstream_pb2.BlocksRequestV2(
+                    start_block_num=start,
+                    stop_block_num=end,
+                    fork_steps=['STEP_IRREVERSIBLE'],
+                    include_filter_expr=custom_include_expr if custom_include_expr else f'receiver in {accounts} && action == "transfer"',
+                    exclude_filter_expr=custom_exclude_expr if custom_exclude_expr else 'action == "*"'
+                )):
+                    block = codec_pb2.Block()
+                    # Deserialize google.protobuf.Any to codec.Block
+                    response.block.Unpack(block)
+                    current_block_number = block.number
 
-                logging.info('[%s] Parsing block number #%i (%i blocks remaining)...',
+                    logging.debug('[%s] Parsing block number #%i (%i blocks remaining)...',
+                        get_current_task_name(),
+                        current_block_number,
+                        end - current_block_number
+                    )
+
+                    for transaction in block_processor(block): # TODO: Add exception handling
+                        transactions.append(transaction)
+            except grpc.aio.AioRpcError as error:
+                logging.error('[%s] Failed to process block number #%i: %s',
                     get_current_task_name(),
                     current_block_number,
-                    end - current_block_number
+                    error
                 )
 
-                for transaction in block_processor(block): # TODO: Add exception handling
-                    transactions.append(transaction)
-        except grpc.aio.AioRpcError as error:
-            logging.error('[%s] Failed to parse block number #%i: %s',
-                get_current_task_name(),
-                current_block_number,
-                error
-            )
+                raise BlockStreamException(start, end, current_block_number) from error
 
-            logging.warning('[%s] Resuming block streaming from #%i to #%i (%i retries remaining)',
-                get_current_task_name(),
-                current_block_number,
-                end,
-                retries
-            )
+            logging.debug('[%s] Done !\n', get_current_task_name())
+            return transactions
 
-            if retries:
-                transactions += await stream_blocks(current_block_number, end, retries - 1)
+        tries = 0
+        data = []
+
+        while tries < max_retries:
+            try:
+                data = await _stream_blocks(start, end)
+                print(f'[{get_current_task_name()}] data={data}')
+            except BlockStreamException as error:
+                logging.warning(error)
+                start = error.failed
+                tries += 1
             else:
-                logging.warning('[%s] Max retries reached, aborting task !',
-                    get_current_task_name()
-                )
+                break
 
-        logging.info('[%s] Done !\n', get_current_task_name())
-        return transactions
+        if tries == max_retries:
+            raise RuntimeError(f'Max retries reached for {get_current_task_name()} ({max_retries}/{max_retries})')
+
+        return data
 
     jwt = get_auth_token()
     if not jwt:
@@ -182,15 +204,28 @@ async def asyncio_main(accounts: List[str], period_start: Union[int, datetime], 
         sys.exit(1)
 
     creds = grpc.composite_channel_credentials(
-                grpc.ssl_channel_credentials(),
-                grpc.access_token_call_credentials(jwt)
-            )
+        grpc.ssl_channel_credentials(),
+        grpc.access_token_call_credentials(jwt)
+    )
+
     block_diff = period_end - period_start
     # Prevent having more tasks than the amount of blocks to process
     max_tasks = block_diff if block_diff < max_tasks else max_tasks
     split = block_diff//max_tasks
 
-    logging.info('Streaming %i blocks on %s chain for transfer information related to %s (running %i concurrent tasks)...',
+    tasks = []
+    for i in range(max_tasks):
+        tasks.append(
+            asyncio.create_task(
+                _block_streaming_task(
+                    period_start + i*split,
+                    # Gives the remaining blocks to the last task in case the work can't be splitted equally
+                    period_start + (i+1)*split - 1 if i < max_tasks-1 else period_end,
+                )
+            )
+        )
+
+    logging.info('Streaming %i blocks on %s chain for data related to %s (running %i concurrent tasks)...',
         block_diff,
         chain.upper(),
         accounts,
@@ -198,23 +233,16 @@ async def asyncio_main(accounts: List[str], period_start: Union[int, datetime], 
     )
     CONSOLE_HANDLER.terminator = '\r'
 
-    async with grpc.aio.secure_channel(f'{chain}.firehose.eosnation.io:9000', creds) as secure_channel:
-        tasks = []
-
-        for i in range(max_tasks):
-            tasks.append(
-                asyncio.create_task(
-                    stream_blocks(
-                        period_start + i*split,
-                        # Gives the remaining blocks to the last task in case the work can't be splitted equally
-                        period_start + (i+1)*split - 1 if i < max_tasks-1 else period_end
-                    )
-                )
-            )
-
-        data = []
-        for task in tasks:
-            data += await task
+    # TODO: Test exceptions, optimize
+    data = []
+    secure_channel = grpc.aio.secure_channel(f'{chain}.firehose.eosnation.io:9000', creds)
+    async with secure_channel:
+        for task in asyncio.as_completed(tasks):
+            try:
+                data += await task
+            except RuntimeError as error:
+                logging.error('[%s] %s', task, error)
+                secure_channel = grpc.aio.secure_channel(f'{chain}.firehose.eosnation.io:9000', creds)
 
     os.makedirs(os.path.dirname(out_file), exist_ok=True)
     with open(out_file, 'w', encoding='utf8') as out:
@@ -223,7 +251,7 @@ async def asyncio_main(accounts: List[str], period_start: Union[int, datetime], 
             out.write('\n')
 
     CONSOLE_HANDLER.terminator = '\n'
-    logging.info('Finished block streaming, wrote %i rows of data to %s [SUCCESS]',
+    logging.info('\nFinished block streaming, wrote %i rows of data to %s [SUCCESS]',
         len(data),
         out_file
     )
@@ -267,6 +295,7 @@ def main():
         module = f'block_processors.{module}'
 
     # === Logging setup ===
+
     logging_handlers.append(CONSOLE_HANDLER)
 
     logging.basicConfig(
@@ -307,7 +336,7 @@ def main():
             ):
                 raise TypeError(f'Incompatible block processing function signature:'
                                 f' {signature} should be <generator>(block: codec_pb2.Block) -> Dict')
-    except (AttributeError, TypeError) as exception:
+    except (AttributeError, TypeError) as exception: # TODO: Use exception group
         logging.critical('Could not load block processing function: %s', exception)
         sys.exit(1)
     else:
@@ -326,5 +355,4 @@ def main():
         )
 
 if __name__ == '__main__':
-    #sys.exit(1)
     main()
