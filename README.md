@@ -42,8 +42,13 @@ DFUSE_TOKEN=<DFUSE_API_TOKEN>
 
 # [OPTIONAL] Endpoint for getting authentication token
 AUTH_ENDPOINT="https://auth.eosnation.io/v1/auth/issue"
+
 # [OPTIONAL] Endpoint for querying block numbers from date
 DFUSE_GRAPHQL_ENDPOINT="https://eos.dfuse.eosnation.io/graphql"
+
+# [OPTIONAL] Maximum block size (in KB) for blocks returned by the Firehose stream 
+# Note that blocks bigger than the limit will make the workers throw a `grpc.aio.AioRpcError`
+MAX_RECV_BLOCK_SIZE=10240 # 10MB
 ```
 
 Follow the instructions on the [dFuse documentation website](https://docs.dfuse.eosnation.io/platform/dfuse-cloud/authentication/#types-of-keys) to generate an API key and copy it to your `.env` file (the JWT token authentication is handled by the [script](utils.py#L70) itself).

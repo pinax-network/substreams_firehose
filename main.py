@@ -198,7 +198,13 @@ async def asyncio_main(accounts: List[str], period_start: Union[int, datetime], 
     )
     CONSOLE_HANDLER.terminator = '\r'
 
-    async with grpc.aio.secure_channel(f'{chain}.firehose.eosnation.io:9000', creds) as secure_channel:
+    async with grpc.aio.secure_channel(
+        f'{chain}.firehose.eosnation.io:9000',
+        creds,
+        options=(
+            ('grpc.max_receive_message_length', os.environ.get('MAX_RECV_BLOCK_SIZE')), # default is 10MB
+        )
+    ) as secure_channel:
         tasks = []
 
         for i in range(max_tasks):
