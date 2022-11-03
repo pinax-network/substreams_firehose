@@ -66,32 +66,33 @@ def eos_block_processor(block: codec_pb2.Block) -> Dict:
             action = action_trace.action
             try:
                 json_data = json.loads(action.json_data)
-            except json.JSONDecodeError as error:
-                logging.warning('[%s] Could not parse action (trxid=%s): %s\n',
+
+                amount, token = json_data['quantity'].split(' ')
+                data = {
+                    'account': action_trace.receiver,
+                    'date': datetime.utcfromtimestamp(action_trace.block_time.seconds).strftime('%Y-%m-%d %H:%M:%S'),
+                    'timestamp': action_trace.block_time.seconds,
+                    'amount': amount,
+                    'token': token,
+                    'from': json_data['from'],
+                    'to': json_data['to'],
+                    'block_num': transaction_trace.block_num,
+                    'transaction_id': action_trace.transaction_id,
+                    'memo': json_data['memo'],
+                    'contract': action.account,
+                    'action': action.name,
+                }
+
+                logging.debug('[%s] %s', get_current_task_name(), data)
+                yield data
+            except (json.JSONDecodeError, KeyError) as error:
+                logging.warning('[%s] Could not parse action (trxid=%s): %s:%s\n',
                     get_current_task_name(),
                     action_trace.transaction_id,
+                    type(error).__name__,
                     error
                 )
                 continue
-
-            amount, token = json_data['quantity'].split(' ')
-            data = {
-                'account': action_trace.receiver,
-                'date': datetime.utcfromtimestamp(action_trace.block_time.seconds).strftime('%Y-%m-%d %H:%M:%S'),
-                'timestamp': action_trace.block_time.seconds,
-                'amount': amount,
-                'token': token,
-                'from': json_data['from'],
-                'to': json_data['to'],
-                'block_num': transaction_trace.block_num,
-                'transaction_id': action_trace.transaction_id,
-                'memo': json_data['memo'],
-                'contract': action.account,
-                'action': action.name,
-            }
-
-            logging.debug('[%s] %s', get_current_task_name(), data)
-            yield data
 
 def wax_block_processor(block: codec_pb2.Block) -> Dict:
     """
