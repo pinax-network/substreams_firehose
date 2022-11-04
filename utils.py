@@ -6,6 +6,7 @@ This module provides utility functions such as querying for a block number from 
 
 import argparse
 import asyncio
+from contextlib import nullcontext
 import json
 import logging
 import os
@@ -67,9 +68,13 @@ def date_to_block_num(date: datetime, jwt: str = None) -> int:
 
     return block_num
 
-def get_auth_token() -> str:
+def get_auth_token(use_cache=True) -> str:
     """
     Fetch a JWT authorization token from the AUTH_ENDPOINT defined in .env. Cache the token for 24-hour use.
+
+    Args:
+        use_cache:
+            A boolean enabling/disabling fetching the cache for the JWT token request.
 
     Returns:
         The JWT token or an empty string if the request failed.
@@ -86,7 +91,8 @@ def get_auth_token() -> str:
     logging.info('Getting JWT token...')
 
     jwt = ''
-    response = session.post(os.environ.get('AUTH_ENDPOINT'), headers=headers, data=data)
+    with session.cache_disabled() if not use_cache else nullcontext():
+        response = session.post(os.environ.get('AUTH_ENDPOINT'), headers=headers, data=data)
 
     if response.status_code == 200:
         logging.debug('JWT response: %s', response.json())
