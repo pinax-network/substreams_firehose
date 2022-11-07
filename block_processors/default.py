@@ -10,7 +10,6 @@ from datetime import datetime
 from typing import Dict
 
 from proto import codec_pb2
-from utils import get_current_task_name
 
 def eos_block_processor(block: codec_pb2.Block) -> Dict:
     """
@@ -43,20 +42,20 @@ def eos_block_processor(block: codec_pb2.Block) -> Dict:
         A dictionary containing the extracted block data.
 
         Example:
-            {
-                "account": "eosio.bpay",
-                "date": "2022-10-21 00:03:31",
-                "timestamp": 1666310611,
-                "amount": "344.5222",
-                "token": "EOS",
-                "from": "eosio.bpay",
-                "to": "newdex.bp",
-                "block_num": 274268407,
-                "transaction_id": "353555074901da28cd6dd64b0b64e73f12fdc86a91c8ad5e25b68952979aeed0",
-                "memo": "producer block pay",
-                "contract": "eosio.token",
-                "action": "transfer"
-            }
+        {
+            "account": "eosio.bpay",
+            "date": "2022-10-21 00:03:31",
+            "timestamp": 1666310611,
+            "amount": "344.5222",
+            "token": "EOS",
+            "from": "eosio.bpay",
+            "to": "newdex.bp",
+            "block_num": 274268407,
+            "transaction_id": "353555074901da28cd6dd64b0b64e73f12fdc86a91c8ad5e25b68952979aeed0",
+            "memo": "producer block pay",
+            "contract": "eosio.token",
+            "action": "transfer"
+        }
     """
     for transaction_trace in block.filtered_transaction_traces:
         for action_trace in transaction_trace.action_traces:
@@ -66,33 +65,32 @@ def eos_block_processor(block: codec_pb2.Block) -> Dict:
             action = action_trace.action
             try:
                 json_data = json.loads(action.json_data)
-
-                amount, token = json_data['quantity'].split(' ')
-                data = {
-                    'account': action_trace.receiver,
-                    'date': datetime.utcfromtimestamp(action_trace.block_time.seconds).strftime('%Y-%m-%d %H:%M:%S'),
-                    'timestamp': action_trace.block_time.seconds,
-                    'amount': amount,
-                    'token': token,
-                    'from': json_data['from'],
-                    'to': json_data['to'],
-                    'block_num': transaction_trace.block_num,
-                    'transaction_id': action_trace.transaction_id,
-                    'memo': json_data['memo'],
-                    'contract': action.account,
-                    'action': action.name,
-                }
-
-                logging.debug('[%s] %s', get_current_task_name(), data)
-                yield data
-            except (json.JSONDecodeError, KeyError) as error:
-                logging.warning('[%s] Could not parse action (trxid=%s): %s:%s\n',
-                    get_current_task_name(),
+            except json.JSONDecodeError as error:
+                logging.warning('Could not parse action (trxid=%s): %s\n',
                     action_trace.transaction_id,
-                    type(error).__name__,
                     error
                 )
                 continue
+
+            # TODO: Handle exceptions for missing keys in json_data
+            amount, token = json_data['quantity'].split(' ')
+            data = {
+                'account': action_trace.receiver,
+                'date': datetime.utcfromtimestamp(action_trace.block_time.seconds).strftime('%Y-%m-%d %H:%M:%S'),
+                'timestamp': action_trace.block_time.seconds,
+                'amount': amount,
+                'token': token,
+                'from': json_data['from'],
+                'to': json_data['to'],
+                'block_num': transaction_trace.block_num,
+                'transaction_id': action_trace.transaction_id,
+                'memo': json_data['memo'],
+                'contract': action.account,
+                'action': action.name,
+            }
+
+            logging.debug('Data: %s', data)
+            yield data
 
 def wax_block_processor(block: codec_pb2.Block) -> Dict:
     """
