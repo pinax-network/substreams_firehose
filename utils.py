@@ -4,7 +4,6 @@ SPDX-License-Identifier: MIT
 This module provides utility functions such as querying for a block number from a date or parsing cli arguments.
 """
 
-import argparse
 import asyncio
 from contextlib import nullcontext
 import json
@@ -59,14 +58,15 @@ def date_to_block_num(date: datetime, jwt: str = None) -> int:
     response = session.post(os.environ.get('DFUSE_GRAPHQL_ENDPOINT'), headers=headers, data=json.dumps(data))
     block_num = 0
 
-    if response.status_code == 200:
+    if response.status_code == 200 and not 'errors' in response.json():
         logging.debug('Block number query response: %s', response.json())
         block_num = response.json()['data']['block']['num']
         logging.info('Got response: block number #%i [SUCCESS]', block_num)
-    else:
-        logging.warning('Could not fetch block number data (%s)', response.status_code) # TODO: Raise exception
 
-    return block_num
+        return block_num
+
+    logging.warning('Could not fetch block number data: [%s] %s', response.status_code, response.json()) # TODO: Raise exception
+    return 0
 
 def get_auth_token(use_cache=True) -> str:
     """
@@ -111,42 +111,3 @@ def get_current_task_name() -> str:
 
     # Add leading zeroes for single digit task ids to prevent display flickering with '\r' in the console
     return f'{prefix}-{task_id.zfill(2)}'
-
-def parse_arguments() -> argparse.Namespace:
-    """
-    Setup the command line interface and return the parsed arguments.
-
-    Returns:
-        A Namespace object containing the parsed arguments.
-    """
-    arg_parser = argparse.ArgumentParser(
-        description=('Search the blockchain for transactions targeting specific accounts over a given period.'
-                     'Powered by Firehose (https://eos.firehose.eosnation.io/).'),
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    )
-    arg_parser.add_argument('accounts', nargs='+', type=str,
-                            help='target account(s) (single or space-separated)')
-    arg_parser.add_argument('start', type=str,
-                            help='period start as a date (iso-like format) or a block number')
-    arg_parser.add_argument('end', type=str,
-                            help='period end as a date (iso-like format) or a block number')
-    arg_parser.add_argument('-c', '--chain', choices=['eos', 'wax', 'kylin', 'jungle4'], default='eos',
-                            help='target blockchain')
-    arg_parser.add_argument('-n', '--max-tasks', type=int, default=10,
-                            help='maximum number of concurrent tasks running for block streaming')
-    arg_parser.add_argument('-o', '--out-file', type=str, default='jsonl/{chain}_{accounts}_{start}_to_{end}.jsonl',
-                            help='output file path')
-    arg_parser.add_argument('-l', '--log', nargs='?', type=str, const=None, default='logs/{datetime}.log',
-                            help='log debug information to log file (can specify the full path)')
-    arg_parser.add_argument('-q', '--quiet', action='store_true',
-                            help='disable console logging')
-    arg_parser.add_argument('-x', '--custom-exclude-expr', type=str,
-                            help='custom filter for the Firehose stream to exclude transactions')
-    arg_parser.add_argument('-i', '--custom-include-expr', type=str,
-                            help='custom filter for the Firehose stream to tag included transactions')
-    arg_parser.add_argument('-p', '--custom-processor', type=str,
-                            help='relative import path to a custom block processing function located in the "block_processors" module')
-    arg_parser.add_argument('--disable-signature-check', action='store_true',
-                            help='disable signature checking for the custom block processing function')
-
-    return arg_parser.parse_args()
