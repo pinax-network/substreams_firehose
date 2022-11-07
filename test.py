@@ -17,7 +17,6 @@ from dotenv import find_dotenv
 from exceptions import BlockStreamException
 from proto import bstream_pb2
 from proto import bstream_pb2_grpc
-from proto import codec_pb2
 from utils import get_auth_token
 from utils import get_current_task_name
 
@@ -43,18 +42,19 @@ async def stream_blocks(start, end, secure_channel):
             fork_steps=['STEP_IRREVERSIBLE'],
             include_filter_expr='receiver in ["eosio.bpay", "eosio.vpay"] && action == "transfer"',
         )):
-            block = codec_pb2.Block()
-            # Deserialize google.protobuf.Any to codec.Block
-            response.block.Unpack(block) # TODO: Investigate separating unpacking process after fetching all raw blocks
-            current_block_number = block.number
+            # block = codec_pb2.Block()
+            # # Deserialize google.protobuf.Any to codec.Block
+            # response.block.Unpack(block) # TODO: Investigate separating unpacking process after fetching all raw blocks
+            # current_block_number = block.number
 
-            logging.debug('[%s] Parsing block number #%i (%i blocks remaining)...',
-                get_current_task_name(),
-                current_block_number,
-                end - current_block_number
-            )
+            # logging.debug('[%s] Parsing block number #%i (%i blocks remaining)...',
+            # 	get_current_task_name(),
+            # 	current_block_number,
+            # 	end - current_block_number
+            # )
 
-            data.append(current_block_number)
+            # data.append(current_block_number)
+            data.append(response.block)
     except grpc.aio.AioRpcError as error: # TODO: More robust if another exception is thrown
         logging.error('[%s] Failed to process block number #%i: %s',
             get_current_task_name(),
@@ -122,7 +122,13 @@ async def asyncio_spawner(period_start, period_end, initial_tasks = 10, workload
         )
 
         data = []
-        async with grpc.aio.secure_channel('eos.firehose.eosnation.io:9000', creds) as secure_channel:
+        async with grpc.aio.secure_channel(
+            'eos.firehose.eosnation.io:9000',
+            creds,
+            options=( # See https://github.com/grpc/grpc/blob/v1.46.x/include/grpc/impl/codegen/grpc_types.h#L141
+                ('grpc.max_concurrent_streams', 30),
+            )
+        ) as secure_channel:
             async def _task_spawner():
                 while True:
                     logging.debug('[%s] %i tasks running | polling every %fs | %i blocks remaining in block_pool["%s"]',
@@ -139,7 +145,7 @@ async def asyncio_spawner(period_start, period_end, initial_tasks = 10, workload
                         logging.warning('[%s] Stopping spawner task NOW...', get_current_task_name())
                         return
 
-                    if max_tasks and len(running) >= max_tasks:
+                    if (max_tasks and len(running) >= max_tasks) or not token in block_pool:
                         continue
 
                     if not block_pool[token]:
@@ -196,7 +202,7 @@ async def asyncio_spawner(period_start, period_end, initial_tasks = 10, workload
                         )
                         max_tasks = len(running)
 
-                        async with TRIGGER_CHANNEL_CREATION_LOCK:
+                        async with TRIGGER_CHANNEL_CREATION_LOCK: # TODO: Replace with events
                             nonlocal trigger_channel_creation
                             trigger_channel_creation = True
 
@@ -238,13 +244,13 @@ async def asyncio_spawner(period_start, period_end, initial_tasks = 10, workload
     while pending:
         done, pending = await asyncio.wait(spawners, timeout=1)
 
-        # if trigger_channel_creation and token == 0:
-        # 	token += 1
-        # 	add_task()
+        if trigger_channel_creation and token == 0:
+            token += 1
+            add_task()
 
-        # if spawners and previous_pending != len(spawners):
-        # 	block_pool = reshape_block_pool(len(spawners))
-        # 	previous_pending = len(spawners)
+        if spawners and previous_pending != len(spawners):
+            block_pool = reshape_block_pool(len(spawners))
+            previous_pending = len(spawners)
 
     return [item for l in [spawner.result() for spawner in done] for item in l]
 
@@ -277,14 +283,14 @@ def run_test_profiler(period_start, period_end):
     logging.info('Time elapsed: %i', time.perf_counter() - start)
 
     start = time.perf_counter()
-    results.append(asyncio.run(asyncio_spawner(period_start, period_end, workload=120, auto_adjust_frequency=True)))
+    results.append(asyncio.run(asyncio_spawner(period_start, period_end, workload=100, auto_adjust_frequency=True)))
     logging.info('Time elapsed: %i', time.perf_counter() - start)
 
-    logging.debug('Results: %s', results)
-    logging.info('Same results ? %s', results.count(results[0]) == len(results))
-    logging.info('Diff: %s', list(set(results[0]) ^ set(results[1])))
+    # logging.debug('Results: %s', results)
+    # logging.info('Same results ? %s', results.count(results[0]) == len(results))
+    # logging.info('Diff: %s', list(set(results[0]) ^ set(results[1])))
 
 if __name__ == '__main__':
     START = 272368521
-    NB_BLOCKS = 6000
+    NB_BLOCKS = 4000
     run_test_profiler(START, START + NB_BLOCKS - 1)
