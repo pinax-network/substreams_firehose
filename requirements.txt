@@ -1,4 +1,4 @@
-grpcio==1.49.1
-protobuf==4.21.8
+grpcio==1.50.0
+protobuf==4.21.9
 python-dotenv==0.21.0
-requests_cache==0.9.6
+requests_cache==0.9.7
