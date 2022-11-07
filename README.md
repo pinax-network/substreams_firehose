@@ -29,8 +29,8 @@ You can see the rendered chart [here](https://krow10.github.io/eos-blockchain-da
 ```console
 foo@bar:~$ git clone git@github.com:Krow10/eos-blockchain-data.git
 foo@bar:~$ cd eos-blockchain-data
-foo@bar:~/eos-blockchain-data$ nano sample.env # Edit sample .env file with editor of your choice and add your DFUSE_API_TOKEN
-foo@bar:~/eos-blockchain-data$ mv sample.env .env # Rename to .env
+foo@bar:~/eos-blockchain-data$ nano pyfirehose/sample.env # Edit sample .env file with editor of your choice and add your DFUSE_API_TOKEN
+foo@bar:~/eos-blockchain-data$ mv pyfirehose/sample.env pyfirehose/.env # Rename to .env
 ```
 
 ### Environment variables
@@ -113,13 +113,13 @@ By default, the script include **every** transaction from the targeted blocks. Y
 
 Let's say you just wanted outgoing transactions from certain accounts. You could use the `--custom-include-expr` argument like so:
 ```console
-(.venv) foo@bar:~/eos-blockchain-data$ python main.py $START $END -i "receiver == '${TARGET}' && data['from'] == '${TARGET}' && action == 'transfer'"
+(.venv) foo@bar:~/eos-blockchain-data$ python pyfirehose $START $END -i "receiver == '${TARGET}' && data['from'] == '${TARGET}' && action == 'transfer'"
 ```
 This specifies that only *transfer* transactions *from* the `TARGET` should be included in the resulting `.jsonl` file.
 
 You could also write it using the `--custom-exclude-expr` argument:
 ```console
-(.venv) foo@bar:~/eos-blockchain-data$ python main.py $START $END -x "receiver == '${TARGET}' && data['to'] == '${TARGET}' && action == 'transfer'"
+(.venv) foo@bar:~/eos-blockchain-data$ python pyfirehose $START $END -x "receiver == '${TARGET}' && data['to'] == '${TARGET}' && action == 'transfer'"
 ```
 
 For full documentation about the syntax and variables available in the filter expressions, see the [Firehose documentation](https://github.com/streamingfast/playground-firehose-eosio-go#query-language).
