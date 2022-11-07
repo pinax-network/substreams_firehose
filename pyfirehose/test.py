@@ -36,7 +36,7 @@ async def stream_blocks(start, end, secure_channel):
 
     data = []
     try: # TODO: Investigate why filter expressions makes blocking behavior -> stops parallel execution
-        async for response in stub.Blocks(bstream_pb2.BlocksRequestV2(
+        async for response in stub.Blocks(bstream_pb2.BlocksRequestV2( #pylint: disable=no-member
             start_block_num=start,
             stop_block_num=end,
             fork_steps=['STEP_IRREVERSIBLE'],

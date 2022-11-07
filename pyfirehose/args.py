@@ -41,7 +41,7 @@ def parse_arguments() -> argparse.Namespace:
         A Namespace object containing the parsed arguments.
     """
     arg_parser = argparse.ArgumentParser(
-        description=('Extract data from the blockchain. '
+        description=('Extract any data from the blockchain. '
                      'Powered by Firehose (https://eos.firehose.eosnation.io/).'),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )

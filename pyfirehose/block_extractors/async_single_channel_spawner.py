@@ -1,57 +1,27 @@
-#!/usr/bin/env python3
-
 """
 SPDX-License-Identifier: MIT
 """
 
 import asyncio
-import importlib
-import inspect
-import json
 import logging
 import os
 import os.path
 import statistics
 import time
-from datetime import datetime
-from typing import Callable, Dict, List, Sequence
+from typing import List
 
 import grpc
-from dotenv import load_dotenv
-from dotenv import find_dotenv
 from google.protobuf.message import Message
 
-# Load .env before local imports for enabling authentication token queries
-load_dotenv(find_dotenv())
-
 #pylint: disable=wrong-import-position
-from args import parse_arguments
 from exceptions import BlockStreamException
 from proto import bstream_pb2
 from proto import bstream_pb2_grpc
-from proto import codec_pb2
 from utils import get_auth_token
 from utils import get_current_task_name
 #pylint: enable=wrong-import-position
 
-CONSOLE_HANDLER = logging.StreamHandler()
 JWT = get_auth_token()
-
-'''
-    TODO
-    ====
-
-    - Restructure project with separate "block_streamers" according to each architecture
-        - Have a top module main to select which streamer to use
-        - Have another file for measuring performance of each streamer
-    - Add more examples to README.md
-    - Drop the generator requirement for block processors (?)
-    - Investigate functools and other more abstract modules for block processor modularity (?)
-        - Possibility of 3 stages:
-            - Pre-processing (e.g. load some API data)
-            - Process (currently implemented)
-            - Post-processing (e.g. adding more data to transactions)
-'''
 
 async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #pylint: disable=too-many-arguments, too-many-locals, too-many-statements
               initial_tasks: int = 25, workload: int = 100, auto_adjust_frequency: bool = False, spawn_frequency: float = 0.1,
@@ -111,7 +81,7 @@ async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #
         )
 
         try:
-            async for response in stub.Blocks(bstream_pb2.BlocksRequestV2(
+            async for response in stub.Blocks(bstream_pb2.BlocksRequestV2( #pylint: disable=no-member
                 start_block_num=start,
                 stop_block_num=end,
                 fork_steps=['STEP_IRREVERSIBLE'],
@@ -247,137 +217,3 @@ async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #
         len(raw_data),
     )
     return raw_data
-
-def process_blocks(raw_blocks: Sequence[Message], block_processor: Callable[[codec_pb2.Block], Dict],
-                   out_file: str) -> int:
-    """
-    Parse data using the given `block_processor` from previously extracted raw blocks into a file.
-
-    Args:
-        raw_blocks:
-            A sequence of packed blocks (google.protobuf.any_pb2.Any objects) extracted from Firehose.
-        block_processor:
-            A generator function extracting relevant properties from a block.
-        out_file:
-            The path or filename for the output data file.
-
-    Returns:
-        An integer indicating the success/failure status.
-    """
-    data = []
-    for raw_block in raw_blocks:
-        block = codec_pb2.Block()
-        raw_block.Unpack(block)
-        for transaction in block_processor(block):
-            data.append(transaction)
-
-    os.makedirs(os.path.dirname(out_file), exist_ok=True)
-    with open(out_file, 'w', encoding='utf8') as out:
-        for entry in data:
-            json.dump(entry, out) # TODO: Add exception handling
-            out.write('\n')
-
-    logging.info('Finished block processing, wrote %i rows of data to %s [SUCCESS]',
-        len(data),
-        out_file
-    )
-
-    return 0
-
-def main() -> int:
-    """
-    Main function for parsing arguments, setting up logging and running asyncio `run` function.
-    """
-    if not JWT:
-        return 1
-
-    logging_handlers = []
-    args = parse_arguments()
-
-    # === Arguments checking ===
-
-    if args.end < args.start:
-        logging.error('Period start must be less than or equal to period end')
-        return 1
-
-    out_file = f'jsonl/{args.chain}_{args.start}_to_{args.end}.jsonl'
-    if args.out_file != 'jsonl/{chain}_{start}_to_{end}.jsonl':
-        out_file = args.out_file
-
-    log_filename = 'logs/' + datetime.today().strftime('%Y-%m-%d_%H-%M-%S') + '.log'
-    if args.log != 'logs/{datetime}.log':
-        if args.log:
-            log_filename = args.log
-        logging_handlers.append(logging.FileHandler(log_filename, mode='a+'))
-
-    CONSOLE_HANDLER.setLevel(logging.INFO)
-    if args.quiet:
-        CONSOLE_HANDLER.setLevel(logging.ERROR) # Keep only errors and critical messages
-
-    module, function = ('block_processors.default', f'{args.chain}_block_processor')
-    if args.custom_processor:
-        module, function = args.custom_processor.rsplit('.', 1)
-        module = f'block_processors.{module}'
-
-    # === Logging setup ===
-
-    logging_handlers.append(CONSOLE_HANDLER)
-
-    logging.basicConfig(
-        handlers=logging_handlers,
-        level=logging.DEBUG,
-        format='T+%(relativeCreated)d\t%(levelname)s %(message)s',
-        force=True
-    )
-
-    logging.addLevelName(logging.DEBUG, '[DEBUG]')
-    logging.addLevelName(logging.INFO, '[*]')
-    logging.addLevelName(logging.WARNING, '[!]')
-    logging.addLevelName(logging.ERROR, '[ERROR]')
-    logging.addLevelName(logging.CRITICAL, '[CRITICAL]')
-
-    logging.debug('Script arguments: %s', args)
-
-    # === Block processor loading and startup ===
-
-    try:
-        block_processor = getattr(importlib.import_module(module), function)
-
-        if not args.disable_signature_check:
-            signature = inspect.signature(block_processor)
-            parameters_annotations = [p_type.annotation for (_, p_type) in signature.parameters.items()]
-
-            if (signature.return_annotation == signature.empty
-                # If there are parameters and none are annotated
-                or (not parameters_annotations and signature.parameters)
-                # If some parameters are not annotated
-                or any((t == inspect.Parameter.empty for t in parameters_annotations))
-            ):
-                logging.warning('Could not check block processing function signature '
-                                '(make sure parameters and return value have type hinting annotations)')
-            elif (not codec_pb2.Block in parameters_annotations
-                  or signature.return_annotation != Dict
-                  or not inspect.isgeneratorfunction(block_processor)
-            ):
-                raise TypeError(f'Incompatible block processing function signature:'
-                                f' {signature} should be <generator>(block: codec_pb2.Block) -> Dict')
-    except (AttributeError, TypeError) as exception:
-        logging.critical('Could not load block processing function: %s', exception)
-        raise
-    else:
-        return process_blocks(
-            asyncio.run(
-                asyncio_main(
-                    period_start=args.start,
-                    period_end=args.end,
-                    chain=args.chain,
-                    custom_include_expr=args.custom_include_expr,
-                    custom_exclude_expr=args.custom_exclude_expr,
-                )
-            ),
-            block_processor=block_processor,
-            out_file=out_file,
-        )
-
-if __name__ == '__main__':
-    main()
