@@ -21,16 +21,18 @@ from dotenv import load_dotenv
 from dotenv import find_dotenv
 from google.protobuf.message import Message
 
+# Load .env before local imports for enabling authentication token queries
+load_dotenv(find_dotenv())
+
+#pylint: disable=wrong-import-position
 from args import parse_arguments
 from exceptions import BlockStreamException
 from proto import bstream_pb2
 from proto import bstream_pb2_grpc
 from proto import codec_pb2
-from utils import date_to_block_num
 from utils import get_auth_token
 from utils import get_current_task_name
-
-load_dotenv(find_dotenv())
+#pylint: enable=wrong-import-position
 
 CONSOLE_HANDLER = logging.StreamHandler()
 JWT = get_auth_token()
