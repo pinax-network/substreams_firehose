@@ -10,7 +10,6 @@ from datetime import datetime
 from typing import Dict
 
 from proto import codec_pb2
-from utils import get_current_task_name
 
 def eos_block_processor(block: codec_pb2.Block) -> Dict:
     """
@@ -67,8 +66,7 @@ def eos_block_processor(block: codec_pb2.Block) -> Dict:
             try:
                 json_data = json.loads(action.json_data)
             except json.JSONDecodeError as error:
-                logging.warning('[%s] Could not parse action (trxid=%s): %s\n',
-                    get_current_task_name(),
+                logging.warning('Could not parse action (trxid=%s): %s\n',
                     action_trace.transaction_id,
                     error
                 )
@@ -91,7 +89,7 @@ def eos_block_processor(block: codec_pb2.Block) -> Dict:
                 'action': action.name,
             }
 
-            logging.debug('[%s] %s', get_current_task_name(), data)
+            logging.debug('Data: %s', data)
             yield data
 
 def wax_block_processor(block: codec_pb2.Block) -> Dict:
