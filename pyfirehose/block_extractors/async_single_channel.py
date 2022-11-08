@@ -14,9 +14,8 @@ import grpc
 from google.protobuf.message import Message
 
 #pylint: disable=wrong-import-position
+from block_extractors.common import stream_blocks
 from exceptions import BlockStreamException
-from proto import bstream_pb2
-from proto import bstream_pb2_grpc
 from utils import get_auth_token
 from utils import get_current_task_name
 #pylint: enable=wrong-import-position
@@ -57,57 +56,6 @@ async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #
     Returns:
         A list of raw blocks (google.protobuf.any_pb2.Any objects) that can later be processed.
     """
-    async def _stream_blocks(start: int, end: int) -> List[Message]:
-        """
-        Return a subset of transactions for blocks between `start` and `end` using the provided filters.
-
-        Args:
-            start:
-                The stream's starting block.
-            end:
-                The stream's ending block.
-
-        Returns:
-            A list of raw blocks (google.protobuf.any_pb2.Any objects).
-        """
-        raw_blocks = []
-        current_block_number = start
-        stub = bstream_pb2_grpc.BlockStreamV2Stub(secure_channel)
-
-        logging.debug('[%s] Starting streaming blocks from #%i to #%i...',
-            get_current_task_name(),
-            start,
-            end,
-        )
-
-        try:
-            async for response in stub.Blocks(bstream_pb2.BlocksRequestV2( #pylint: disable=no-member
-                start_block_num=start,
-                stop_block_num=end,
-                fork_steps=['STEP_IRREVERSIBLE'],
-                include_filter_expr=custom_include_expr,
-                exclude_filter_expr=custom_exclude_expr
-            )):
-                logging.debug('[%s] Getting block number #%i (%i blocks remaining)...',
-                    get_current_task_name(),
-                    current_block_number,
-                    end - current_block_number
-                )
-
-                current_block_number += 1
-                raw_blocks.append(response.block)
-        except grpc.aio.AioRpcError as error:
-            logging.error('[%s] Failed to process block number #%i: %s',
-                get_current_task_name(),
-                current_block_number,
-                error
-            )
-
-            raise BlockStreamException(start, end, current_block_number) from error
-
-        logging.debug('[%s] Done !\n', get_current_task_name())
-        return raw_blocks
-
     async def _spawner():
         """
         Periodically try to spawn new workers for extracting blocks until the block pool is empty.
@@ -124,7 +72,7 @@ async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #
             tasks_done.put_nowait(task)
 
         while True:
-            logging.info('[%s] %i tasks running | polling every %fs | %i blocks remaining in block pool',
+            logging.debug('[%s] %i tasks running | polling every %fs | %i blocks remaining in block pool',
                 get_current_task_name(),
                 len(tasks_running),
                 spawn_frequency,
@@ -146,7 +94,14 @@ async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #
             if (max_tasks and len(tasks_running) >= max_tasks):
                 continue
 
-            new_task = asyncio.create_task(_stream_blocks(*block_pool.pop()))
+            new_task = asyncio.create_task(
+                stream_blocks(
+                    *block_pool.pop(),
+                    secure_channel,
+                    custom_include_expr,
+                    custom_exclude_expr
+                )
+            )
             new_task.add_done_callback(__task_done_callback)
             tasks_running.add(new_task)
 
@@ -176,10 +131,11 @@ async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #
     async with grpc.aio.secure_channel(
         f'{chain}.firehose.eosnation.io:9000',
         creds,
-        # See https://github.com/grpc/grpc/blob/v1.46.x/include/grpc/impl/codegen/grpc_types.h#L141 for a list of options
-        options=(
-            ('grpc.max_receive_message_length', os.environ.get('MAX_RECV_BLOCK_SIZE')), # default is 10MB
-        )
+        # See https://github.com/grpc/grpc/blob/master/include/grpc/impl/codegen/grpc_types.h#L141 for a list of options
+        options=[
+            ('grpc.max_receive_message_length', os.environ.get('MAX_BLOCK_SIZE')), # default is 8MB
+            ('grpc.max_send_message_length', os.environ.get('MAX_BLOCK_SIZE')), # default is 8MB
+        ]
     ) as secure_channel:
         spawner_task = asyncio.create_task(_spawner())
         # Wait for spawner to start initial tasks
