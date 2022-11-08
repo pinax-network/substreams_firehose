@@ -1,7 +1,7 @@
 """
 SPDX-License-Identifier: MIT
 
-This module provides utility functions such as querying for a block number from a date or parsing cli arguments.
+This module provides utility functions for other submodules.
 """
 
 import asyncio

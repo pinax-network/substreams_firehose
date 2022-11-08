@@ -2,6 +2,8 @@
 
 """
 SPDX-License-Identifier: MIT
+
+Main entry point of the application.
 """
 
 import asyncio
