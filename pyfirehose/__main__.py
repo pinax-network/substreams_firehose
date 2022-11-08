@@ -19,27 +19,11 @@ load_dotenv(find_dotenv())
 
 #pylint: disable=wrong-import-position
 from args import parse_arguments
-from block_extractors.async_single_channel_spawner import asyncio_main
+from block_extractors.async_simple import asyncio_main
 from block_extractors.common import process_blocks
 from proto import codec_pb2
 from utils import get_auth_token
 #pylint: enable=wrong-import-position
-
-'''
-    TODO
-    ====
-
-    - Restructure project with separate "block_streamers" according to each architecture
-        - Have a top module main to select which streamer to use
-        - Have another file for measuring performance of each streamer
-    - Add more examples to README.md
-    - Drop the generator requirement for block processors (?)
-    - Investigate functools and other more abstract modules for block processor modularity (?)
-        - Possibility of 3 stages:
-            - Pre-processing (e.g. load some API data)
-            - Process (currently implemented)
-            - Post-processing (e.g. adding more data to transactions)
-'''
 
 CONSOLE_HANDLER = logging.StreamHandler()
 JWT = get_auth_token()

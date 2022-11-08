@@ -16,6 +16,20 @@
 - [ ] Telos
 - [ ] UX
 
+**TODO:**
+* Prevent boilerplate channel and arguments setup for block_extractors
+* Cleanup multi-channel extractor
+* Test perfomance between extractors
+* Add architectures description
+* Add more examples to README.md
+* Drop the generator requirement for block processors (?)
+* Investigate functools and other more abstract modules for block processor modularity (?)
+  + Possibility of 3 stages:
+  + Pre-processing (e.g. load some API data)
+  + Process (currently implemented)
+  + Post-processing (e.g. adding more data to transactions)
+
+
 ## Github Actions workflow
 
 This repo uses Github actions to automatically fetch transactions related to EOS block producer's (BP) addresses payments, parse them and generate a [Sankey chart](https://en.wikipedia.org/wiki/Sankey_diagram) for visualizing the flow of funds. Below is a flow diagram showing what the actual pipeline looks like:
