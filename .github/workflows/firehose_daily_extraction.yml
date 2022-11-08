@@ -12,7 +12,7 @@ jobs:
       DFUSE_TOKEN: ${{ secrets.DFUSE_TOKEN }}
       AUTH_ENDPOINT: "https://auth.eosnation.io/v1/auth/issue"
       DFUSE_GRAPHQL_ENDPOINT: "https://eos.dfuse.eosnation.io/graphql"
-      MAX_RECV_BLOCK_SIZE: 10240
+      MAX_BLOCK_SIZE: 10240
     permissions:
       contents: write
     steps:
