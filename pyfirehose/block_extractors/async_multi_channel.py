@@ -5,41 +5,25 @@ SPDX-License-Identifier: MIT
 import asyncio
 from itertools import zip_longest
 import logging
-import os
 import statistics
 import time
 from typing import List
 
-import grpc
 from google.protobuf.message import Message
 
+from block_extractors.common import get_secure_channel
 from block_extractors.common import stream_blocks
 from exceptions import BlockStreamException
-from utils import get_auth_token
 from utils import get_current_task_name
 
-JWT = get_auth_token()
 TRIGGER_CHANNEL_CREATION_LOCK = asyncio.Lock()
 
 async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #pylint: disable=too-many-arguments, too-many-locals, too-many-statements
               initial_tasks: int = 25, workload: int = 100, auto_adjust_frequency: bool = False, spawn_frequency: float = 0.1,
               custom_include_expr: str = '', custom_exclude_expr: str = '') -> List[Message]:
     async def _spawner(token):
-        creds = grpc.composite_channel_credentials(
-            grpc.ssl_channel_credentials(),
-            grpc.access_token_call_credentials(JWT)
-        )
-
         data = []
-        async with grpc.aio.secure_channel(
-            f'{chain}.firehose.eosnation.io:9000',
-            creds,
-            # See https://github.com/grpc/grpc/blob/master/include/grpc/impl/codegen/grpc_types.h#L141 for a list of options
-            options=[
-                ('grpc.max_receive_message_length', os.environ.get('MAX_BLOCK_SIZE')), # default is 8MB
-                ('grpc.max_send_message_length', os.environ.get('MAX_BLOCK_SIZE')), # default is 8MB
-            ]
-        ) as secure_channel:
+        async with get_secure_channel(chain) as secure_channel:
             async def _task_spawner():
                 while True:
                     logging.debug('[%s] %i tasks running | polling every %fs | %i blocks remaining in block_pool["%s"]',

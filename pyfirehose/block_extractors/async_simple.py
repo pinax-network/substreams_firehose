@@ -4,45 +4,29 @@ SPDX-License-Identifier: MIT
 
 import asyncio
 import logging
-import os
 from typing import List
 
-import grpc
 from google.protobuf.message import Message
 
+from block_extractors.common import get_secure_channel
 from block_extractors.common import stream_blocks
 from exceptions import BlockStreamException
-from utils import get_auth_token
-
-JWT = get_auth_token()
 
 async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', initial_tasks: int = 25,
                        custom_include_expr: str = '', custom_exclude_expr: str = '') -> List[Message]:
-    creds = grpc.composite_channel_credentials(
-        grpc.ssl_channel_credentials(),
-        grpc.access_token_call_credentials(JWT)
-    )
-
     block_diff = period_end - period_start
     # Prevent having more tasks than the amount of blocks to process
     split = block_diff//initial_tasks if block_diff > initial_tasks else block_diff
 
-    logging.info('Streaming %i blocks (running %i concurrent tasks)...',
-        block_diff,
+    logging.info('Streaming %i blocks on %s chain (running %i workers)...',
+        period_end - period_start,
+        chain.upper(),
         initial_tasks
     )
 
     tasks = set()
     data = []
-    async with grpc.aio.secure_channel(
-        f'{chain}.firehose.eosnation.io:9000',
-        creds,
-        # See https://github.com/grpc/grpc/blob/master/include/grpc/impl/codegen/grpc_types.h#L141 for a list of options
-        options=[
-            ('grpc.max_receive_message_length', os.environ.get('MAX_BLOCK_SIZE')), # default is 8MB
-            ('grpc.max_send_message_length', os.environ.get('MAX_BLOCK_SIZE')), # default is 8MB
-        ]
-    ) as secure_channel:
+    async with get_secure_channel(chain) as secure_channel:
         for i in range(initial_tasks):
             tasks.add(
                 asyncio.create_task(
@@ -72,5 +56,5 @@ async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', i
 
             tasks = failed_tasks.copy()
 
-    logging.info('Block processing done !')
+    logging.info('Block streaming done !')
     return data
