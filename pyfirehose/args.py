@@ -61,6 +61,8 @@ def parse_arguments() -> argparse.Namespace:
                             help='custom filter for the Firehose stream to exclude transactions')
     arg_parser.add_argument('-i', '--custom-include-expr', type=str,
                             help='custom filter for the Firehose stream to tag included transactions')
+    arg_parser.add_argument('-e', '--extractor', choices=['simple', 'single', 'multi'], default='simple',
+                            help='type of extractor used for streaming blocks from the Firehose endpoint')
     arg_parser.add_argument('-p', '--custom-processor', type=str,
                             help='relative import path to a custom block processing function located in the "block_processors" module')
     arg_parser.add_argument('--disable-signature-check', action='store_true',

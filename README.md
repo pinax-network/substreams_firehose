@@ -17,7 +17,6 @@
 - [ ] UX
 
 **TODO:**
-* Prevent boilerplate channel and arguments setup for block_extractors
 * Cleanup multi-channel extractor
 * Test perfomance between extractors
 * Add architectures description
@@ -74,32 +73,34 @@ foo@bar:~/eos-blockchain-data$ python3 -m venv .venv # Create virtual environnem
 foo@bar:~/eos-blockchain-data$ source .venv/bin/activate # Activate virtual environnement
 (.venv) foo@bar:~/eos-blockchain-data$ pip install -r requirements.txt # Install dependencies
 (.venv) foo@bar:~/eos-blockchain-data$ python pyfirehose -h
-usage: pyfirehose [-h] [-c {eos,wax,kylin,jungle4}] [-o OUT_FILE] [-l [LOG]] [-q] [-x CUSTOM_EXCLUDE_EXPR] [-i CUSTOM_INCLUDE_EXPR] [-p CUSTOM_PROCESSOR]
-                  [--disable-signature-check]                                                        
-                  start end                                                                          
-                                                                                                     
-Extract any data from the blockchain. Powered by Firehose (https://eos.firehose.eosnation.io/).      
-                                                                                                   
-positional arguments:                                                           
-  start                 period start as a date (iso-like format) or a block number
-  end                   period end as a date (iso-like format) or a block number                                
+usage: pyfirehose [-h] [-c {eos,wax,kylin,jungle4}] [-o OUT_FILE] [-l [LOG]] [-q] [-x CUSTOM_EXCLUDE_EXPR] [-i CUSTOM_INCLUDE_EXPR]                           
+                  [-e {simple,single,multi}] [-p CUSTOM_PROCESSOR] [--disable-signature-check]
+                  start end                                           
 
-options:         
+Extract any data from the blockchain. Powered by Firehose (https://eos.firehose.eosnation.io/).                                      
+
+positional arguments:  
+  start                 period start as a date (iso-like format) or a block number                                 
+  end                   period end as a date (iso-like format) or a block number             
+
+options:                        
   -h, --help            show this help message and exit
-  -c {eos,wax,kylin,jungle4}, --chain {eos,wax,kylin,jungle4}
-                        target blockchain (default: eos)                                                                                                      
-  -o OUT_FILE, --out-file OUT_FILE
+  -c {eos,wax,kylin,jungle4}, --chain {eos,wax,kylin,jungle4}                                                             
+                        target blockchain (default: eos)
+  -o OUT_FILE, --out-file OUT_FILE                                                                                                      
                         output file path (default: jsonl/{chain}_{start}_to_{end}.jsonl)
-  -l [LOG], --log [LOG]
+  -l [LOG], --log [LOG]                                                                                                          
                         log debug information to log file (can specify the full path) (default: logs/{datetime}.log)
-  -q, --quiet           disable console logging (default: False)
+  -q, --quiet           disable console logging (default: False)                                      
   -x CUSTOM_EXCLUDE_EXPR, --custom-exclude-expr CUSTOM_EXCLUDE_EXPR
                         custom filter for the Firehose stream to exclude transactions (default: None)
-  -i CUSTOM_INCLUDE_EXPR, --custom-include-expr CUSTOM_INCLUDE_EXPR
+  -i CUSTOM_INCLUDE_EXPR, --custom-include-expr CUSTOM_INCLUDE_EXPR    
                         custom filter for the Firehose stream to tag included transactions (default: None)
+  -e {simple,single,multi}, --extractor {simple,single,multi}
+                        type of extractor used for streaming blocks from the Firehose endpoint (default: simple)
   -p CUSTOM_PROCESSOR, --custom-processor CUSTOM_PROCESSOR
                         relative import path to a custom block processing function located in the "block_processors" module (default: None)
-  --disable-signature-check
+  --disable-signature-check                                                                                                    
                         disable signature checking for the custom block processing function (default: False)
 ```
 

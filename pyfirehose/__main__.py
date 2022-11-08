@@ -60,6 +60,17 @@ def main() -> int:
     if args.quiet:
         CONSOLE_HANDLER.setLevel(logging.ERROR) # Keep only errors and critical messages
 
+    try:
+        block_extractor = getattr(
+            importlib.import_module(
+                f'block_extractors.async_{args.extractor + "_channel" if args.extractor != "simple" else args.extractor}'
+            ),
+            'asyncio_main'
+        )
+    except (AttributeError, TypeError) as exception:
+        logging.critical('Could not load block extractor function: %s', exception)
+        raise
+
     module, function = ('block_processors.default', f'{args.chain}_block_processor')
     if args.custom_processor:
         module, function = args.custom_processor.rsplit('.', 1)
@@ -113,7 +124,7 @@ def main() -> int:
     else:
         return process_blocks(
             asyncio.run(
-                asyncio_main(
+                block_extractor(
                     period_start=args.start,
                     period_end=args.end,
                     chain=args.chain,
