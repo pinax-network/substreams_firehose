@@ -9,7 +9,9 @@ Main entry point of the application.
 import asyncio
 import importlib
 import inspect
+import json
 import logging
+import os
 from datetime import datetime
 from typing import Dict
 
@@ -21,7 +23,6 @@ load_dotenv(find_dotenv())
 
 #pylint: disable=wrong-import-position
 from args import parse_arguments
-from block_extractors.async_simple import asyncio_main
 from block_extractors.common import process_blocks
 from proto import codec_pb2
 from utils import get_auth_token
@@ -30,7 +31,7 @@ from utils import get_auth_token
 CONSOLE_HANDLER = logging.StreamHandler()
 JWT = get_auth_token()
 
-def main() -> int:
+def main() -> int: #pylint: disable=too-many-statements, too-many-branches
     """
     Main function for parsing arguments, setting up logging and running asyncio `run` function.
     """
@@ -94,6 +95,7 @@ def main() -> int:
     logging.addLevelName(logging.CRITICAL, '[CRITICAL]')
 
     logging.debug('Script arguments: %s', args)
+    logging.debug('JWT: %s', JWT)
 
     # === Block processor loading and startup ===
 
@@ -121,20 +123,30 @@ def main() -> int:
     except (AttributeError, TypeError) as exception:
         logging.critical('Could not load block processing function: %s', exception)
         raise
-    else:
-        return process_blocks(
-            asyncio.run(
-                block_extractor(
-                    period_start=args.start,
-                    period_end=args.end,
-                    chain=args.chain,
-                    custom_include_expr=args.custom_include_expr,
-                    custom_exclude_expr=args.custom_exclude_expr,
-                )
-            ),
-            block_processor=block_processor,
-            out_file=out_file,
-        )
+
+    # === Main methods calls ===
+
+    data = process_blocks(
+        asyncio.run(
+            block_extractor(
+                period_start=args.start,
+                period_end=args.end,
+                chain=args.chain,
+                custom_include_expr=args.custom_include_expr,
+                custom_exclude_expr=args.custom_exclude_expr,
+            )
+        ),
+        block_processor=block_processor
+    )
+
+    os.makedirs(os.path.dirname(out_file), exist_ok=True)
+    with open(out_file, 'w', encoding='utf8') as out:
+        for entry in data:
+            json.dump(entry, out) # TODO: Add exception handling
+            out.write('\n')
+
+    logging.info('Wrote %i rows of data to %s [SUCCESS]', len(data), out_file)
+    return 0
 
 if __name__ == '__main__':
     main()

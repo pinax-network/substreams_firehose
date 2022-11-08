@@ -4,7 +4,6 @@ SPDX-License-Identifier: MIT
 This module holds common functions used by the block extractors.
 """
 
-import json
 import logging
 import os
 import os.path
@@ -51,8 +50,7 @@ async def get_secure_channel(chain: str) -> Generator[grpc.aio.Channel, None, No
         ]
     )
 
-def process_blocks(raw_blocks: Sequence[Message], block_processor: Callable[[codec_pb2.Block], Dict],
-                   out_file: str) -> int: # TODO: Make it return a string/byte stream / allow for more flexibility
+def process_blocks(raw_blocks: Sequence[Message], block_processor: Callable[[codec_pb2.Block], Dict]) -> List[Dict]:
     """
     Parse data using the given `block_processor` from previously extracted raw blocks into a file.
 
@@ -61,11 +59,9 @@ def process_blocks(raw_blocks: Sequence[Message], block_processor: Callable[[cod
             A sequence of packed blocks (google.protobuf.any_pb2.Any objects) extracted from Firehose.
         block_processor:
             A generator function extracting relevant properties from a block.
-        out_file:
-            The path or filename for the output data file.
 
     Returns:
-        An integer indicating the success/failure status.
+        The list of parsed information.
     """
     data = []
     for raw_block in raw_blocks:
@@ -74,18 +70,9 @@ def process_blocks(raw_blocks: Sequence[Message], block_processor: Callable[[cod
         for transaction in block_processor(block):
             data.append(transaction)
 
-    os.makedirs(os.path.dirname(out_file), exist_ok=True)
-    with open(out_file, 'w', encoding='utf8') as out:
-        for entry in data:
-            json.dump(entry, out) # TODO: Add exception handling
-            out.write('\n')
+    logging.info('Finished block processing, parsed %i rows of data [SUCCESS]', len(data))
 
-    logging.info('Finished block processing, wrote %i rows of data to %s [SUCCESS]',
-        len(data),
-        out_file
-    )
-
-    return 0
+    return data
 
 async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel,
                         custom_include_expr: str, custom_exclude_expr: str) -> List[Message]:
