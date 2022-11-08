@@ -100,6 +100,15 @@ async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #
             new_task.add_done_callback(__task_done_callback)
             tasks_running.add(new_task)
 
+    block_diff = period_end - period_start
+    # Run only one task if number of block to stream is very small
+    if block_diff < initial_tasks:
+        initial_tasks = 1
+        workload = block_diff
+    # Adjust workload to give work to all the tasks in case the number of blocks to stream is too small
+    elif block_diff < initial_tasks * workload:
+        workload = block_diff//initial_tasks
+
     tasks_done = asyncio.Queue()
     tasks_running = set()
     # Maximum number of tasks not defined at the start, will be set once a newly spawned task raises an exception

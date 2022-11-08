@@ -135,6 +135,15 @@ async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #
         task.add_done_callback(lambda task_done: spawners.remove(task_done))
         spawners.add(task)
 
+    block_diff = period_end - period_start
+    # Run only one task if number of block to stream is very small
+    if block_diff < initial_tasks:
+        initial_tasks = 1
+        workload = block_diff
+    # Adjust workload to give work to all the tasks in case the number of blocks to stream is too small
+    elif block_diff < initial_tasks * workload:
+        workload = block_diff//initial_tasks
+
     trigger_channel_creation = False
     token = 0
 
