@@ -2,6 +2,8 @@
 
 """
 SPDX-License-Identifier: MIT
+
+This script compares the throughput performance of multiple block extractors.
 """
 
 import asyncio
@@ -19,7 +21,6 @@ load_dotenv(find_dotenv())
 # from block_extractors.async_multi_channel import asyncio_main as async_multi
 from block_extractors.async_single_channel import asyncio_main as async_single
 from block_extractors.async_simple import asyncio_main as async_simple
-from proto import codec_pb2
 #pylint: enable=wrong-import-position
 
 CONSOLE_HANDLER = logging.StreamHandler()
@@ -45,19 +46,19 @@ def main() -> int:
     logging.getLogger('perf').setLevel(logging.INFO)
 
     accounts = ['eosio.bpay', 'eosio.bpay']
-    n_blocks = 10_000
+    n_blocks = 100_000
     logger.info('Comparing performance for extracting %i blocks targeting %s transfers on EOS blockchain',
         n_blocks,
         accounts,
     )
 
-    data = {}
+    throughput = {}
 
     for extractor in (async_simple, async_single):
         period_start = random.randint(217_418_470, 267_418_470)
         logger.info('[%s] Starting streaming at height %i...', extractor.__module__, period_start)
         time_start = time.perf_counter()
-        data[extractor.__name__] = asyncio.run(
+        asyncio.run(
             extractor(
                 period_start,
                 period_start + n_blocks,
@@ -66,24 +67,24 @@ def main() -> int:
         )
 
         elapsed = time.perf_counter() - time_start
+        throughput[extractor.__module__] = n_blocks//elapsed
         logger.info('[%s] Extracted %i blocks in %fs (avg. %i blocks/s)',
             extractor.__module__,
             n_blocks,
             elapsed,
-            n_blocks//elapsed
+            throughput[extractor.__module__]
         )
 
-    for extractor, raw_data in data.items():
-        unpacked = []
-        for raw_block in raw_data:
-            block = codec_pb2.Block()
-            raw_block.Unpack(block)
-            unpacked.append(block.number)
-
-        data[extractor] = sorted(unpacked)
-
-    ref = next(iter(data.values()))
-    logger.info('All equal ? %s', all(extracted == ref for extracted in data.values()))
+    logger.info('=== Results ===')
+    fastest = max(throughput, key=throughput.get)
+    for key, value in throughput.items():
+        if key != fastest:
+            logger.info('"%s" is faster than "%s" by %.2f%% (+%i blocks/s)',
+                fastest,
+                key,
+                (throughput[fastest]/value - 1)*100,
+                throughput[fastest] - value
+            )
 
 if __name__ == '__main__':
     main()
