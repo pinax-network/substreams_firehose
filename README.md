@@ -17,16 +17,19 @@
 - [ ] UX
 
 **TODO:**
-* Cleanup multi-channel extractor
-* Test perfomance between extractors
+* Clean-up multi-channel extractor
 * Add architectures description
+* Support more chains
+  - Automatic endpoint detection (no .env variable loading)
 * Add more examples to README.md
+* Integrate Substreams as an alternative to Firehose (?)
+  - Can the pipeline remain mostly the same ?
 * Drop the generator requirement for block processors (?)
 * Investigate functools and other more abstract modules for block processor modularity (?)
-  + Possibility of 3 stages:
-  + Pre-processing (e.g. load some API data)
-  + Process (currently implemented)
-  + Post-processing (e.g. adding more data to transactions)
+  - Possibility of 3 stages:
+  - Pre-processing (e.g. load some API data)
+  - Process (currently implemented)
+  - Post-processing (e.g. adding more data to transactions)
 
 
 ## Github Actions workflow
@@ -51,17 +54,21 @@ foo@bar:~/eos-blockchain-data$ mv pyfirehose/sample.env pyfirehose/.env # Rename
 [Sample `.env` file](pyfirehose/sample.env):
 ```env
 # [REQUIRED] Authentication to Firehose endpoint (see https://docs.dfuse.eosnation.io/platform/dfuse-cloud/authentication/)
-DFUSE_TOKEN=<DFUSE_API_TOKEN>
+FIREHOSE_API_TOKEN=<api_token>
 
-# [OPTIONAL] Endpoint for getting authentication token
-AUTH_ENDPOINT="https://auth.eosnation.io/v1/auth/issue"
+# [NON-FUNCTIONAL] Authentication to Substreams endpoint (see https://substreams.streamingfast.io/reference-and-specs/authentication)
+# SUBSTREAMS_API_TOKEN=<api_token>
+
+# [OPTIONAL] Endpoints for getting authentication token
+FIREHOSE_AUTH_ENDPOINT="https://auth.eosnation.io/v1/auth/issue"
+SUBSTREAMS_AUTH_ENDPOINT="https://auth.streamingfast.io/v1/auth/issue"
 
 # [OPTIONAL] Endpoint for querying block numbers from date
 DFUSE_GRAPHQL_ENDPOINT="https://eos.dfuse.eosnation.io/graphql"
 
 # [OPTIONAL] Maximum block size (in KB) for blocks returned by the Firehose stream 
 # Note that blocks bigger than the limit will make the workers throw a `grpc.aio.AioRpcError`
-MAX_RECV_BLOCK_SIZE=10240 # 10MB
+MAX_BLOCK_SIZE=8388608 # 8MB
 ```
 
 Follow the instructions on the [dFuse documentation website](https://docs.dfuse.eosnation.io/platform/dfuse-cloud/authentication/#types-of-keys) to generate an API key and copy it to your `.env` file (the JWT token authentication is handled by the [script](pyfirehose/utils.py#L71) itself).
@@ -120,7 +127,7 @@ To communicate with the gRPC endpoint, Python object are generated through the u
 (.venv) foo@bar:~/eos-blockchain-data/pyfirehose$ python -m grpc_tools.protoc -Iproto --python_out=proto/ --grpc_python_out=proto/ proto/*.proto
 ```
 
-*Note: if you encounter some `ModuleNotFound` errors, you might have to edit the files for fixing the imports by prefixing them with `proto.`.*
+*Note: if you encounter some `ModuleNotFound` errors, you might have to edit the generated files for fixing local imports by prefixing them with `proto.`.*
 
 ## Using Firehose filters
 

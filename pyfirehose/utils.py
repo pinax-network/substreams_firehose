@@ -1,21 +1,29 @@
 """
 SPDX-License-Identifier: MIT
 
-This module provides utility functions for other submodules.
+This module provides utility functions and enums for other modules.
 """
 
 import asyncio
-from contextlib import nullcontext
 import json
 import logging
 import os
+from contextlib import nullcontext
 from datetime import datetime, timedelta
+from enum import StrEnum, auto
 
 from requests_cache import CachedSession
 
+class Backend(StrEnum):
+    """
+    Describe the backend used to stream blocks.
+    """
+    FIREHOSE = auto()
+    SUBSTREAMS = auto()
+
 def date_to_block_num(date: datetime, jwt: str = None) -> int:
     """
-    Queries the DFUSE_GRAPHQL_ENDPOINT specified in the .env file for the block number associated with a given date time.
+    Queries the DFUSE_GRAPHQL_ENDPOINT specified in the `.env` file for the block number associated with a given date time.
 
     Args:
         date:
@@ -68,11 +76,15 @@ def date_to_block_num(date: datetime, jwt: str = None) -> int:
     logging.warning('Could not fetch block number data: [%s] %s', response.status_code, response.json()) # TODO: Raise exception
     return 0
 
-def get_auth_token(use_cache=True) -> str:
+def get_auth_token(backend: Backend = Backend.FIREHOSE, use_cache: bool = True) -> str:
     """
-    Fetch a JWT authorization token from the AUTH_ENDPOINT defined in .env. Cache the token for 24-hour use.
+    Fetch a JWT authorization token from the authentication endpoints defined in `.env` file.
+
+    Caches the token for 24-hour use.
 
     Args:
+        backend:
+            An enum value specifying the backend for which the JWT token should be retrieved.
         use_cache:
             A boolean enabling/disabling fetching the cache for the JWT token request.
 
@@ -86,13 +98,14 @@ def get_auth_token(use_cache=True) -> str:
     )
 
     headers = {'Content-Type': 'application/json',}
-    data = f'{{"api_key":"{os.environ.get("DFUSE_TOKEN")}"}}'
+    api_key = f'{backend.upper()}_API_TOKEN'
+    data = f'{{"api_key":"{os.environ.get(api_key)}"}}'
 
     logging.info('Getting JWT token...')
 
     jwt = ''
     with session.cache_disabled() if not use_cache else nullcontext():
-        response = session.post(os.environ.get('AUTH_ENDPOINT'), headers=headers, data=data)
+        response = session.post(os.environ.get(f'{backend.upper()}_AUTH_ENDPOINT'), headers=headers, data=data)
 
     if response.status_code == 200:
         logging.debug('JWT response: %s', response.json())
