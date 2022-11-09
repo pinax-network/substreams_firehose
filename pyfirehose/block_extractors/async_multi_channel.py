@@ -1,5 +1,16 @@
 """
 SPDX-License-Identifier: MIT
+
+This extractor is very similar to the `async_single_channel` except that once the first channel has been maxed out of
+workers, it tries to open a second gRPC channel to allow for even more workers to be spawned in the new channel.
+The block pool is thus shared between all the 'spawner' tasks and dynamically adjusted on creation or destruction of
+channels.
+
+This concept, while theoretically possible, isn't fully supported right now by the Python gRPC implementation and/or
+by the servers and new channels fails to create any new workers. Prefer to use `async_single_channel` or
+`async_optimized` for block extraction.
+
+Diagram: see 'asynchronous_dream_block_streaming.jpg'
 """
 
 import asyncio
@@ -21,6 +32,37 @@ TRIGGER_CHANNEL_CREATION_LOCK = asyncio.Lock()
 async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #pylint: disable=too-many-arguments, too-many-locals, too-many-statements
               initial_tasks: int = 25, workload: int = 100, auto_adjust_frequency: bool = False, spawn_frequency: float = 0.1,
               custom_include_expr: str = '', custom_exclude_expr: str = '') -> List[Message]:
+    """
+    Extract blocks from a Firehose endpoint as raw blocks for later processing.
+
+    Using asynchronous directives, a number of workers will be periodically spawned to
+    extract data from *multiple* gRPC channels until all blocks have been retrieved.
+    The returned list can then be parsed for extracting relevant data from the blocks.
+
+    Args:
+        period_start:
+            The first block number of the targeted period.
+        period_end:
+            The last block number of the targeted period.
+        chain:
+            The target blockchain determining the Firehose endpoint used for streaming blocks.
+        initial_tasks:
+            The initial number of concurrent tasks to start for streaming blocks.
+        workload:
+            The number of blocks to extract for each task.
+        auto_adjust_frequency:
+            Enable the task spawner to auto adjust the task spawning frequency based on the tasks' average runtime.
+        spawn_frequency:
+            The sleep time (in seconds) for the spawner to wait before trying to spawn a new task.
+            Will be overridden if `auto_adjust_frequency` is enabled.
+        custom_include_expr:
+            A custom Firehose filter for tagging blocks as included.
+        custom_exclude_expr:
+            A custom Firehose filter for excluding blocks from the results.
+
+    Returns:
+        A list of raw blocks (google.protobuf.any_pb2.Any objects) that can later be processed.
+    """
     async def _spawner(token):
         data = []
         async with get_secure_channel(chain) as secure_channel:

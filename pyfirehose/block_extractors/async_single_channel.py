@@ -1,5 +1,15 @@
 """
 SPDX-License-Identifier: MIT
+
+This extractor differs from `async_optimized` by scaling automatically the number of workers needed according to the
+`workload` parameter. Each task will extract a fixed amount of raw blocks and a 'spawner' task will periodically spawn
+new workers until the block pool (remaining blocks that need to be fetched) is empty.
+
+The 'spawner' task will first max out the number of workers for a *single* channel (25 is the stable value that seems
+to hold for every execution of the program) and only spawn new workers if the number falls below the established maximum
+(and the block pool isn't already empty).
+
+Diagram: see 'asynchronous_optimized_block_streaming.jpg'
 """
 
 import asyncio
@@ -24,8 +34,8 @@ async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #
     Extract blocks from a Firehose endpoint as raw blocks for later processing.
 
     Using asynchronous directives, a number of workers will be periodically spawned to
-    extract data from the gRPC channel until all blocks have been retrieved. The returned
-    list can then be parsed for extracting relevant data from the blocks.
+    extract data from the gRPC channel until all blocks have been retrieved.
+    The returned list can then be parsed for extracting relevant data from the blocks.
 
     Args:
         period_start:
@@ -115,7 +125,7 @@ async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #
     max_tasks = None
 
     # Split the period range into smaller ranges according to the workload given to each task
-    block_pool = {(k, k + workload - 1) for k in range(period_start, period_end, workload)} # TODO: Handle edge case of too many initial_tasks for the job
+    block_pool = {(k, k + workload - 1) for k in range(period_start, period_end, workload)}
     raw_data = []
 
     # Track the tasks' runtime history for auto-adjusting the task spawning frequency (if enabled)

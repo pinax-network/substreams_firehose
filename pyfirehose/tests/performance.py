@@ -20,7 +20,7 @@ load_dotenv(find_dotenv())
 #pylint: disable=wrong-import-position
 # from block_extractors.async_multi_channel import asyncio_main as async_multi
 from block_extractors.async_single_channel import asyncio_main as async_single
-from block_extractors.async_simple import asyncio_main as async_simple
+from block_extractors.async_optimized import asyncio_main as async_optimized
 #pylint: enable=wrong-import-position
 
 CONSOLE_HANDLER = logging.StreamHandler()
@@ -54,7 +54,7 @@ def main() -> int:
 
     throughput = {}
 
-    for extractor in (async_simple, async_single):
+    for extractor in (async_optimized, async_single):
         period_start = random.randint(217_418_470, 267_418_470)
         logger.info('[%s] Starting streaming at height %i...', extractor.__module__, period_start)
         time_start = time.perf_counter()
