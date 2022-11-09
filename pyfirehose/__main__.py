@@ -13,7 +13,6 @@ import json
 import logging
 import os
 from datetime import datetime
-from typing import Dict
 
 from dotenv import load_dotenv
 from dotenv import find_dotenv
@@ -116,7 +115,7 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
                 logging.warning('Could not check block processing function signature '
                                 '(make sure parameters and return value have type hinting annotations)')
             elif (not codec_pb2.Block in parameters_annotations
-                  or signature.return_annotation != Dict
+                  or signature.return_annotation != dict
                   or not inspect.isgeneratorfunction(block_processor)
             ):
                 raise TypeError(f'Incompatible block processing function signature:'

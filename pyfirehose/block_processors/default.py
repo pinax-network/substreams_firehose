@@ -7,11 +7,10 @@ This module provides the default block processors for the Firehose supported cha
 import json
 import logging
 from datetime import datetime
-from typing import Dict
 
 from proto import codec_pb2
 
-def eos_block_processor(block: codec_pb2.Block) -> Dict:
+def eos_block_processor(block: codec_pb2.Block) -> dict:
     """
     Yield a processed transaction from a block returning relevant properties.
 
@@ -92,19 +91,19 @@ def eos_block_processor(block: codec_pb2.Block) -> Dict:
             logging.debug('Data: %s', data)
             yield data
 
-def wax_block_processor(block: codec_pb2.Block) -> Dict:
+def wax_block_processor(block: codec_pb2.Block) -> dict:
     """
     Same as eos_block_processor.
     """
     yield from eos_block_processor(block)
 
-def kylin_block_processor(block: codec_pb2.Block) -> Dict:
+def kylin_block_processor(block: codec_pb2.Block) -> dict:
     """
     Same as eos_block_processor.
     """
     yield from eos_block_processor(block)
 
-def jungle4_block_processor(block: codec_pb2.Block) -> Dict:
+def jungle4_block_processor(block: codec_pb2.Block) -> dict:
     """
     Same as eos_block_processor.
     """

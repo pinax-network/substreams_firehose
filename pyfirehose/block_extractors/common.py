@@ -9,7 +9,7 @@ import os
 import os.path
 from collections.abc import Generator
 from contextlib import asynccontextmanager
-from typing import Callable, Dict, List, Optional, Sequence
+from typing import Callable, Optional, Sequence
 
 import grpc
 from google.protobuf.message import Message
@@ -50,7 +50,7 @@ async def get_secure_channel(chain: str) -> Generator[grpc.aio.Channel, None, No
         ]
     )
 
-def process_blocks(raw_blocks: Sequence[Message], block_processor: Callable[[codec_pb2.Block], Dict]) -> List[Dict]:
+def process_blocks(raw_blocks: Sequence[Message], block_processor: Callable[[codec_pb2.Block], dict]) -> list[dict]:
     """
     Parse data using the given `block_processor` from previously extracted raw blocks into a file.
 
@@ -76,7 +76,7 @@ def process_blocks(raw_blocks: Sequence[Message], block_processor: Callable[[cod
 
 async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel, #pylint: disable=too-many-arguments
                         custom_include_expr: str, custom_exclude_expr: str,
-                        block_processor: Optional[Callable[[codec_pb2.Block], Dict]] = None) -> List[Message] | List[Dict]:
+                        block_processor: Optional[Callable[[codec_pb2.Block], dict]] = None) -> list[Message | dict]:
     """
     Return raw blocks (or parsed data) for the subset period between `start` and `end` using the provided filters.
 

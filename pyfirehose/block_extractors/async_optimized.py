@@ -14,7 +14,6 @@ Diagram: see 'asynchronous_optimized_block_streaming.jpg'
 
 import asyncio
 import logging
-from typing import List
 
 from google.protobuf.message import Message
 
@@ -23,7 +22,7 @@ from block_extractors.common import stream_blocks
 from exceptions import BlockStreamException
 
 async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', initial_tasks: int = 25, #pylint: disable=too-many-arguments
-                       custom_include_expr: str = '', custom_exclude_expr: str = '') -> List[Message]:
+                       custom_include_expr: str = '', custom_exclude_expr: str = '') -> list[Message]:
     """
     Extract blocks from a Firehose endpoint as raw blocks for later processing.
 
