@@ -64,7 +64,7 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
     try:
         block_extractor = getattr(
             importlib.import_module(
-                f'block_extractors.async_{args.extractor + "_channel" if args.extractor != "simple" else args.extractor}'
+                f'block_extractors.async_{args.extractor + "_channel" if args.extractor != "optimized" else args.extractor}'
             ),
             'asyncio_main'
         )
@@ -84,7 +84,8 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
     logging.basicConfig(
         handlers=logging_handlers,
         level=logging.DEBUG,
-        format='T+%(relativeCreated)d\t%(levelname)s %(message)s',
+        format='%(asctime)s:T+%(relativeCreated)d %(levelname)s %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S',
         force=True
     )
 
