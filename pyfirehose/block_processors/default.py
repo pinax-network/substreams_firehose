@@ -8,7 +8,7 @@ import json
 import logging
 from datetime import datetime
 
-from proto import codec_pb2
+from proto.generated import codec_pb2
 
 def eos_block_processor(block: codec_pb2.Block) -> dict:
     """

@@ -125,14 +125,14 @@ A [`.pylintrc`](.pylintrc) file is provided if you want to run [Pylint](https://
 
 ### Protobuf
 
-To communicate with the gRPC endpoint, Python object are generated through the use of `.proto` file templates that describes the kind of data the client and server are going to manipulate. Those Python object are already provided in the [`proto/`](pyfirehose/proto/) folder, however if you want to generate them yourself, you can run the following commands:
+To communicate with the gRPC endpoint, Python object are generated through the use of `.proto` file templates that describes the kind of data the client and server are going to manipulate. Those Python object are already provided in the [`proto/generated/`](pyfirehose/proto/generated/) folder, however if you want to generate them yourself, you can run the following commands:
 ```console
 (.venv) foo@bar:~/eos-blockchain-data$ pip install grpcio-tools
 (.venv) foo@bar:~/eos-blockchain-data$ cd pyfirehose
-(.venv) foo@bar:~/eos-blockchain-data/pyfirehose$ python -m grpc_tools.protoc -Iproto --python_out=proto/ --grpc_python_out=proto/ proto/*.proto
+(.venv) foo@bar:~/eos-blockchain-data/pyfirehose$ python -m grpc_tools.protoc -Iproto --python_out=proto/generated/ --grpc_python_out=proto/generated/ proto/*.proto
 ```
 
-*Note: if you encounter some `ModuleNotFound` errors, you might have to edit the generated files for fixing local imports by prefixing them with `proto.`.*
+*Note: if you encounter some `ModuleNotFound` errors, you might have to edit the generated files for fixing local imports by prefixing them with `proto.generated.`.*
 
 ## Using Firehose filters
 

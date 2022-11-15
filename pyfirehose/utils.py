@@ -25,6 +25,8 @@ def date_to_block_num(date: datetime, jwt: str = None) -> int:
     """
     Queries the DFUSE_GRAPHQL_ENDPOINT specified in the `.env` file for the block number associated with a given date time.
 
+    Cache the results for 30 days.
+
     Args:
         date:
             A date to retrieve the associated block number.
@@ -80,7 +82,7 @@ def get_auth_token(backend: Backend = Backend.FIREHOSE, use_cache: bool = True) 
     """
     Fetch a JWT authorization token from the authentication endpoints defined in `.env` file.
 
-    Caches the token for 24-hour use.
+    Cache the token for 24-hour use.
 
     Args:
         backend:

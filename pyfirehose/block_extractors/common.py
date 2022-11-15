@@ -15,9 +15,9 @@ import grpc
 from google.protobuf.message import Message
 
 from exceptions import BlockStreamException
-from proto import bstream_pb2
-from proto import bstream_pb2_grpc
-from proto import codec_pb2
+from proto.generated import bstream_pb2
+from proto.generated import bstream_pb2_grpc
+from proto.generated import codec_pb2
 from utils import get_auth_token
 from utils import get_current_task_name
 
@@ -47,7 +47,8 @@ async def get_secure_channel(chain: str) -> Generator[grpc.aio.Channel, None, No
         options=[
             ('grpc.max_receive_message_length', os.environ.get('MAX_BLOCK_SIZE')), # default is 8MB
             ('grpc.max_send_message_length', os.environ.get('MAX_BLOCK_SIZE')), # default is 8MB
-        ]
+        ],
+        #compression=grpc.Compression.Gzip
     )
 
 def process_blocks(raw_blocks: Sequence[Message], block_processor: Callable[[codec_pb2.Block], dict]) -> list[dict]:

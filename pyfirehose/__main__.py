@@ -23,7 +23,7 @@ load_dotenv(find_dotenv())
 #pylint: disable=wrong-import-position
 from args import parse_arguments
 from block_extractors.common import process_blocks
-from proto import codec_pb2
+from proto.generated import codec_pb2
 from utils import get_auth_token
 #pylint: enable=wrong-import-position
 
