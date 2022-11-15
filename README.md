@@ -17,10 +17,15 @@
 - [ ] UX
 
 **TODO:**
-* Clean-up multi-channel extractor
-* Add architectures description
-* Support more chains
+* Add support for channel compression methods
+* Clean-up and fix multi-channel extractor
+* Rework chain selection and stub creation
   - Automatic endpoint detection (no .env variable loading)
+  - Allow supporting more chains
+  - Adapt stubs to endpoint selection
+    + process_blocks
+    + stream_blocks
+    + main signature check
 * Add more examples to README.md
 * Integrate Substreams as an alternative to Firehose (?)
   - Can the pipeline remain mostly the same ?
