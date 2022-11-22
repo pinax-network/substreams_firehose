@@ -7,21 +7,15 @@ This module provides utility functions and enums for other modules.
 import asyncio
 import json
 import logging
-import os
 from contextlib import nullcontext
 from datetime import datetime, timedelta
-from enum import StrEnum, auto
+from typing import Optional
 
 from requests_cache import CachedSession
 
-class Backend(StrEnum):
-    """
-    Describe the backend used to stream blocks.
-    """
-    FIREHOSE = auto()
-    SUBSTREAMS = auto()
+from config import Config
 
-def date_to_block_num(date: datetime, jwt: str = None) -> int:
+def date_to_block_num(date: datetime, jwt: Optional[str] = None) -> int:
     """
     Queries the DFUSE_GRAPHQL_ENDPOINT specified in the `.env` file for the block number associated with a given date time.
 
@@ -65,7 +59,7 @@ def date_to_block_num(date: datetime, jwt: str = None) -> int:
 
     logging.info('Querying block number for %s...', date)
 
-    response = session.post(os.environ.get('DFUSE_GRAPHQL_ENDPOINT'), headers=headers, data=json.dumps(data))
+    response = session.post(Config.GRAPHQL_ENDPOINT, headers=headers, data=json.dumps(data))
     block_num = 0
 
     if response.status_code == 200 and not 'errors' in response.json():
@@ -78,15 +72,13 @@ def date_to_block_num(date: datetime, jwt: str = None) -> int:
     logging.warning('Could not fetch block number data: [%s] %s', response.status_code, response.json()) # TODO: Raise exception
     return 0
 
-def get_auth_token(backend: Backend = Backend.FIREHOSE, use_cache: bool = True) -> str:
+def get_auth_token(use_cache: bool = True) -> str:
     """
     Fetch a JWT authorization token from the authentication endpoints defined in `.env` file.
 
     Cache the token for 24-hour use.
 
     Args:
-        backend:
-            An enum value specifying the backend for which the JWT token should be retrieved.
         use_cache:
             A boolean enabling/disabling fetching the cache for the JWT token request.
 
@@ -100,14 +92,13 @@ def get_auth_token(backend: Backend = Backend.FIREHOSE, use_cache: bool = True) 
     )
 
     headers = {'Content-Type': 'application/json',}
-    api_key = f'{backend.upper()}_API_TOKEN'
-    data = f'{{"api_key":"{os.environ.get(api_key)}"}}'
+    data = f'{{"api_key":"{Config.API_KEY}"}}'
 
     logging.info('Getting JWT token...')
 
     jwt = ''
     with session.cache_disabled() if not use_cache else nullcontext():
-        response = session.post(os.environ.get(f'{backend.upper()}_AUTH_ENDPOINT'), headers=headers, data=data)
+        response = session.post(Config.AUTH_ENDPOINT, headers=headers, data=data)
 
     if response.status_code == 200:
         logging.debug('JWT response: %s', response.json())

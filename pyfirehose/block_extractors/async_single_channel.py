@@ -22,11 +22,12 @@ from google.protobuf.message import Message
 #pylint: disable=wrong-import-position
 from block_extractors.common import get_secure_channel
 from block_extractors.common import stream_blocks
+from config import Config
 from exceptions import BlockStreamException
 from utils import get_current_task_name
 #pylint: enable=wrong-import-position
 
-async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #pylint: disable=too-many-arguments, too-many-locals, too-many-statements
+async def asyncio_main(period_start: int, period_end: int, #pylint: disable=too-many-arguments, too-many-locals, too-many-statements
               initial_tasks: int = 25, workload: int = 100, auto_adjust_frequency: bool = False, spawn_frequency: float = 0.1,
               custom_include_expr: str = '', custom_exclude_expr: str = '') -> list[Message]:
     """
@@ -41,8 +42,6 @@ async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #
             The first block number of the targeted period.
         period_end:
             The last block number of the targeted period.
-        chain:
-            The target blockchain determining the Firehose endpoint used for streaming blocks.
         initial_tasks:
             The initial number of concurrent tasks to start for streaming blocks.
         workload:
@@ -133,10 +132,10 @@ async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #
 
     logging.info('Streaming %i blocks on %s chain...',
         period_end - period_start,
-        chain.upper(),
+        Config.CHAIN,
     )
 
-    async with get_secure_channel(chain) as secure_channel:
+    async with get_secure_channel() as secure_channel:
         spawner_task = asyncio.create_task(_spawner())
         # Wait for spawner to start initial tasks
         await asyncio.sleep(spawn_frequency * initial_tasks)

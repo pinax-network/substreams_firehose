@@ -8,9 +8,6 @@ import argparse
 from datetime import datetime
 
 from utils import date_to_block_num
-from utils import get_auth_token
-
-JWT = get_auth_token()
 
 def check_period(arg_period: str) -> int:
     """
@@ -26,7 +23,7 @@ def check_period(arg_period: str) -> int:
     try:
         arg_period = int(arg_period)
     except ValueError:
-        arg_period = date_to_block_num(datetime.fromisoformat(arg_period), JWT)
+        arg_period = date_to_block_num(datetime.fromisoformat(arg_period))
 
     if not arg_period:
         raise argparse.ArgumentTypeError(f'Invalid period: {arg_period} must be `int` or `datetime`-like object')
@@ -45,12 +42,12 @@ def parse_arguments() -> argparse.Namespace:
                      'Powered by Firehose (https://eos.firehose.eosnation.io/).'),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    arg_parser.add_argument('start', type=check_period,
+    arg_parser.add_argument('start', type=str,
                             help='period start as a date (iso-like format) or a block number')
-    arg_parser.add_argument('end', type=check_period,
+    arg_parser.add_argument('end', type=str,
                             help='period end as a date (iso-like format) or a block number')
-    arg_parser.add_argument('-c', '--chain', choices=['eos', 'wax', 'kylin', 'jungle4'], default='eos',
-                            help='target blockchain')
+    arg_parser.add_argument('-c', '--config', type=str, default='pyfirehose/config.hjson',
+                            help='config file path in HJSON or JSON format')
     arg_parser.add_argument('-o', '--out-file', type=str, default='jsonl/{chain}_{start}_to_{end}.jsonl',
                             help='output file path')
     arg_parser.add_argument('-l', '--log', nargs='?', type=str, const=None, default='logs/{datetime}.log',

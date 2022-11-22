@@ -1,6 +1,6 @@
-# EOS - Blockchain Data for Analytics (Python version)
+# EOSNation - Blockchain Data for Analytics (Python version)
 
-> Aggregates historical EOS blockchains data & outputs result into JSONL format (using [dfuse **Firehose**](https://dfuse.eosnation.io/))
+> Aggregates historical blockchain data & outputs result in JSONL format (powered by [**Firehose**](https://eos.firehose.eosnation.io/) and [**Substreams**](https://substreams.streamingfast.io))
 
 [![Pylint](https://github.com/Krow10/eos-blockchain-data/actions/workflows/pylint.yml/badge.svg)](https://github.com/Krow10/eos-blockchain-data/actions/workflows/pylint.yml)
 
@@ -8,17 +8,9 @@
 [![Update Index](https://github.com/Krow10/eos-blockchain-data/actions/workflows/update_index_notebook.yml/badge.svg)](https://github.com/Krow10/eos-blockchain-data/actions/workflows/update_index_notebook.yml)
 [![Deploy Website](https://github.com/Krow10/eos-blockchain-data/actions/workflows/static.yml/badge.svg)](https://github.com/Krow10/eos-blockchain-data/actions/workflows/static.yml)
 
-**Supported chains:**
-- [x] EOS
-- [x] Jungle4
-- [x] Kylin
-- [x] WAX
-- [ ] Telos
-- [ ] UX
-
 **TODO:**
+* Add links to gRPC endpoint tables
 * Add support for channel compression methods
-* Clean-up and fix multi-channel extractor
 * Rework chain selection and stub creation
   - Automatic endpoint detection (no .env variable loading)
   - Allow supporting more chains
@@ -26,6 +18,7 @@
     + process_blocks
     + stream_blocks
     + main signature check
+* Clean-up and fix multi-channel extractor
 * Add more examples to README.md
 * Integrate Substreams as an alternative to Firehose (?)
   - Can the pipeline remain mostly the same ?
@@ -35,7 +28,6 @@
   - Pre-processing (e.g. load some API data)
   - Process (currently implemented)
   - Post-processing (e.g. adding more data to transactions)
-
 
 ## Github Actions workflow
 
@@ -50,69 +42,40 @@ You can see the rendered chart [here](https://krow10.github.io/eos-blockchain-da
 ```console
 foo@bar:~$ git clone git@github.com:Krow10/eos-blockchain-data.git
 foo@bar:~$ cd eos-blockchain-data
-foo@bar:~/eos-blockchain-data$ nano pyfirehose/sample.env # Edit sample .env file with editor of your choice and add your DFUSE_API_TOKEN
-foo@bar:~/eos-blockchain-data$ mv pyfirehose/sample.env pyfirehose/.env # Rename to .env
-```
-
-### Environment variables
-
-[Sample `.env` file](pyfirehose/sample.env):
-```env
-# [REQUIRED] Authentication to Firehose endpoint (see https://docs.dfuse.eosnation.io/platform/dfuse-cloud/authentication/)
-FIREHOSE_API_TOKEN=<api_token>
-
-# [NON-FUNCTIONAL] Authentication to Substreams endpoint (see https://substreams.streamingfast.io/reference-and-specs/authentication)
-# SUBSTREAMS_API_TOKEN=<api_token>
-
-# [OPTIONAL] Endpoints for getting authentication token
-FIREHOSE_AUTH_ENDPOINT="https://auth.eosnation.io/v1/auth/issue"
-SUBSTREAMS_AUTH_ENDPOINT="https://auth.streamingfast.io/v1/auth/issue"
-
-# [OPTIONAL] Endpoint for querying block numbers from date
-DFUSE_GRAPHQL_ENDPOINT="https://eos.dfuse.eosnation.io/graphql"
-
-# [OPTIONAL] Maximum block size (in KB) for blocks returned by the Firehose stream 
-# Note that blocks bigger than the limit will make the workers throw a `grpc.aio.AioRpcError`
-MAX_BLOCK_SIZE=8388608 # 8MB
-```
-
-Follow the instructions on the [dFuse documentation website](https://docs.dfuse.eosnation.io/platform/dfuse-cloud/authentication/#types-of-keys) to generate an API key and copy it to your `.env` file (the JWT token authentication is handled by the [script](pyfirehose/utils.py#L71) itself).
-
-### Python
-
-```console
+foo@bar:~/eos-blockchain-data$ vim pyfirehose/sample.config.hjson # Edit sample config file with editor of your choice to add your API keys
+foo@bar:~/eos-blockchain-data$ mv pyfirehose/sample.config.hjson pyfirehose/config.hjson # Rename to config.hjson
 foo@bar:~/eos-blockchain-data$ python3 -m venv .venv # Create virtual environnement
 foo@bar:~/eos-blockchain-data$ source .venv/bin/activate # Activate virtual environnement
 (.venv) foo@bar:~/eos-blockchain-data$ pip install -r requirements.txt # Install dependencies
 (.venv) foo@bar:~/eos-blockchain-data$ python pyfirehose -h
-usage: pyfirehose [-h] [-c {eos,wax,kylin,jungle4}] [-o OUT_FILE] [-l [LOG]] [-q] [-x CUSTOM_EXCLUDE_EXPR] [-i CUSTOM_INCLUDE_EXPR]                           
-                  [-e {simple,single,multi}] [-p CUSTOM_PROCESSOR] [--disable-signature-check]
-                  start end                                           
+usage: pyfirehose [-h] [-c CONFIG] [-o OUT_FILE] [-l [LOG]] [-q] [-x CUSTOM_EXCLUDE_EXPR] [-i CUSTOM_INCLUDE_EXPR] [-e {optimized,single,multi}]
+                  [-p CUSTOM_PROCESSOR] [--disable-signature-check]
+                  start end
 
-Extract any data from the blockchain. Powered by Firehose (https://eos.firehose.eosnation.io/).                                      
+Extract any data from the blockchain. Powered by Firehose (https://eos.firehose.eosnation.io/).
 
-positional arguments:  
-  start                 period start as a date (iso-like format) or a block number                                 
-  end                   period end as a date (iso-like format) or a block number             
+positional arguments:
+  start                 period start as a date (iso-like format) or a block number
+  end                   period end as a date (iso-like format) or a block number
 
-options:                        
+options:
   -h, --help            show this help message and exit
-  -c {eos,wax,kylin,jungle4}, --chain {eos,wax,kylin,jungle4}                                                             
-                        target blockchain (default: eos)
-  -o OUT_FILE, --out-file OUT_FILE                                                                                                      
+  -c CONFIG, --config CONFIG
+                        config file path in HJSON or JSON format (default: pyfirehose/config.hjson)
+  -o OUT_FILE, --out-file OUT_FILE
                         output file path (default: jsonl/{chain}_{start}_to_{end}.jsonl)
-  -l [LOG], --log [LOG]                                                                                                          
+  -l [LOG], --log [LOG]
                         log debug information to log file (can specify the full path) (default: logs/{datetime}.log)
-  -q, --quiet           disable console logging (default: False)                                      
+  -q, --quiet           disable console logging (default: False)
   -x CUSTOM_EXCLUDE_EXPR, --custom-exclude-expr CUSTOM_EXCLUDE_EXPR
                         custom filter for the Firehose stream to exclude transactions (default: None)
-  -i CUSTOM_INCLUDE_EXPR, --custom-include-expr CUSTOM_INCLUDE_EXPR    
+  -i CUSTOM_INCLUDE_EXPR, --custom-include-expr CUSTOM_INCLUDE_EXPR
                         custom filter for the Firehose stream to tag included transactions (default: None)
-  -e {simple,single,multi}, --extractor {simple,single,multi}
-                        type of extractor used for streaming blocks from the Firehose endpoint (default: simple)
+  -e {optimized,single,multi}, --extractor {optimized,single,multi}
+                        type of extractor used for streaming blocks from the Firehose endpoint (default: optimized)
   -p CUSTOM_PROCESSOR, --custom-processor CUSTOM_PROCESSOR
                         relative import path to a custom block processing function located in the "block_processors" module (default: None)
-  --disable-signature-check                                                                                                    
+  --disable-signature-check
                         disable signature checking for the custom block processing function (default: False)
 ```
 
@@ -123,9 +86,41 @@ A [`.pylintrc`](.pylintrc) file is provided if you want to run [Pylint](https://
 (.venv) user@dev-eosnation:~/Documents/eos-blockchain-data$ pylint pyfirehose --rcfile=.pylintrc
 ```
 
+## Editing the configuration file
+
+The settings values are stored in a `config.hjson` file located in the [`pyfirehose/`](pyfirehose/) folder. A sample file is provided as [`sample.config.hjson`](pyfirehose/sample.config.hjson) that you can rename after adding your API keys.
+
+For using [EOSNation](https://eosnation.io) based endpoints, go to https://dfuse.eosnation.io/ and create a free account for registering an API key.
+For using [StreamingFast](https://streamingfast.io) based endpoints, go to https://app.streamingfast.io/ and create a free account for registering an API key.
+
+Replace the placeholder values with the optained API keys in the config file:
+```json
+"auth": {
+  "eosnation": {
+    "api_key": "<YOUR_API_KEY>",
+    "endpoint": "https://auth.eosnation.io/v1/auth/issue"
+  },
+  "streamingfast": {
+    "api_key": "<YOUR_API_KEY>",
+    "endpoint": "https://auth.streamingfast.io/v1/auth/issue"
+  }
+}
+```
+
+The format chosen, [`hjson`](https://hjson.github.io/hjson-py/), allow for adding comments to the config file but is fully compatible with plain JSON. You can extend the list of endpoints by adding entries to the `grpc` array following the format:
+```json
+{
+  "auth": "<reference an 'auth' entry to authenticate with the gRPC endpoint>",
+  "chain": "<the target blockchain (for information purpose only)>",
+  "url": "<the gRPC endpoint url as 'ip:port'>"
+}
+```
+
+If the gRPC endpoint uses different protobuf definitions, you will need to add the appropriate files to the [`proto/`](pyfirehose/proto/) folder and generate the python stubs (see following section).
+
 ### Protobuf
 
-To communicate with the gRPC endpoint, Python object are generated through the use of `.proto` file templates that describes the kind of data the client and server are going to manipulate. Those Python object are already provided in the [`proto/generated/`](pyfirehose/proto/generated/) folder, however if you want to generate them yourself, you can run the following commands:
+To communicate with the gRPC endpoint, Python objects are generated using `.proto` template files that describes the kind of data the client and server are going to manipulate. Those Python objects are already provided in the [`proto/generated/`](pyfirehose/proto/generated/) folder, however if you want to generate them yourself, you can run the following commands:
 ```console
 (.venv) foo@bar:~/eos-blockchain-data$ pip install grpcio-tools
 (.venv) foo@bar:~/eos-blockchain-data$ cd pyfirehose
@@ -133,6 +128,32 @@ To communicate with the gRPC endpoint, Python object are generated through the u
 ```
 
 *Note: if you encounter some `ModuleNotFound` errors, you might have to edit the generated files for fixing local imports by prefixing them with `proto.generated.`.*
+
+### gRPC endpoints
+
+#### Currently supported
+
+| Auth provider | Blockchain          | Block protobuf        | gRPC endpoint                        |
+|---------------|---------------------|-----------------------|--------------------------------------|
+| eosnation     | EOS                 | sf.firehose.v2.stream | eos.firehose.eosnation.io:9001       |
+| eosnation     | EOS                 | dfuse.eosio.codec.v1  | eos.firehose.eosnation.io:9000       |
+| eosnation     | WAX                 | dfuse.eosio.codec.v1  | wax.firehose.eosnation.io:9000       |
+| eosnation     | Kylin               | dfuse.eosio.codec.v1  | kylin.firehose.eosnation.io:9000     |
+| eosnation     | Jungle4             | dfuse.eosio.codec.v1  | jungle4.firehose.eosnation.io:9000   |
+
+#### Pending implementation
+
+| Auth provider | Blockchain          | Block protobuf      | gRPC endpoint                        |
+|---------------|---------------------|---------------------|--------------------------------------|
+| streamingfast | Ethereum Mainnet    | sf.ethereum.type.v2 | mainnet.eth.streamingfast.io:443     |
+| streamingfast | Görli               | sf.ethereum.type.v2 | goerli.eth.streamingfast.io:443      |
+| streamingfast | Polygon Mainnet     | sf.ethereum.type.v2 | polygon.streamingfast.io:443         |
+| streamingfast | BNB                 | sf.ethereum.type.v2 | bnb.streamingfast.io:443             |
+| streamingfast | Near Mainnet        | sf.near.type.v1     | mainnet.near.streamingfast.io:443    |
+| streamingfast | Near Testnet        | sf.near.type.v1     | testnet.near.streamingfast.io:443    |
+| streamingfast | Solana Mainnet-beta | sf.solana.type.v1   | mainnet.sol.streamingfast.io:443     |
+| streamingfast | Arweave Mainnet     | sf.arweave.type.v1  | mainnet.arweave.streamingfast.io:443 |
+| streamingfast | Aptos Testnet       | aptos.extractor.v1  | testnet.aptos.streamingfast.io:443   |
 
 ## Using Firehose filters
 

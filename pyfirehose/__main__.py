@@ -12,41 +12,41 @@ import inspect
 import json
 import logging
 import os
+from argparse import ArgumentTypeError
 from datetime import datetime
 
-from dotenv import load_dotenv
-from dotenv import find_dotenv
-
-# Load .env before local imports for enabling authentication token queries
-load_dotenv(find_dotenv())
-
 #pylint: disable=wrong-import-position
-from args import parse_arguments
+from args import check_period, parse_arguments
 from block_extractors.common import process_blocks
+from config import Config, load_config
 from proto.generated import codec_pb2
 from utils import get_auth_token
 #pylint: enable=wrong-import-position
 
 CONSOLE_HANDLER = logging.StreamHandler()
-JWT = get_auth_token()
 
 def main() -> int: #pylint: disable=too-many-statements, too-many-branches
     """
     Main function for parsing arguments, setting up logging and running asyncio `run` function.
     """
-    if not JWT:
-        return 1
-
     logging_handlers = []
     args = parse_arguments()
 
     # === Arguments checking ===
 
+    load_config(args.config) # TODO: add error checking
+
+    try:
+        args.start = check_period(args.start)
+        args.end = check_period(args.end)
+    except ArgumentTypeError:
+        return 1
+
     if args.end < args.start:
         logging.error('Period start must be less than or equal to period end')
         return 1
 
-    out_file = f'jsonl/{args.chain}_{args.start}_to_{args.end}.jsonl'
+    out_file = f'jsonl/{Config.CHAIN}_{args.start}_to_{args.end}.jsonl'
     if args.out_file != 'jsonl/{chain}_{start}_to_{end}.jsonl':
         out_file = args.out_file
 
@@ -71,7 +71,7 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
         logging.critical('Could not load block extractor function: %s', exception)
         raise
 
-    module, function = ('block_processors.default', f'{args.chain}_block_processor')
+    module, function = ('block_processors.default', f'{Config.CHAIN.lower()}_block_processor')
     if args.custom_processor:
         module, function = args.custom_processor.rsplit('.', 1)
         module = f'block_processors.{module}'
@@ -95,14 +95,20 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
     logging.addLevelName(logging.CRITICAL, '[CRITICAL]')
 
     logging.debug('Script arguments: %s', args)
-    logging.debug('JWT: %s', JWT)
+
+    # === JWT token validation ===
+
+    jwt = get_auth_token()
+    if not jwt:
+        logging.critical('Could not get authentication token from endpoint (%s), aborting...', Config.AUTH_ENDPOINT)
+        return 1
 
     # === Block processor loading and startup ===
 
     try:
         block_processor = getattr(importlib.import_module(module), function)
 
-        if not args.disable_signature_check:
+        if not args.disable_signature_check: # TODO: Rework depending on protobuf (or remove entirely ?)
             signature = inspect.signature(block_processor)
             parameters_annotations = [p_type.annotation for (_, p_type) in signature.parameters.items()]
 
@@ -131,7 +137,6 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
             block_extractor(
                 period_start=args.start,
                 period_end=args.end,
-                chain=args.chain,
                 custom_include_expr=args.custom_include_expr,
                 custom_exclude_expr=args.custom_exclude_expr,
             )

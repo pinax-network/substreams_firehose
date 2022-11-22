@@ -5,8 +5,6 @@ This module holds common functions used by the block extractors.
 """
 
 import logging
-import os
-import os.path
 from collections.abc import Generator
 from contextlib import asynccontextmanager
 from typing import Callable, Optional, Sequence
@@ -14,6 +12,7 @@ from typing import Callable, Optional, Sequence
 import grpc
 from google.protobuf.message import Message
 
+from config import Config
 from exceptions import BlockStreamException
 from proto.generated import bstream_pb2
 from proto.generated import bstream_pb2_grpc
@@ -21,32 +20,27 @@ from proto.generated import codec_pb2
 from utils import get_auth_token
 from utils import get_current_task_name
 
-JWT = get_auth_token()
-
 @asynccontextmanager
-async def get_secure_channel(chain: str) -> Generator[grpc.aio.Channel, None, None]:
+async def get_secure_channel() -> Generator[grpc.aio.Channel, None, None]:
     """
     Instantiate a secure gRPC channel as an asynchronous context manager used by block extractors.
-
-    Args:
-        chain:
-            The target chain for specifying the channel's Firehose endpoint.
 
     Yields:
         A grpc.aio.Channel as an asynchronous context manager.
     """
+    jwt = get_auth_token()
     creds = grpc.composite_channel_credentials(
         grpc.ssl_channel_credentials(),
-        grpc.access_token_call_credentials(JWT)
+        grpc.access_token_call_credentials(jwt)
     )
 
     yield grpc.aio.secure_channel(
-        f'{chain}.firehose.eosnation.io:9000',
+        Config.GRPC_ENDPOINT,
         creds,
         # See https://github.com/grpc/grpc/blob/master/include/grpc/impl/codegen/grpc_types.h#L141 for a list of options
         options=[
-            ('grpc.max_receive_message_length', os.environ.get('MAX_BLOCK_SIZE')), # default is 8MB
-            ('grpc.max_send_message_length', os.environ.get('MAX_BLOCK_SIZE')), # default is 8MB
+            ('grpc.max_receive_message_length', Config.MAX_BLOCK_SIZE), # default is 8MB
+            ('grpc.max_send_message_length', Config.MAX_BLOCK_SIZE), # default is 8MB
         ],
         #compression=grpc.Compression.Gzip
     )

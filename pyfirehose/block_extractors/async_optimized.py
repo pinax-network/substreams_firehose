@@ -19,9 +19,10 @@ from google.protobuf.message import Message
 
 from block_extractors.common import get_secure_channel
 from block_extractors.common import stream_blocks
+from config import Config
 from exceptions import BlockStreamException
 
-async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', initial_tasks: int = 25, #pylint: disable=too-many-arguments
+async def asyncio_main(period_start: int, period_end: int, initial_tasks: int = 25, #pylint: disable=too-many-arguments
                        custom_include_expr: str = '', custom_exclude_expr: str = '') -> list[Message]:
     """
     Extract blocks from a Firehose endpoint as raw blocks for later processing.
@@ -35,8 +36,6 @@ async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', i
             The first block number of the targeted period.
         period_end:
             The last block number of the targeted period.
-        chain:
-            The target blockchain determining the Firehose endpoint used for streaming blocks.
         initial_tasks:
             The initial number of concurrent tasks to start for streaming blocks.
         custom_include_expr:
@@ -53,13 +52,13 @@ async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', i
 
     logging.info('Streaming %i blocks on %s chain (running %i workers)...',
         period_end - period_start,
-        chain.upper(),
+        Config.CHAIN,
         initial_tasks
     )
 
     tasks = set()
     data = []
-    async with get_secure_channel(chain) as secure_channel:
+    async with get_secure_channel() as secure_channel:
         for i in range(initial_tasks):
             tasks.add(
                 asyncio.create_task(

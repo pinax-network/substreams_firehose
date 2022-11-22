@@ -23,12 +23,13 @@ from google.protobuf.message import Message
 
 from block_extractors.common import get_secure_channel
 from block_extractors.common import stream_blocks
+from config import Config
 from exceptions import BlockStreamException
 from utils import get_current_task_name
 
 TRIGGER_CHANNEL_CREATION_LOCK = asyncio.Lock()
 
-async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #pylint: disable=too-many-arguments, too-many-locals, too-many-statements
+async def asyncio_main(period_start: int, period_end: int, #pylint: disable=too-many-arguments, too-many-locals, too-many-statements
               initial_tasks: int = 25, workload: int = 100, auto_adjust_frequency: bool = False, spawn_frequency: float = 0.1,
               custom_include_expr: str = '', custom_exclude_expr: str = '') -> list[Message]:
     """
@@ -43,8 +44,6 @@ async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #
             The first block number of the targeted period.
         period_end:
             The last block number of the targeted period.
-        chain:
-            The target blockchain determining the Firehose endpoint used for streaming blocks.
         initial_tasks:
             The initial number of concurrent tasks to start for streaming blocks.
         workload:
@@ -64,7 +63,7 @@ async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #
     """
     async def _spawner(token):
         data = []
-        async with get_secure_channel(chain) as secure_channel:
+        async with get_secure_channel() as secure_channel:
             async def _task_spawner():
                 while True:
                     logging.debug('[%s] %i tasks running | polling every %fs | %i blocks remaining in block_pool["%s"]',
@@ -112,7 +111,7 @@ async def asyncio_main(period_start: int, period_end: int, chain: str = 'eos', #
 
             logging.info('Streaming %i blocks on %s chain...',
                 period_end - period_start,
-                chain.upper(),
+                Config.CHAIN,
             )
 
             done = asyncio.Queue()
