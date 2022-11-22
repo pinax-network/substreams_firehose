@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import proto.generated.substreams_pb2 as substreams__pb2
+from proto.generated.sf.substreams.v1 import substreams_pb2 as sf_dot_substreams_dot_v1_dot_substreams__pb2
 
 
 class StreamStub(object):
@@ -16,8 +16,8 @@ class StreamStub(object):
         """
         self.Blocks = channel.unary_stream(
                 '/sf.substreams.v1.Stream/Blocks',
-                request_serializer=substreams__pb2.Request.SerializeToString,
-                response_deserializer=substreams__pb2.Response.FromString,
+                request_serializer=sf_dot_substreams_dot_v1_dot_substreams__pb2.Request.SerializeToString,
+                response_deserializer=sf_dot_substreams_dot_v1_dot_substreams__pb2.Response.FromString,
                 )
 
 
@@ -35,8 +35,8 @@ def add_StreamServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Blocks': grpc.unary_stream_rpc_method_handler(
                     servicer.Blocks,
-                    request_deserializer=substreams__pb2.Request.FromString,
-                    response_serializer=substreams__pb2.Response.SerializeToString,
+                    request_deserializer=sf_dot_substreams_dot_v1_dot_substreams__pb2.Request.FromString,
+                    response_serializer=sf_dot_substreams_dot_v1_dot_substreams__pb2.Response.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -60,7 +60,7 @@ class Stream(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_stream(request, target, '/sf.substreams.v1.Stream/Blocks',
-            substreams__pb2.Request.SerializeToString,
-            substreams__pb2.Response.FromString,
+            sf_dot_substreams_dot_v1_dot_substreams__pb2.Request.SerializeToString,
+            sf_dot_substreams_dot_v1_dot_substreams__pb2.Response.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -11,6 +11,11 @@
 **TODO:**
 * Add links to gRPC endpoint tables
 * Add support for channel compression methods
+* Better protobuf generation
+  - Fix generated python module import paths
+    + https://github.com/protocolbuffers/protobuf/issues/1491
+    + https://github.com/protocolbuffers/protobuf/issues/881
+  - Add docs for need to specify full path in module import in .proto files
 * Rework chain selection and stub creation
   - Automatic endpoint detection (no .env variable loading)
   - Allow supporting more chains
@@ -123,9 +128,11 @@ If the gRPC endpoint uses different protobuf definitions, you will need to add t
 To communicate with the gRPC endpoint, Python objects are generated using `.proto` template files that describes the kind of data the client and server are going to manipulate. Those Python objects are already provided in the [`proto/generated/`](pyfirehose/proto/generated/) folder, however if you want to generate them yourself, you can run the following commands:
 ```console
 (.venv) foo@bar:~/eos-blockchain-data$ pip install grpcio-tools
-(.venv) foo@bar:~/eos-blockchain-data$ cd pyfirehose
-(.venv) foo@bar:~/eos-blockchain-data/pyfirehose$ python -m grpc_tools.protoc -Iproto --python_out=proto/generated/ --grpc_python_out=proto/generated/ proto/*.proto
+(.venv) foo@bar:~/eos-blockchain-data$ cd pyfirehose/proto
+(.venv) foo@bar:~/eos-blockchain-data/pyfirehose/proto$ python -m grpc_tools.protoc -I. --python_out=generated/ --grpc_python_out=generated/ $(find . -iname *.proto)
 ```
+
+or use the provided script [`build_proto.sh`](pyfirehose/proto/build_proto.sh).
 
 *Note: if you encounter some `ModuleNotFound` errors, you might have to edit the generated files for fixing local imports by prefixing them with `proto.generated.`.*
 

@@ -14,9 +14,9 @@ from google.protobuf.message import Message
 
 from config import Config
 from exceptions import BlockStreamException
-from proto.generated import bstream_pb2
-from proto.generated import bstream_pb2_grpc
-from proto.generated import codec_pb2
+from proto.generated.dfuse.bstream.v1 import bstream_pb2
+from proto.generated.dfuse.bstream.v1 import bstream_pb2_grpc
+from proto.generated.dfuse.eosio.codec.v1 import codec_pb2
 from utils import get_auth_token
 from utils import get_current_task_name
 

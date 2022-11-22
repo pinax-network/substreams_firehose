@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import proto.generated.bstream_pb2 as bstream__pb2
+from proto.generated.dfuse.bstream.v1 import bstream_pb2 as dfuse_dot_bstream_dot_v1_dot_bstream__pb2
 
 
 class BlockStreamStub(object):
@@ -16,8 +16,8 @@ class BlockStreamStub(object):
         """
         self.Blocks = channel.unary_stream(
                 '/dfuse.bstream.v1.BlockStream/Blocks',
-                request_serializer=bstream__pb2.BlockRequest.SerializeToString,
-                response_deserializer=bstream__pb2.Block.FromString,
+                request_serializer=dfuse_dot_bstream_dot_v1_dot_bstream__pb2.BlockRequest.SerializeToString,
+                response_deserializer=dfuse_dot_bstream_dot_v1_dot_bstream__pb2.Block.FromString,
                 )
 
 
@@ -35,8 +35,8 @@ def add_BlockStreamServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Blocks': grpc.unary_stream_rpc_method_handler(
                     servicer.Blocks,
-                    request_deserializer=bstream__pb2.BlockRequest.FromString,
-                    response_serializer=bstream__pb2.Block.SerializeToString,
+                    request_deserializer=dfuse_dot_bstream_dot_v1_dot_bstream__pb2.BlockRequest.FromString,
+                    response_serializer=dfuse_dot_bstream_dot_v1_dot_bstream__pb2.Block.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -60,8 +60,8 @@ class BlockStream(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_stream(request, target, '/dfuse.bstream.v1.BlockStream/Blocks',
-            bstream__pb2.BlockRequest.SerializeToString,
-            bstream__pb2.Block.FromString,
+            dfuse_dot_bstream_dot_v1_dot_bstream__pb2.BlockRequest.SerializeToString,
+            dfuse_dot_bstream_dot_v1_dot_bstream__pb2.Block.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -77,8 +77,8 @@ class BlockStreamV2Stub(object):
         """
         self.Blocks = channel.unary_stream(
                 '/dfuse.bstream.v1.BlockStreamV2/Blocks',
-                request_serializer=bstream__pb2.BlocksRequestV2.SerializeToString,
-                response_deserializer=bstream__pb2.BlockResponseV2.FromString,
+                request_serializer=dfuse_dot_bstream_dot_v1_dot_bstream__pb2.BlocksRequestV2.SerializeToString,
+                response_deserializer=dfuse_dot_bstream_dot_v1_dot_bstream__pb2.BlockResponseV2.FromString,
                 )
 
 
@@ -96,8 +96,8 @@ def add_BlockStreamV2Servicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Blocks': grpc.unary_stream_rpc_method_handler(
                     servicer.Blocks,
-                    request_deserializer=bstream__pb2.BlocksRequestV2.FromString,
-                    response_serializer=bstream__pb2.BlockResponseV2.SerializeToString,
+                    request_deserializer=dfuse_dot_bstream_dot_v1_dot_bstream__pb2.BlocksRequestV2.FromString,
+                    response_serializer=dfuse_dot_bstream_dot_v1_dot_bstream__pb2.BlockResponseV2.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -121,7 +121,7 @@ class BlockStreamV2(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_stream(request, target, '/dfuse.bstream.v1.BlockStreamV2/Blocks',
-            bstream__pb2.BlocksRequestV2.SerializeToString,
-            bstream__pb2.BlockResponseV2.FromString,
+            dfuse_dot_bstream_dot_v1_dot_bstream__pb2.BlocksRequestV2.SerializeToString,
+            dfuse_dot_bstream_dot_v1_dot_bstream__pb2.BlockResponseV2.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

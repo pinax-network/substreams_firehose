@@ -5,7 +5,7 @@ package sf.substreams.v1;
 option go_package = "github.com/streamingfast/substreams/pb/sf/substreams/v1;pbsubstreams";
 
 import "google/protobuf/descriptor.proto";
-import "modules.proto";
+import "sf/substreams/v1/modules.proto";
 
 message Package {
   // Needs to be one so this file can be used _directly_ as a

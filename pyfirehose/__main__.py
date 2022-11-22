@@ -15,11 +15,13 @@ import os
 from argparse import ArgumentTypeError
 from datetime import datetime
 
+from hjson import HjsonDecodeError
+
 #pylint: disable=wrong-import-position
 from args import check_period, parse_arguments
 from block_extractors.common import process_blocks
 from config import Config, load_config
-from proto.generated import codec_pb2
+from proto.generated.dfuse.eosio.codec.v1 import codec_pb2
 from utils import get_auth_token
 #pylint: enable=wrong-import-position
 
@@ -34,7 +36,10 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
 
     # === Arguments checking ===
 
-    load_config(args.config) # TODO: add error checking
+    try:
+        load_config(args.config)
+    except (HjsonDecodeError, KeyError):
+        return 1
 
     try:
         args.start = check_period(args.start)
