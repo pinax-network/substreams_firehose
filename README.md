@@ -16,18 +16,15 @@
     + https://github.com/protocolbuffers/protobuf/issues/1491
     + https://github.com/protocolbuffers/protobuf/issues/881
   - Add docs for need to specify full path in module import in .proto files
-* Rework chain selection and stub creation
+* Finish chain selection and stub creation
   - Automatic endpoint detection (no .env variable loading)
-  - Allow supporting more chains
-  - Adapt stubs to endpoint selection
-    + process_blocks
-    + stream_blocks
-    + main signature check
+  - Flexible block definition (replace codec_pb2)
+  - Add example for producerpay with Firehose v2
 * Clean-up and fix multi-channel extractor
 * Add more examples to README.md
+* Support for external block processing
 * Integrate Substreams as an alternative to Firehose (?)
   - Can the pipeline remain mostly the same ?
-* Drop the generator requirement for block processors (?)
 * Investigate functools and other more abstract modules for block processor modularity (?)
   - Possibility of 3 stages:
   - Pre-processing (e.g. load some API data)
