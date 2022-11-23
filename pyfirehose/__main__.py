@@ -8,7 +8,6 @@ Main entry point of the application.
 
 import asyncio
 import importlib
-import inspect
 import json
 import logging
 import os
@@ -17,14 +16,11 @@ from datetime import datetime
 
 from hjson import HjsonDecodeError
 
-#pylint: disable=wrong-import-position
 from args import check_period, parse_arguments
 from block_extractors.common import process_blocks
 from config import Config
 from config import load_config
-from proto.generated.dfuse.eosio.codec.v1 import codec_pb2
 from utils import get_auth_token
-#pylint: enable=wrong-import-position
 
 CONSOLE_HANDLER = logging.StreamHandler()
 
@@ -82,6 +78,12 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
         module, function = args.custom_processor.rsplit('.', 1)
         module = f'block_processors.{module}'
 
+    try:
+        block_processor = getattr(importlib.import_module(module), function)
+    except (AttributeError, TypeError) as exception:
+        logging.critical('Could not load block processing function: %s', exception)
+        raise
+
     request_parameters_args = {}
     for key, value in [x.split('=', 1) for x in args.request_parameters]:
         if key in ['start_block_num', 'stop_block_num']:
@@ -117,33 +119,6 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
         logging.critical('Could not get authentication token from endpoint (%s), aborting...', Config.AUTH_ENDPOINT)
         return 1
 
-    # === Block processor loading and startup ===
-
-    try:
-        block_processor = getattr(importlib.import_module(module), function)
-
-        # if not args.disable_signature_check: # TODO: Rework depending on protobuf (or remove entirely ?)
-        # 	signature = inspect.signature(block_processor)
-        # 	parameters_annotations = [p_type.annotation for (_, p_type) in signature.parameters.items()]
-
-        # 	if (signature.return_annotation == signature.empty
-        # 		# If there are parameters and none are annotated
-        # 		or (not parameters_annotations and signature.parameters)
-        # 		# If some parameters are not annotated
-        # 		or any((t == inspect.Parameter.empty for t in parameters_annotations))
-        # 	):
-        # 		logging.warning('Could not check block processing function signature '
-        # 						'(make sure parameters and return value have type hinting annotations)')
-        # 	elif (not codec_pb2.Block in parameters_annotations
-        # 		  or signature.return_annotation != dict
-        # 		  or not inspect.isgeneratorfunction(block_processor)
-        # 	):
-        # 		raise TypeError(f'Incompatible block processing function signature:'
-        # 						f' {signature} should be <generator>(block: codec_pb2.Block) -> Dict')
-    except (AttributeError, TypeError) as exception:
-        logging.critical('Could not load block processing function: %s', exception)
-        raise
-
     # === Main methods calls ===
 
     data = process_blocks(
@@ -156,6 +131,8 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
         ),
         block_processor=block_processor
     )
+
+    # === Output data to file ===
 
     os.makedirs(os.path.dirname(out_file), exist_ok=True)
     with open(out_file, 'w', encoding='utf8') as out:
