@@ -19,7 +19,7 @@ from hjson import HjsonDecodeError
 from args import check_period, parse_arguments
 from block_extractors.common import process_blocks
 from config import Config
-from config import load_config
+from config import load_config, load_stub_config
 from utils import get_auth_token
 
 CONSOLE_HANDLER = logging.StreamHandler()
@@ -37,6 +37,12 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
         load_config(args.config)
     except (HjsonDecodeError, ImportError, KeyError):
         return 1
+
+    if args.stub:
+        try:
+            load_stub_config(args.stub) # TODO: Add dict/JSON parsing
+        except (HjsonDecodeError, ImportError, KeyError):
+            return 1
 
     try:
         args.start = check_period(args.start)

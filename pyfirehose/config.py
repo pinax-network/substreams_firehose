@@ -65,14 +65,17 @@ def load_config(file: str):
 
     logging.debug('Loaded main config: %s [SUCCESS]', vars(Config))
 
-    stub_config = default_stub
+    load_stub_config(default_stub)
+
+def load_stub_config(stub: str | dict):
+    stub_config = stub
     # Load stub config from external file
-    if isinstance(default_stub, str):
-        with open(default_stub, 'r', encoding='utf8') as stub_config_file:
+    if isinstance(stub, str):
+        with open(stub, 'r', encoding='utf8') as stub_config_file:
             try:
                 stub_config = hjson.load(stub_config_file)
             except hjson.HjsonDecodeError as error:
-                logging.exception('Error decoding stub config file (%s): %s', default_stub, error)
+                logging.exception('Error decoding stub config file (%s): %s', stub, error)
                 raise
 
     try:
@@ -94,11 +97,11 @@ def load_config(file: str):
             logging.critical('Could not load stub object from config: unable to locate "%sStub" in "%s" module',
                 stub_config['name'],
                 f'proto.generated.{stub_config["python_import_dir"]}')
-            raise Exception
+            raise ImportError
 
         if not StubConfig.REQUEST_OBJECT:
             logging.critical('Could not load request object from config: unable to locate "%s"', stub_config['request'])
-            raise Exception
+            raise ImportError
 
         StubConfig.REQUEST_PARAMETERS = {}
         for key, value in stub_config['parameters'].items():
