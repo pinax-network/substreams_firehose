@@ -17,9 +17,8 @@ then
 
 	# Uses Bash expansion to add the list of accounts as a JSON-like array to the filter, excluding those accounts from transactions destination.
 	time python3 pyfirehose $YESTERDAY $TODAY \
-		-i "receiver in [$( printf "'%s'," "${ACCOUNTS[@]}" )] && action == 'transfer'" \
-		-x "data['to'] in [$( printf "'%s'," "${ACCOUNTS[@]}" )]" \
-		-o "$OUTFILE"\
+		-s pyfirehose/config/dfuse/producerpay.hjson \
+		-o "$OUTFILE" \
 		"$@"
 else
 	echo "Data already extracted for $FILENAME (see $OUTFILE)"
