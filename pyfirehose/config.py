@@ -29,14 +29,15 @@ def load_config(file: str):
             raise
 
         try:
-            Config.API_KEY = options['auth']['eosnation']['api_key']
-            Config.AUTH_ENDPOINT = options['auth']['eosnation']['endpoint']
-            Config.GRAPHQL_ENDPOINT = options['graphql_endpoint']
-            Config.MAX_BLOCK_SIZE = options['max_block_size']
+            default_grpc = options['grpc'][options['default']['grpc']]
+            default_auth = options['auth'][default_grpc['auth']]
 
-            grpc_option = options['grpc'][0] # TODO: Make this selectable / default value
-            Config.CHAIN = grpc_option['chain']
-            Config.GRPC_ENDPOINT = grpc_option['url']
+            Config.API_KEY 			= default_auth['api_key']
+            Config.AUTH_ENDPOINT 	= default_auth['endpoint']
+            Config.CHAIN 			= default_grpc['chain']
+            Config.GRAPHQL_ENDPOINT = options['graphql_endpoint']
+            Config.GRPC_ENDPOINT 	= default_grpc['url']
+            Config.MAX_BLOCK_SIZE 	= options['max_block_size']
         except KeyError as error:
             logging.exception('Error parsing config file (%s): %s', file, error)
             raise
