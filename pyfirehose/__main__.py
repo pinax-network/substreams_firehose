@@ -82,6 +82,14 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
         module, function = args.custom_processor.rsplit('.', 1)
         module = f'block_processors.{module}'
 
+    request_parameters_args = {}
+    for key, value in [x.split('=', 1) for x in args.request_parameters]:
+        if key in ['start_block_num', 'stop_block_num']:
+            raise ArgumentTypeError('Cannot use "start_block_num" or "stop_block_num" as additional keyword arguments')
+        request_parameters_args[key] = int(value) if value.isdigit() else value
+
+    args.request_parameters = request_parameters_args
+
     # === Logging setup ===
 
     logging_handlers.append(CONSOLE_HANDLER)
@@ -143,6 +151,7 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
             block_extractor(
                 period_start=args.start,
                 period_end=args.end,
+                **args.request_parameters
             )
         ),
         block_processor=block_processor

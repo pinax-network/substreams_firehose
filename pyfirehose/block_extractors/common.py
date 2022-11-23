@@ -68,7 +68,7 @@ def process_blocks(raw_blocks: Sequence[Message], block_processor: Callable[[Mes
     return data
 
 async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel, #pylint: disable=too-many-arguments
-                        block_processor: Optional[Callable[[Message], dict]] = None) -> list[Message | dict]:
+                        block_processor: Optional[Callable[[Message], dict]] = None, **kwargs) -> list[Message | dict]:
     """
     Return raw blocks (or parsed data) for the subset period between `start` and `end` using the provided filters.
 
@@ -100,6 +100,13 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel, 
     data = []
     current_block_number = start
     stub = StubConfig.STUB_OBJECT(secure_channel)
+    # Move request parameters to dict to allow CLI keyword argument to override the stub config
+    request_parameters = {
+        'start_block_num': start,
+        'stop_block_num': end,
+        **StubConfig.REQUEST_PARAMETERS,
+        **kwargs
+    }
 
     logging.debug('[%s] Starting streaming blocks from #%i to #%i...',
         get_current_task_name(),
@@ -110,11 +117,7 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel, 
     try:
         # Duplicate code for moving invariant out of loop, preventing condition check on every block streamed
         if block_processor:
-            async for response in stub.Blocks(StubConfig.REQUEST_OBJECT( #pylint: disable=no-member
-                start_block_num=start,
-                stop_block_num=end,
-                **StubConfig.REQUEST_PARAMETERS
-            )):
+            async for response in stub.Blocks(StubConfig.REQUEST_OBJECT(**request_parameters)): #pylint: disable=no-member
                 logging.debug('[%s] Getting block number #%i (%i blocks remaining)...',
                     get_current_task_name(),
                     current_block_number,
@@ -128,11 +131,7 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel, 
                 for blob in block_processor(block):
                     data.append(blob)
         else:
-            async for response in stub.Blocks(StubConfig.REQUEST_OBJECT( #pylint: disable=no-member
-                start_block_num=start,
-                stop_block_num=end,
-                **StubConfig.REQUEST_PARAMETERS
-            )):
+            async for response in stub.Blocks(StubConfig.REQUEST_OBJECT(**request_parameters)): #pylint: disable=no-member
                 logging.debug('[%s] Getting block number #%i (%i blocks remaining)...',
                     get_current_task_name(),
                     current_block_number,

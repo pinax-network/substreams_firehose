@@ -22,7 +22,7 @@ from block_extractors.common import stream_blocks
 from config import Config
 from exceptions import BlockStreamException
 
-async def asyncio_main(period_start: int, period_end: int, initial_tasks: int = 25) -> list[Message]: #pylint: disable=too-many-arguments
+async def asyncio_main(period_start: int, period_end: int, initial_tasks: int = 25, **kwargs) -> list[Message]: #pylint: disable=too-many-arguments
     """
     Extract blocks from a Firehose endpoint as raw blocks for later processing.
 
@@ -66,6 +66,7 @@ async def asyncio_main(period_start: int, period_end: int, initial_tasks: int = 
                         # Gives the remaining blocks to the last task in case the work can't be splitted equally
                         period_start + (i+1)*split - 1 if i < initial_tasks-1 else period_end,
                         secure_channel,
+                        **kwargs
                     )
                 )
             )
@@ -79,7 +80,7 @@ async def asyncio_main(period_start: int, period_end: int, initial_tasks: int = 
                 except BlockStreamException as error:
                     failed_tasks.add(
                         asyncio.create_task(
-                            stream_blocks(error.failed, error.end, secure_channel)
+                            stream_blocks(error.failed, error.end, secure_channel, **kwargs)
                         )
                     )
 
