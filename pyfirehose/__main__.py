@@ -20,7 +20,8 @@ from hjson import HjsonDecodeError
 #pylint: disable=wrong-import-position
 from args import check_period, parse_arguments
 from block_extractors.common import process_blocks
-from config import Config, load_config
+from config import Config
+from config import load_config
 from proto.generated.dfuse.eosio.codec.v1 import codec_pb2
 from utils import get_auth_token
 #pylint: enable=wrong-import-position
@@ -38,7 +39,7 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
 
     try:
         load_config(args.config)
-    except (HjsonDecodeError, KeyError):
+    except (HjsonDecodeError, ImportError, KeyError):
         return 1
 
     try:
@@ -76,7 +77,7 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
         logging.critical('Could not load block extractor function: %s', exception)
         raise
 
-    module, function = ('block_processors.default', f'{Config.CHAIN.lower()}_block_processor')
+    module, function = ('block_processors.dfuse.default', f'{Config.CHAIN.lower()}_block_processor')
     if args.custom_processor:
         module, function = args.custom_processor.rsplit('.', 1)
         module = f'block_processors.{module}'
@@ -113,24 +114,24 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
     try:
         block_processor = getattr(importlib.import_module(module), function)
 
-        if not args.disable_signature_check: # TODO: Rework depending on protobuf (or remove entirely ?)
-            signature = inspect.signature(block_processor)
-            parameters_annotations = [p_type.annotation for (_, p_type) in signature.parameters.items()]
+        # if not args.disable_signature_check: # TODO: Rework depending on protobuf (or remove entirely ?)
+        # 	signature = inspect.signature(block_processor)
+        # 	parameters_annotations = [p_type.annotation for (_, p_type) in signature.parameters.items()]
 
-            if (signature.return_annotation == signature.empty
-                # If there are parameters and none are annotated
-                or (not parameters_annotations and signature.parameters)
-                # If some parameters are not annotated
-                or any((t == inspect.Parameter.empty for t in parameters_annotations))
-            ):
-                logging.warning('Could not check block processing function signature '
-                                '(make sure parameters and return value have type hinting annotations)')
-            elif (not codec_pb2.Block in parameters_annotations
-                  or signature.return_annotation != dict
-                  or not inspect.isgeneratorfunction(block_processor)
-            ):
-                raise TypeError(f'Incompatible block processing function signature:'
-                                f' {signature} should be <generator>(block: codec_pb2.Block) -> Dict')
+        # 	if (signature.return_annotation == signature.empty
+        # 		# If there are parameters and none are annotated
+        # 		or (not parameters_annotations and signature.parameters)
+        # 		# If some parameters are not annotated
+        # 		or any((t == inspect.Parameter.empty for t in parameters_annotations))
+        # 	):
+        # 		logging.warning('Could not check block processing function signature '
+        # 						'(make sure parameters and return value have type hinting annotations)')
+        # 	elif (not codec_pb2.Block in parameters_annotations
+        # 		  or signature.return_annotation != dict
+        # 		  or not inspect.isgeneratorfunction(block_processor)
+        # 	):
+        # 		raise TypeError(f'Incompatible block processing function signature:'
+        # 						f' {signature} should be <generator>(block: codec_pb2.Block) -> Dict')
     except (AttributeError, TypeError) as exception:
         logging.critical('Could not load block processing function: %s', exception)
         raise
@@ -142,8 +143,6 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
             block_extractor(
                 period_start=args.start,
                 period_end=args.end,
-                custom_include_expr=args.custom_include_expr,
-                custom_exclude_expr=args.custom_exclude_expr,
             )
         ),
         block_processor=block_processor

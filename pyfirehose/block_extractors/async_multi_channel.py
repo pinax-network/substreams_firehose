@@ -30,8 +30,8 @@ from utils import get_current_task_name
 TRIGGER_CHANNEL_CREATION_LOCK = asyncio.Lock()
 
 async def asyncio_main(period_start: int, period_end: int, #pylint: disable=too-many-arguments, too-many-locals, too-many-statements
-              initial_tasks: int = 25, workload: int = 100, auto_adjust_frequency: bool = False, spawn_frequency: float = 0.1,
-              custom_include_expr: str = '', custom_exclude_expr: str = '') -> list[Message]:
+              initial_tasks: int = 25, workload: int = 100, auto_adjust_frequency: bool = False,
+              spawn_frequency: float = 0.1) -> list[Message]:
     """
     Extract blocks from a Firehose endpoint as raw blocks for later processing.
 
@@ -94,8 +94,6 @@ async def asyncio_main(period_start: int, period_end: int, #pylint: disable=too-
                         stream_blocks(
                             *block_pool[token].pop(),
                             secure_channel,
-                            custom_include_expr,
-                            custom_exclude_expr
                         )
                     )
                     new_task.add_done_callback(_task_done_callback)

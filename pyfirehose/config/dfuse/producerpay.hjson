@@ -1,0 +1,12 @@
+{
+	"python_import_dir": "dfuse.bstream.v1",
+	"name": "BlockStreamV2",
+	"request": "BlocksRequestV2",
+	"parameters": {
+		"fork_steps": [
+			"STEP_IRREVERSIBLE"
+		],
+		"include_filter_expr": "receiver in ['eosio.bpay', 'eosio.vpay'] && action == 'transfer'",
+		"exclude_filter_expr": "data['to'] in ['eosio.bpay', 'eosio.vpay']"
+	}
+}

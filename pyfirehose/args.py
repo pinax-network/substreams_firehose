@@ -19,6 +19,10 @@ def check_period(arg_period: str) -> int:
 
     Returns:
         A integer representing the corresponding block number.
+
+    Raises:
+        ArgumentTypeError:
+            If the period cannot be parsed.
     """
     try:
         arg_period = int(arg_period)
@@ -48,16 +52,14 @@ def parse_arguments() -> argparse.Namespace:
                             help='period end as a date (iso-like format) or a block number')
     arg_parser.add_argument('-c', '--config', type=str, default='pyfirehose/config.hjson',
                             help='config file path in HJSON or JSON format')
+    arg_parser.add_argument('-s', '--stub', type=str,
+                            help='stub reference file path in HJSON or JSON format') # TODO: Add direct JSON parsing
     arg_parser.add_argument('-o', '--out-file', type=str, default='jsonl/{chain}_{start}_to_{end}.jsonl',
                             help='output file path')
     arg_parser.add_argument('-l', '--log', nargs='?', type=str, const=None, default='logs/{datetime}.log',
                             help='log debug information to log file (can specify the full path)')
     arg_parser.add_argument('-q', '--quiet', action='store_true',
                             help='disable console logging')
-    arg_parser.add_argument('-x', '--custom-exclude-expr', type=str,
-                            help='custom filter for the Firehose stream to exclude transactions')
-    arg_parser.add_argument('-i', '--custom-include-expr', type=str,
-                            help='custom filter for the Firehose stream to tag included transactions')
     arg_parser.add_argument('-e', '--extractor', choices=['optimized', 'single', 'multi'], default='optimized',
                             help='type of extractor used for streaming blocks from the Firehose endpoint')
     arg_parser.add_argument('-p', '--custom-processor', type=str,
