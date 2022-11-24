@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from sf.solana.serumhist.v1 import serumhist_pb2 as sf_dot_solana_dot_serumhist_dot_v1_dot_serumhist__pb2
+from proto.generated.sf.solana.serumhist.v1 import serumhist_pb2 as sf_dot_solana_dot_serumhist_dot_v1_dot_serumhist__pb2
 
 
 class SerumOrderTrackerStub(object):

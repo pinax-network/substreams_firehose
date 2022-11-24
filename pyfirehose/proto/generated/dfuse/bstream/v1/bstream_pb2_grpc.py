@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from dfuse.bstream.v1 import bstream_pb2 as dfuse_dot_bstream_dot_v1_dot_bstream__pb2
+from proto.generated.dfuse.bstream.v1 import bstream_pb2 as dfuse_dot_bstream_dot_v1_dot_bstream__pb2
 
 
 class BlockStreamStub(object):
