@@ -1,4 +1,7 @@
 {
+	// Id for default grpc endpoint taken from the "grpc" array-object
+	"default": "eos_firehose_v1"
+
 	// Maximum block size (in KB) allowed for streaming block in the gRPC channel
 	"max_block_size": 8388608, // 8MB
 
@@ -21,73 +24,88 @@
 	"grpc": [
 		// See https://docs.dfuse.eosnation.io/eosio/public-apis/reference/network-endpoints/
 		{
-			"auth": "eosnation",
+			"id": "eos_firehose_v1",
+			"auth": "eosnation", // One of the entry in the "auth" object
 			"chain": "EOS",
-			"url": "eos.firehose.eosnation.io:9000"
+			"stub": "pyfirehose/config/dfuse/producerpay.hjson" // Path to default stub reference
+			"url": "eos.firehose.eosnation.io:9000",
 		},
 		{
+			"id": "wax_firehose_v1",
 			"auth": "eosnation",
 			"chain": "WAX",
 			"url": "wax.firehose.eosnation.io:9000"
 		},
 		{
+			"id": "kylin_firehose_v1",
 			"auth": "eosnation",
 			"chain": "Kylin",
 			"url": "kylin.firehose.eosnation.io:9000"
 		},
 		{
+			"id": "jungle4_firehose_v1",
 			"auth": "eosnation",
 			"chain": "Jungle4",
 			"url": "jungle4.firehose.eosnation.io:9000"
 		},
 		// Substream-enabled Firehose
 		{
+			"id": "eos_firehose_v2",
 			"auth": "eosnation",
 			"chain": "EOS",
 			"url": "eos.firehose.eosnation.io:9001"
 		},
 		// See https://substreams.streamingfast.io/reference-and-specs/chains-and-endpoints
 		{
+			"id": "eth_mainnet_substream",
 			"auth": "streamingfast",
 			"chain": "Ethereum Mainnet",
 			"url": "mainnet.eth.streamingfast.io:443"
 		},
 		{
+			"id": "eth_gorli_substream",
 			"auth": "streamingfast",
 			"chain": "Görli",
 			"url": "goerli.eth.streamingfast.io:443"
 		},
 		{
+			"id": "polygon_mainnet_substream",
 			"auth": "streamingfast",
 			"chain": "Polygon Mainnet",
 			"url": "polygon.streamingfast.io:443"
 		},
 		{
+			"id": "bnb_substream",
 			"auth": "streamingfast",
 			"chain": "BNB",
 			"url": "bnb.streamingfast.io:443"
 		},
 		{
+			"id": "near_mainnet_substream",
 			"auth": "streamingfast",
 			"chain": "Near Mainnet",
 			"url": "mainnet.near.streamingfast.io:443"
 		},
 		{
+			"id": "near_testnet_substream",
 			"auth": "streamingfast",
 			"chain": "Near Testnet",
 			"url": "testnet.near.streamingfast.io:443"
 		},
 		{
+			"id": "solana_mainnet_substream",
 			"auth": "streamingfast",
 			"chain": "Solana Mainnet-beta",
 			"url": "mainnet.sol.streamingfast.io:443"
 		},
 		{
+			"id": "arweave_mainnet_substream",
 			"auth": "streamingfast",
 			"chain": "Arweave Mainnet",
 			"url": "mainnet.arweave.streamingfast.io:443"
 		},
 		{
+			"id": "aptos_testnet_substream",
 			"auth": "streamingfast",
 			"chain": "Aptos Testnet",
 			"url": "testnet.aptos.streamingfast.io:443"
