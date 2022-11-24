@@ -58,9 +58,7 @@ def process_blocks(raw_blocks: Sequence[Message], block_processor: Callable[[Mes
     """
     data = []
     for raw_block in raw_blocks:
-        block = codec_pb2.Block()
-        raw_block.Unpack(block)
-        for blob in block_processor(block):
+        for blob in block_processor(raw_block):
             data.append(blob)
 
     logging.info('Finished block processing, parsed %i rows of data [SUCCESS]', len(data))
@@ -125,10 +123,8 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel, 
                 )
 
                 current_block_number += 1
-                block = codec_pb2.Block()
-                response.block.Unpack(block)
 
-                for blob in block_processor(block):
+                for blob in block_processor(response.block):
                     data.append(blob)
         else:
             async for response in stub.Blocks(StubConfig.REQUEST_OBJECT(**request_parameters)): #pylint: disable=no-member

@@ -60,6 +60,8 @@ def parse_arguments() -> argparse.Namespace:
                             help='log debug information to log file (can specify the full path)')
     arg_parser.add_argument('-q', '--quiet', action='store_true',
                             help='disable console logging')
+    arg_parser.add_argument('-g', '--grpc-entry', type=str,
+                            help='id of a grpc entry in the "grpc" array found in the main config file')
     arg_parser.add_argument('-e', '--extractor', choices=['optimized', 'single', 'multi'], default='optimized',
                             help='type of extractor used for streaming blocks from the Firehose endpoint')
     arg_parser.add_argument('-p', '--custom-processor', type=str,

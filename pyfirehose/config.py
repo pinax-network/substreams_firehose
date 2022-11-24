@@ -9,7 +9,7 @@ import importlib
 import logging
 import os
 from dataclasses import dataclass
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Optional
 
 # https://hjson.github.io/hjson-py/ -- allow comments in JSON files for configuration purposes
 import hjson
@@ -40,7 +40,7 @@ def import_all_from_module(module_name: str):
 
     return imported
 
-def load_config(file: str):
+def load_config(file: str, grpc_entry_id: Optional[str] = None):
     with open(file, 'r', encoding='utf8') as config_file:
         try:
             options = hjson.load(config_file)
@@ -49,9 +49,13 @@ def load_config(file: str):
             raise
 
     try:
-        default_grpc = options['grpc'][options['default']]
+        if grpc_entry_id:
+            options['default'] = grpc_entry_id
+
+        default_grpc_id = [i for i, entry in enumerate(options['grpc']) if entry['id'] == options['default']][0]
+        default_grpc = options['grpc'][default_grpc_id]
         default_auth = options['auth'][default_grpc['auth']]
-        default_stub = default_grpc['stub']
+        default_stub = default_grpc['stub'] if 'stub' in default_grpc else ''
 
         Config.API_KEY 			= default_auth['api_key']
         Config.AUTH_ENDPOINT 	= default_auth['endpoint']
@@ -68,6 +72,10 @@ def load_config(file: str):
     load_stub_config(default_stub)
 
 def load_stub_config(stub: str | dict):
+    if not stub:
+        logging.warning('Could not load empty stub !')
+        return
+
     stub_config = stub
     # Load stub config from external file
     if isinstance(stub, str):

@@ -34,7 +34,7 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
     # === Arguments checking ===
 
     try:
-        load_config(args.config)
+        load_config(args.config, args.grpc_entry)
     except (HjsonDecodeError, ImportError, KeyError):
         return 1
 

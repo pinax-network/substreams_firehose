@@ -8,9 +8,10 @@ import json
 import logging
 from datetime import datetime
 
+from google.protobuf.message import Message
 from proto.generated.dfuse.eosio.codec.v1 import codec_pb2
 
-def eos_block_processor(block: codec_pb2.Block) -> dict:
+def eos_block_processor(raw_block: Message) -> dict:
     """
     Yield a processed transaction from a block returning relevant properties.
 
@@ -56,6 +57,8 @@ def eos_block_processor(block: codec_pb2.Block) -> dict:
             "action": "transfer"
         }
     """
+    block = codec_pb2.Block()
+    raw_block.Unpack(block)
     for transaction_trace in block.filtered_transaction_traces:
         for action_trace in transaction_trace.action_traces:
             if not action_trace.filtering_matched:
@@ -91,20 +94,20 @@ def eos_block_processor(block: codec_pb2.Block) -> dict:
             logging.debug('Data: %s', data)
             yield data
 
-def wax_block_processor(block: codec_pb2.Block) -> dict:
+def wax_block_processor(raw_block: Message) -> dict:
     """
     Same as eos_block_processor.
     """
-    yield from eos_block_processor(block)
+    yield from eos_block_processor(raw_block)
 
-def kylin_block_processor(block: codec_pb2.Block) -> dict:
+def kylin_block_processor(raw_block: Message) -> dict:
     """
     Same as eos_block_processor.
     """
-    yield from eos_block_processor(block)
+    yield from eos_block_processor(raw_block)
 
-def jungle4_block_processor(block: codec_pb2.Block) -> dict:
+def jungle4_block_processor(raw_block: Message) -> dict:
     """
     Same as eos_block_processor.
     """
-    yield from eos_block_processor(block)
+    yield from eos_block_processor(raw_block)

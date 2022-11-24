@@ -17,8 +17,8 @@
     + https://github.com/protocolbuffers/protobuf/issues/881
   - Add docs for need to specify full path in module import in .proto files
 * Finish chain selection and stub creation
+  - Add gRPC endpoint selection -> currently only possible with "default" from config
   - Automatic endpoint detection (no .env variable loading)
-  - Flexible block definition (replace codec_pb2)
   - Add example for producerpay with Firehose v2
 * Clean-up and fix multi-channel extractor
 * Add more examples to README.md
