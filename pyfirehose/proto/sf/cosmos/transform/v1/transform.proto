@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package sf.cosmos.transform.v1;
+
+option go_package = "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/transform/v1;pbtransform";
+
+message CombinedFilter {
+  repeated EventTypeFilter event_type_filters = 1;
+  repeated EventOriginFilter event_origin_filters = 2;
+  repeated MessageTypeFilter message_type_filters = 3;
+}
+
+message EventTypeFilter {
+  repeated string event_types = 1;
+}
+
+message EventOriginFilter {
+  repeated string event_origins = 1;
+}
+
+message MessageTypeFilter {
+  repeated string message_types = 1;
+}
