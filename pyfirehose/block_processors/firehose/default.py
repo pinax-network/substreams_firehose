@@ -14,3 +14,4 @@ def eos_block_processor(raw_block: Message) -> dict:
     raw_block.Unpack(block)
 
     logging.debug(block)
+    yield {}
