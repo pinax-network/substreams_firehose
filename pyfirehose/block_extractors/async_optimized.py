@@ -46,8 +46,12 @@ async def asyncio_main(period_start: int, period_end: int, initial_tasks: int = 
         A list of raw blocks (google.protobuf.any_pb2.Any objects) that can later be processed.
     """
     block_diff = period_end - period_start
+    split = block_diff//initial_tasks
+
     # Prevent having more tasks than the amount of blocks to process
-    split = block_diff//initial_tasks if block_diff > initial_tasks else block_diff
+    if block_diff <= initial_tasks:
+        split = block_diff
+        initial_tasks = 1
 
     logging.info('Streaming %i blocks on %s chain (running %i workers)...',
         period_end - period_start,
