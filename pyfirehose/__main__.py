@@ -150,7 +150,10 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
     os.makedirs(os.path.dirname(out_file), exist_ok=True)
     with open(out_file, 'w', encoding='utf8') as out:
         for entry in data:
-            json.dump(entry, out) # TODO: Add exception handling
+            if args.no_json_output:
+                out.write(entry)
+            else:
+                json.dump(entry, out) # TODO: Add exception handling
             out.write('\n')
 
     logging.info('Wrote %i rows of data to %s [SUCCESS]', len(data), out_file)

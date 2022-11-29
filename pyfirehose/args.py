@@ -66,6 +66,8 @@ def parse_arguments() -> argparse.Namespace:
                             help='type of extractor used for streaming blocks from the Firehose endpoint')
     arg_parser.add_argument('-p', '--custom-processor', type=str,
                             help='relative import path to a custom block processing function located in the "block_processors" module')
+    arg_parser.add_argument('--no-json-output', action='store_true',
+                            help='don\'t try to convert block processor output to JSON')
     arg_parser.add_argument('--request-parameters', nargs=argparse.REMAINDER,
                             help='optional keyword arguments (key=val) sent with the gRPC request (must match .proto definition, \
                             will override any parameters set in the config)')

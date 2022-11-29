@@ -27,32 +27,33 @@ foo@bar:~/eos-blockchain-data$ python3 -m venv .venv # Create virtual environnem
 foo@bar:~/eos-blockchain-data$ source .venv/bin/activate # Activate virtual environnement
 (.venv) foo@bar:~/eos-blockchain-data$ pip install -r requirements.txt # Install dependencies
 (.venv) foo@bar:~/eos-blockchain-data$ python pyfirehose -h
-usage: pyfirehose [-h] [-c CONFIG] [-s STUB] [-o OUT_FILE] [-l [LOG]] [-q] [-g GRPC_ENTRY] [-e {optimized,single,multi}] [-p CUSTOM_PROCESSOR]
-                  [--request-parameters ...]
-                  start end
-
-Extract any data from the blockchain. Powered by Firehose (https://eos.firehose.eosnation.io/) and Substreams (https://substreams.streamingfast.io).
-
-positional arguments:
-  start                 period start as a date (iso-like format) or a block number
-  end                   period end as a date (iso-like format) or a block number
-
-options:
-  -h, --help            show this help message and exit
+usage: pyfirehose [-h] [-c CONFIG] [-s STUB] [-o OUT_FILE] [-l [LOG]] [-q] [-g GRPC_ENTRY] [-e {optimized,single,multi}] [-p CUSTOM_PROCESSOR]               
+                  [--no-json-output] [--request-parameters ...]                                                                                              
+                  start end                                                                                                                                  
+                                                                                                                                                             
+Extract any data from the blockchain. Powered by Firehose (https://eos.firehose.eosnation.io/) and Substreams (https://substreams.streamingfast.io).         
+                                                                                                                                                             
+positional arguments:                                                                                                                                        
+  start                 period start as a date (iso-like format) or a block number                                                                           
+  end                   period end as a date (iso-like format) or a block number                                                                             
+                                                                                                                                                             
+options:                                                                                                                                                     
+  -h, --help            show this help message and exit                     
   -c CONFIG, --config CONFIG
-                        config file path in HJSON or JSON format (default: pyfirehose/config.hjson)
-  -s STUB, --stub STUB  stub config file path in HJSON or JSON format (default: None)
-  -o OUT_FILE, --out-file OUT_FILE
-                        output file path (default: jsonl/{chain}_{start}_to_{end}.jsonl)
-  -l [LOG], --log [LOG]
-                        log debug information to log file (can specify the full path) (default: logs/{datetime}.log)
-  -q, --quiet           disable console logging (default: False)
-  -g GRPC_ENTRY, --grpc-entry GRPC_ENTRY
-                        id of a grpc entry in the "grpc" array found in the main config file (default: None)
+                        config file path in HJSON or JSON format (default: pyfirehose/config.hjson)                                                          
+  -s STUB, --stub STUB  stub config file path in HJSON or JSON format (default: None)                                                                        
+  -o OUT_FILE, --out-file OUT_FILE                                                                                                                           
+                        output file path (default: jsonl/{chain}_{start}_to_{end}.jsonl)                                                                     
+  -l [LOG], --log [LOG]                                                                                                                                      
+                        log debug information to log file (can specify the full path) (default: logs/{datetime}.log)                                         
+  -q, --quiet           disable console logging (default: False)                                                                                             
+  -g GRPC_ENTRY, --grpc-entry GRPC_ENTRY                                                                                                                     
+                        id of a grpc entry in the "grpc" array found in the main config file (default: None)                     
   -e {optimized,single,multi}, --extractor {optimized,single,multi}
                         type of extractor used for streaming blocks from the Firehose endpoint (default: optimized)
   -p CUSTOM_PROCESSOR, --custom-processor CUSTOM_PROCESSOR
                         relative import path to a custom block processing function located in the "block_processors" module (default: None)
+  --no-json-output      don't try to convert block processor output to JSON (default: False)
   --request-parameters ...
                         optional keyword arguments (key=val) sent with the gRPC request (must match .proto definition, will override any parameters set in
                         the config) (default: None)
