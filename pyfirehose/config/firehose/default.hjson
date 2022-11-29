@@ -1,0 +1,7 @@
+{
+	"python_import_dir": "sf.firehose.v2",
+	"name": "Stream",
+	"request": "Request",
+	"parameters": {
+	}
+}

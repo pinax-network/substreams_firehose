@@ -1,0 +1,7 @@
+{
+	"python_import_dir": "dfuse.bstream.v1",
+	"name": "BlockStreamV2",
+	"request": "BlocksRequestV2",
+	"parameters": {
+	}
+}
