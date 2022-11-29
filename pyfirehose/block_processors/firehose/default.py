@@ -13,5 +13,8 @@ def eos_block_processor(raw_block: Message) -> dict:
     block = type_pb2.Block()
     raw_block.Unpack(block)
 
-    logging.debug(block)
-    yield {}
+    data = {}
+    for (field, value) in block.ListFields():
+        data[field.name] = str(value) # TODO: Better parsing for generic extractor
+
+    yield data
