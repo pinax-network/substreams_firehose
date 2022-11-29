@@ -12,8 +12,8 @@ import json
 import logging
 import os
 from argparse import ArgumentTypeError
-from dataclasses import fields
 from datetime import datetime
+from pprint import pformat
 
 from hjson import HjsonDecodeError
 
@@ -25,7 +25,7 @@ from utils import get_auth_token
 
 CONSOLE_HANDLER = logging.StreamHandler()
 
-def main() -> int: #pylint: disable=too-many-statements, too-many-branches
+def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-many-locals, too-many-return-statements
     """
     Main function for parsing arguments, setting up logging and running asyncio `run` function.
     """
@@ -122,6 +122,8 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
     logging.addLevelName(logging.CRITICAL, '[CRITICAL]')
 
     logging.debug('Script arguments: %s', args)
+    logging.debug('Main config: %s', pformat(vars(Config)))
+    logging.debug('Stub config: %s', pformat(vars(StubConfig)))
 
     # === JWT token validation ===
 

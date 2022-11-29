@@ -212,7 +212,26 @@ For full documentation about the syntax and variables available in the filter ex
 ### Log file sample (logs/eosio_pay.log)
 
 ```
-2022-11-29 14:26:53:T+194 [DEBUG] Script arguments: Namespace(start=272368521, end=272369521, config='pyfirehose/config.hjson', stub=None, out_file='jsonl/out.jsonl', log='logs/eosio_pay.log', quiet=True, grpc_entry=None, extractor='optimized', custom_processor=None, request_parameters={})
+2022-11-29 14:55:59:T+189 [DEBUG] Script arguments: Namespace(start=272368521, end=272369521, config='pyfirehose/config.hjson', stub=None, out_file='jsonl/out.jsonl', log='logs/eosio_pay.log', quiet=True, grpc_entry=None, extractor='optimized', custom_processor=None, request_parameters={})
+2022-11-29 14:55:59:T+190 [DEBUG] Main config: mappingproxy({'API_KEY': '<REDACTED>',
+              'AUTH_ENDPOINT': 'https://auth.eosnation.io/v1/auth/issue',
+              'CHAIN': 'EOS',
+              'GRAPHQL_ENDPOINT': 'https://eos.dfuse.eosnation.io/graphql',
+              'GRPC_ENDPOINT': 'eos.firehose.eosnation.io:9000',
+              'MAX_BLOCK_SIZE': 8388608,
+              [...]
+2022-11-29 14:55:59:T+191 [DEBUG] Stub config: mappingproxy({'REQUEST_OBJECT': <class 'dfuse.bstream.v1.bstream_pb2.BlocksRequestV2'>,
+              'REQUEST_PARAMETERS': {'exclude_filter_expr': "data['to'] in "
+                                                            "['eosio.bpay', "
+                                                            "'eosio.vpay']",
+                                     'fork_steps': ['STEP_IRREVERSIBLE'],
+                                     'include_filter_expr': 'receiver in '
+                                                            "['eosio.bpay', "
+                                                            "'eosio.vpay'] && "
+                                                            'action == '
+                                                            "'transfer'"},
+              'STUB_OBJECT': <class 'proto.generated.dfuse.bstream.v1.bstream_pb2_grpc.BlockStreamV2Stub'>,
+              [...]
 2022-11-29 14:26:53:T+194 [DEBUG] Initializing backend: None jwt_token
 2022-11-29 14:26:53:T+194 [DEBUG] Initializing SQLitePickleDict with serializer: <requests_cache.serializers.pipeline.SerializerPipeline object at 0x76a949847250>
 2022-11-29 14:26:53:T+195 [DEBUG] Opening connection to /home/user/Documents/eos-blockchain-data/jwt_token.sqlite:responses
@@ -220,7 +239,7 @@ For full documentation about the syntax and variables available in the filter ex
 2022-11-29 14:26:53:T+195 [DEBUG] Opening connection to /home/user/Documents/eos-blockchain-data/jwt_token.sqlite:redirects
 2022-11-29 14:26:53:T+196 [*] Getting JWT token...
 2022-11-29 14:26:53:T+199 [DEBUG] Cache directives from request headers: {}
-2022-11-29 14:26:53:T+202 [DEBUG] JWT response: {'token': 'REDACTED', 'expires_at': 1669823698}
+2022-11-29 14:26:53:T+202 [DEBUG] JWT response: {'token': '<REDACTED>', 'expires_at': 1669823698}
 2022-11-29 14:26:53:T+202 [*] Got JWT token (cached) [SUCCESS]
 2022-11-29 14:26:53:T+202 [DEBUG] Using selector: EpollSelector
 2022-11-29 14:26:53:T+203 [*] Streaming 1000 blocks on EOS chain (running 25 workers)...
@@ -231,7 +250,7 @@ For full documentation about the syntax and variables available in the filter ex
 2022-11-29 14:26:53:T+203 [DEBUG] Opening connection to /home/user/Documents/eos-blockchain-data/jwt_token.sqlite:redirects
 2022-11-29 14:26:53:T+204 [*] Getting JWT token...
 2022-11-29 14:26:53:T+204 [DEBUG] Cache directives from request headers: {}
-2022-11-29 14:26:53:T+205 [DEBUG] JWT response: {'token': 'REDACTED', 'expires_at': 1669823698}
+2022-11-29 14:26:53:T+205 [DEBUG] JWT response: {'token': '<REDACTED>', 'expires_at': 1669823698}
 2022-11-29 14:26:53:T+205 [*] Got JWT token (cached) [SUCCESS]
 2022-11-29 14:26:53:T+206 [DEBUG] Using AsyncIOEngine.POLLER as I/O engine
 2022-11-29 14:26:53:T+209 [DEBUG] [Task-02] Starting streaming blocks from #272368521 to #272368560...
