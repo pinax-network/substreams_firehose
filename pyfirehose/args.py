@@ -43,7 +43,7 @@ def parse_arguments() -> argparse.Namespace:
     """
     arg_parser = argparse.ArgumentParser(
         description=('Extract any data from the blockchain. '
-                     'Powered by Firehose (https://eos.firehose.eosnation.io/).'),
+                     'Powered by Firehose (https://eos.firehose.eosnation.io/) and Substreams (https://substreams.streamingfast.io).'),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     arg_parser.add_argument('start', type=str,
@@ -53,7 +53,7 @@ def parse_arguments() -> argparse.Namespace:
     arg_parser.add_argument('-c', '--config', type=str, default='pyfirehose/config.hjson',
                             help='config file path in HJSON or JSON format')
     arg_parser.add_argument('-s', '--stub', type=str,
-                            help='stub reference file path in HJSON or JSON format')
+                            help='stub config file path in HJSON or JSON format')
     arg_parser.add_argument('-o', '--out-file', type=str, default='jsonl/{chain}_{start}_to_{end}.jsonl',
                             help='output file path')
     arg_parser.add_argument('-l', '--log', nargs='?', type=str, const=None, default='logs/{datetime}.log',
