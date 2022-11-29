@@ -12,13 +12,14 @@ import json
 import logging
 import os
 from argparse import ArgumentTypeError
+from dataclasses import fields
 from datetime import datetime
 
 from hjson import HjsonDecodeError
 
 from args import check_period, parse_arguments
 from block_extractors.common import process_blocks
-from config import Config
+from config import Config, StubConfig
 from config import load_config, load_stub_config
 from utils import get_auth_token
 
@@ -34,7 +35,7 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
     # === Arguments checking ===
 
     try:
-        load_config(args.config, args.grpc_entry)
+        stub_loaded = load_config(args.config, args.grpc_entry)
     except (HjsonDecodeError, ImportError, KeyError):
         return 1
 
@@ -43,6 +44,9 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
             load_stub_config(args.stub) # TODO: Add dict/JSON parsing
         except (HjsonDecodeError, ImportError, KeyError):
             return 1
+    elif not stub_loaded:
+        logging.critical('Stub config should be supplied either in the main config file or through the CLI.')
+        return 1
 
     try:
         args.start = check_period(args.start)
@@ -51,7 +55,7 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches
         return 1
 
     if args.end < args.start:
-        logging.error('Period start must be less than or equal to period end')
+        logging.critical('Period start must be less than or equal to period end')
         return 1
 
     out_file = f'jsonl/{Config.CHAIN}_{args.start}_to_{args.end}.jsonl'

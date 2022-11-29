@@ -40,7 +40,7 @@ def import_all_from_module(module_name: str):
 
     return imported
 
-def load_config(file: str, grpc_entry_id: Optional[str] = None):
+def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
     with open(file, 'r', encoding='utf8') as config_file:
         try:
             options = hjson.load(config_file)
@@ -69,13 +69,14 @@ def load_config(file: str, grpc_entry_id: Optional[str] = None):
 
     logging.debug('Loaded main config: %s [SUCCESS]', vars(Config))
 
-    load_stub_config(default_stub)
+    if default_stub:
+        load_stub_config(default_stub)
+    else:
+        return False
+
+    return True
 
 def load_stub_config(stub: str | dict):
-    if not stub:
-        logging.warning('Could not load empty stub !')
-        return
-
     stub_config = stub
     # Load stub config from external file
     if isinstance(stub, str):
