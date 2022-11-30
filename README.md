@@ -153,30 +153,41 @@ Below is a list of the gRPC endpoints which have a default ready-to-use [stub co
 | streamingfast | Arweave Mainnet     | sf.arweave.type.v1  | mainnet.arweave.streamingfast.io:443 |
 | streamingfast | Aptos Testnet       | aptos.extractor.v1  | testnet.aptos.streamingfast.io:443   |
 
-## Writing custom block processors (Firehose v1)
+## Writing custom block processors
 
-For even more control over the data extracted, the extraction process uses a modular approach for manipulating `Block` objects coming from the Firehose gRPC stream. A block processing function is used for extracting the data into `Dict` objects that are later stored in a `.jsonl` file at the end of the process. Customizing which data is extracted is the objective of writing a custom block processor. The default behavior is documented in the [`eos_block_processor`](pyfirehose/block_processors/default.py#L15) function.
+For even more control over the data extracted, the extraction process uses a modular approach for manipulating `Block` response objects coming from the gRPC stream. A block processing function is used for extracting the data that is later stored in the output file at the end of the block extraction process. Customizing which data is extracted is the objective of writing a custom block processor. Default block processors are available as `default.py` files in the [`block_processors/`](pyfirehose/block_processors) subfolders.
 
 In order to write custom block processing functions, some conditions must be respected:
-- The function signature should strictly follow the following model: `func(codec_pb2.Block) -> Dict` (you can disable the signature check with the `--disable-signature-check` flag, however this is not recommended and might break the script if your function isn't parsing the block data as expected).
-- The function should act as a **generator** (using the `yield` keyword) to return the dictionary data.
 - The function should be placed inside a seperate `.py` file in the [`block_processors`](pyfirehose/block_processors/) module.
+- The function should act as a **generator** (using the `yield` keyword) to return the data.
+- The **first parameter** of the function should take the raw block extracted from the gRPC stream.
 
-A typical template for parsing the block data would look like the following:
+Since the function is getting the raw block, you should unpack it according to the `.proto` file definition the gRPC stream is using. For example, if you use Firehose v2 gRPC on Antelope chain, the block response is defined in the [`type.proto`](pyfirehose/proto/sf/antelope/type/v1/type.proto) file and you would unpack the raw data like the following:
 ```python
-for transaction_trace in block.filtered_transaction_traces: # Gets every filtered TransactionTrace from a Block
-  for action_trace in transaction_trace.action_traces: # Gets every ActionTrace within a TransactionTrace
-    if not action_trace.filtering_matched: # Only keep 'transfer' actions that matched the filters
-      continue
+from proto.generated.sf.antelope.type.v1 import type_pb2
 
-    data = {}
-    
-    # Process the data...
+block = type_pb2.Block()
+raw_block.Unpack(block)
+``` 
 
-    yield data # Make the function act as a generator
+If using Firehose v1 filters, a typical template for parsing the block data would look like the following:
+```python
+  block = codec_pb2.Block()
+  raw_block.Unpack(block)
+
+  for transaction_trace in block.filtered_transaction_traces: # Gets every filtered TransactionTrace from a Block
+    for action_trace in transaction_trace.action_traces: # Gets every ActionTrace within a TransactionTrace
+      if not action_trace.filtering_matched: # Only keep 'transfer' actions that matched the filters
+        continue
+
+      data = {}
+      
+      # Process the data...
+
+      yield data # Make the function act as a generator
 ```
 
-For documentation about `Block`, `TransactionTrace`, `ActionTrace` or other objects and their properties, please refer to the [`codec.proto`](pyfirehose/proto/codec.proto) file.
+See the default block processors for more details.
 
 You can then use custom block processors through the command-line using the `--custom-processor` argument and providing the relative import path **from the `block_processors` submodule**. 
 
