@@ -15,6 +15,7 @@ def eos_block_processor(raw_block: Message) -> dict:
 
     data = {}
     for (field, value) in block.ListFields():
-        data[field.name] = str(value) # TODO: Better parsing for generic extractor
+        data[field.name] = str(value) # TODO: Better parsing for generic processor
 
+    logging.debug('Data: %s', data)
     yield data
