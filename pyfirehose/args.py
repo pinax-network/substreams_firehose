@@ -63,7 +63,7 @@ def parse_arguments() -> argparse.Namespace:
     arg_parser.add_argument('-g', '--grpc-entry', type=str,
                             help='id of a grpc entry in the "grpc" array found in the main config file')
     arg_parser.add_argument('-e', '--extractor', choices=['optimized', 'single', 'multi'], default='optimized',
-                            help='type of extractor used for streaming blocks from the Firehose endpoint')
+                            help='type of extractor used for streaming blocks from the gRPC endpoint')
     arg_parser.add_argument('-p', '--custom-processor', type=str,
                             help='relative import path to a custom block processing function located in the "block_processors" module')
     arg_parser.add_argument('--no-json-output', action='store_true',

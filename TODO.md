@@ -1,4 +1,6 @@
 # TODO
+* Check permission for writing to file before starting block streaming (not waste time at the end) or write to /tmp as backup
+* Implement a maximum retry limit for failed blocks
 * Better protobuf generation
   - Fix generated python module import paths
     + https://github.com/protocolbuffers/protobuf/issues/1491

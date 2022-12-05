@@ -50,7 +50,7 @@ options:
   -g GRPC_ENTRY, --grpc-entry GRPC_ENTRY                                                                                                                     
                         id of a grpc entry in the "grpc" array found in the main config file (default: None)                     
   -e {optimized,single,multi}, --extractor {optimized,single,multi}
-                        type of extractor used for streaming blocks from the Firehose endpoint (default: optimized)
+                        type of extractor used for streaming blocks from the gRPC endpoint (default: optimized)
   -p CUSTOM_PROCESSOR, --custom-processor CUSTOM_PROCESSOR
                         relative import path to a custom block processing function located in the "block_processors" module (default: None)
   --no-json-output      don't try to convert block processor output to JSON (default: False)
@@ -131,13 +131,13 @@ or use the provided script [`build_proto.sh`](pyfirehose/proto/build_proto.sh).
 
 Below is a list of the gRPC endpoints which have a default ready-to-use [stub config](pyfirehose/config/) and [processor](pyfirehose/block_processors) available for extracting blocks. All data available in the gRPC block response (as defined in their respective [`.proto` files](pyfirehose/proto/)) will be available upon completion.
 
-| Auth provider | Blockchain          | Block protobuf        | gRPC endpoint                        |
-|---------------|---------------------|-----------------------|--------------------------------------|
-| eosnation     | EOS                 | sf.firehose.v2.stream | eos.firehose.eosnation.io:9001       |
-| eosnation     | EOS                 | dfuse.eosio.codec.v1  | eos.firehose.eosnation.io:9000       |
-| eosnation     | WAX                 | dfuse.eosio.codec.v1  | wax.firehose.eosnation.io:9000       |
-| eosnation     | Kylin               | dfuse.eosio.codec.v1  | kylin.firehose.eosnation.io:9000     |
-| eosnation     | Jungle4             | dfuse.eosio.codec.v1  | jungle4.firehose.eosnation.io:9000   |
+| Auth provider | Blockchain          | Block protobuf       | gRPC endpoint                       |
+|---------------|---------------------|----------------------|-------------------------------------|
+| eosnation     | EOS                 | sf.antelope.type.v1  | eos.firehose.eosnation.io:9001      |
+| eosnation     | EOS                 | dfuse.eosio.codec.v1 | eos.firehose.eosnation.io:9000      |
+| eosnation     | WAX                 | dfuse.eosio.codec.v1 | wax.firehose.eosnation.io:9000      |
+| eosnation     | Kylin               | dfuse.eosio.codec.v1 | kylin.firehose.eosnation.io:9000    |
+| eosnation     | Jungle4             | dfuse.eosio.codec.v1 | jungle4.firehose.eosnation.io:9000  |
 
 #### Pending implementation
 
@@ -155,7 +155,7 @@ Below is a list of the gRPC endpoints which have a default ready-to-use [stub co
 
 ## Writing custom block processors
 
-For even more control over the data extracted, the extraction process uses a modular approach for manipulating `Block` response objects coming from the gRPC stream. A block processing function is used for extracting the data that is later stored in the output file at the end of the block extraction process. Customizing which data is extracted is the objective of writing a custom block processor. Default block processors are available as `default.py` files in the [`block_processors/`](pyfirehose/block_processors) subfolders.
+For even more control over the data extracted, the extraction process uses a modular approach for manipulating `Block` response objects coming from the gRPC stream. A block processing function is used for extracting the data that is later stored in the output file at the end of the block extraction process. Customizing which data is extracted is the objective of writing a custom block processor.
 
 In order to write custom block processing functions, some conditions must be respected:
 - The function should be placed inside a seperate `.py` file in the [`block_processors`](pyfirehose/block_processors/) module.
@@ -187,7 +187,7 @@ If using Firehose v1 filters, a typical template for parsing the block data woul
       yield data # Make the function act as a generator
 ```
 
-See the default block processors for more details.
+See the default block processors (available as `default.py` files in the [`block_processors/`](pyfirehose/block_processors) subfolders) for more details.
 
 You can then use custom block processors through the command-line using the `--custom-processor` argument and providing the relative import path **from the `block_processors` submodule**. 
 
