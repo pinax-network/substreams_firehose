@@ -208,6 +208,54 @@ For full documentation about the syntax and variables available in the filter ex
 
 ### Input
 
+#### Main config
+
+```json
+{
+  "default": "eos_firehose_v1",
+
+  "max_block_size": 8388608,
+
+  "auth": {
+    "eosnation": {
+      "api_key": "<REDACTED>",
+      "endpoint": "https://auth.eosnation.io/v1/auth/issue"
+    }
+  },
+
+  "graphql_endpoint": "https://eos.dfuse.eosnation.io/graphql",
+
+  "grpc": [
+    {
+      "id": "eos_firehose_v1",
+      "auth": "eosnation",
+      "chain": "EOS",
+      "stub": "pyfirehose/config/dfuse/producerpay.hjson",
+      "url": "eos.firehose.eosnation.io:9000",
+    },
+  ]
+}
+```
+
+#### `producerpay.hjson` stub config
+
+```json
+{
+  "python_import_dir": "dfuse.bstream.v1",
+  "name": "BlockStreamV2",
+  "request": "BlocksRequestV2",
+  "parameters": {
+    "fork_steps": [
+      "STEP_IRREVERSIBLE"
+    ],
+    "include_filter_expr": "receiver in ['eosio.bpay', 'eosio.vpay'] && action == 'transfer'",
+    "exclude_filter_expr": "data['to'] in ['eosio.bpay', 'eosio.vpay']"
+  }
+}
+```
+
+#### Command-line
+
 ```console
 (.venv) foo@bar:~/eos-blockchain-data$ python pyfirehose 272368521 272369521 --quiet --log logs/eosio_pay.log --out jsonl/out.jsonl
 ```
