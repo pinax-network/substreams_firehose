@@ -8,11 +8,13 @@ import inspect
 import importlib
 import logging
 import os
+from argparse import ArgumentTypeError
 from dataclasses import dataclass
 from typing import Any, ClassVar, Optional
 
 # https://hjson.github.io/hjson-py/ -- allow comments in JSON files for configuration purposes
 import hjson
+from grpc import Compression
 
 @dataclass
 class StubConfig:
@@ -25,6 +27,7 @@ class Config:
     API_KEY: ClassVar[str]
     AUTH_ENDPOINT: ClassVar[str]
     CHAIN: ClassVar[str]
+    COMPRESSION: ClassVar[Compression]
     GRAPHQL_ENDPOINT: ClassVar[str]
     GRPC_ENDPOINT: ClassVar[str]
     MAX_BLOCK_SIZE: ClassVar[int]
@@ -66,6 +69,16 @@ def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
     except KeyError as error:
         logging.exception('Error parsing main config file (%s): %s', file, error)
         raise
+
+    try:
+        compression_option = default_grpc['compression'].lower()
+        if compression_option in ['gzip', 'deflate']:
+            Config.COMPRESSION = Compression.Gzip if compression_option == 'gzip' else Compression.Deflate
+        else:
+            logging.exception('Unrecognized compression option: "%s" not one of "gzip" or "deflate"', compression_option)
+            raise ArgumentTypeError
+    except KeyError as error:
+        Config.COMPRESSION = Compression.NoCompression
 
     logging.debug('Loaded main config: %s [SUCCESS]', vars(Config))
 

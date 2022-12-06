@@ -36,7 +36,7 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
 
     try:
         stub_loaded = load_config(args.config, args.grpc_entry)
-    except (HjsonDecodeError, ImportError, KeyError):
+    except (HjsonDecodeError, ArgumentTypeError, ImportError, KeyError):
         return 1
 
     if args.stub:

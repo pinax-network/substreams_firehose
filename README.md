@@ -93,6 +93,7 @@ The format chosen, [`hjson`](https://hjson.github.io/hjson-py/), allow for addin
   "id": "<string for identifying the gRPC entry (used as default or CLI argument)>",
   "auth": "<reference an 'auth' entry to authenticate with the gRPC endpoint>",
   "chain": "<the target blockchain (for information purpose only)>",
+  "compression": "<compression method for gRPC messages, must be one of 'gzip' or 'deflate' if specified (no compression by default)>",
   "stub": "<path to a stub config file (optional, must be supplied as CLI argument if not specified here)>",
   "url": "<the gRPC endpoint url as 'ip:port'>"
 }

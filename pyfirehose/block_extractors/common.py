@@ -14,7 +14,6 @@ from google.protobuf.message import Message
 
 from config import Config, StubConfig
 from exceptions import BlockStreamException
-from proto.generated.dfuse.eosio.codec.v1 import codec_pb2
 from utils import get_auth_token
 from utils import get_current_task_name
 
@@ -40,7 +39,7 @@ async def get_secure_channel() -> Generator[grpc.aio.Channel, None, None]:
             ('grpc.max_receive_message_length', Config.MAX_BLOCK_SIZE), # default is 8MB
             ('grpc.max_send_message_length', Config.MAX_BLOCK_SIZE), # default is 8MB
         ],
-        #compression=grpc.Compression.Gzip
+        compression=Config.COMPRESSION
     )
 
 def process_blocks(raw_blocks: Sequence[Message], block_processor: Callable[[Message], dict]) -> list[dict]:
