@@ -1,6 +1,6 @@
 {
 	// Id for default grpc endpoint taken from the "grpc" array-object
-	"default": "eos_firehose_v1"
+	"default": "eos_firehose_v2",
 
 	// Maximum block size (in KB) allowed for streaming block in the gRPC channel
 	"max_block_size": 8388608, // 8MB
@@ -27,7 +27,7 @@
 			"id": "eos_firehose_v1",
 			"auth": "eosnation", // One of the entry in the "auth" object
 			"chain": "EOS",
-			"stub": "pyfirehose/config/dfuse/producerpay.hjson" // Path to default stub reference
+			"stub": "pyfirehose/config/dfuse/default.hjson", // Path to default stub reference
 			"url": "eos.firehose.eosnation.io:9000",
 		},
 		{
@@ -53,6 +53,8 @@
 			"id": "eos_firehose_v2",
 			"auth": "eosnation",
 			"chain": "EOS",
+			"compression": "gzip", // Must be one of 'gzip' or 'deflate' if specified (no compression by default)
+			"stub": "pyfirehose/config/firehose/default.hjson",
 			"url": "eos.firehose.eosnation.io:9001"
 		},
 		// See https://substreams.streamingfast.io/reference-and-specs/chains-and-endpoints
