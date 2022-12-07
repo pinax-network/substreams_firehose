@@ -49,9 +49,8 @@ jobs:
           python -m mkdocs build
       - name: Convert notebook to HTML
         run: |
-          cd site/
           jupyter nbconvert --to html index.ipynb
-          mv index.html static/
+          mv index.html site/static/
       - name: Upload artifacts
         uses: actions/upload-pages-artifact@v1
         with:
