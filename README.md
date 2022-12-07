@@ -14,7 +14,7 @@ This repo uses Github actions to automatically fetch transactions related to EOS
 
 ![Github actions workflow pipeline](github_actions_workflow.png)
 
-You can see the rendered chart [here](https://krow10.github.io/eos-blockchain-data/) at the bottom of the page.
+You can see the rendered chart [here](https://krow10.github.io/eos-blockchain-data/static/) at the bottom of the page.
 
 ## Quickstart
 
@@ -66,6 +66,8 @@ A [`.pylintrc`](.pylintrc) file is provided if you want to run [Pylint](https://
 ```console
 (.venv) user@dev-eosnation:~/Documents/eos-blockchain-data$ pylint pyfirehose --rcfile=.pylintrc
 ```
+
+Auto-generated documentation can be browsed at [https://krow10.github.io/eos-blockchain-data/](https://krow10.github.io/eos-blockchain-data/).
 
 ## Editing configuration files
 
