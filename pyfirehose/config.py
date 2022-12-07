@@ -29,6 +29,7 @@ class Config:
     CHAIN: ClassVar[str]
     COMPRESSION: ClassVar[Compression]
     GRAPHQL_ENDPOINT: ClassVar[str]
+    GRAPHQL_CACHE: ClassVar[int]
     GRPC_ENDPOINT: ClassVar[str]
     MAX_BLOCK_SIZE: ClassVar[int]
 
@@ -64,6 +65,7 @@ def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
         Config.AUTH_ENDPOINT 	= default_auth['endpoint']
         Config.CHAIN 			= default_grpc['chain']
         Config.GRAPHQL_ENDPOINT = options['graphql_endpoint']
+        Config.GRAPHQL_CACHE 	= options['graphql_cache']
         Config.GRPC_ENDPOINT 	= default_grpc['url']
         Config.MAX_BLOCK_SIZE 	= options['max_block_size']
     except KeyError as error:

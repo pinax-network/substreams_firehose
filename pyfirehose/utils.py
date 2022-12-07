@@ -36,7 +36,7 @@ def date_to_block_num(date: datetime, jwt: Optional[str] = None) -> int:
     headers = {'Authorization': f'Bearer {jwt}'}
     session = CachedSession(
         'graphql_rest',
-        expire_after=timedelta(days=30),
+        expire_after=timedelta(days=Config.GRAPHQL_CACHE),
         allowable_methods=['GET', 'POST'],
     )
 
