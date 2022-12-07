@@ -1,6 +1,6 @@
 site_name: "Eos-blockchain-data"
 repo_url: "https://github.com/Krow10/eos-blockchain-data"
-site_dir: "site"
+site_dir: "site/docs/"
 docs_dir: "docs"
 
 theme:
