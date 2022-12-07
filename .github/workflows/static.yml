@@ -43,15 +43,15 @@ jobs:
       - run: |
           python -m pip install --upgrade pip
           pip install -r site/requirements.txt
+      - name: Build docs to HTML
+        run: |
+          handsdown --external $(git config --get remote.origin.url) --create-configs
+          python -m mkdocs build
       - name: Convert notebook to HTML
         run: |
           cd site/
           jupyter nbconvert --to html index.ipynb
           mv index.html static/
-      - name: Build docs to HTML
-        run: |
-          handsdown --external $(git config --get remote.origin.url) --create-configs
-          python -m mkdocs build
       - name: Upload artifacts
         uses: actions/upload-pages-artifact@v1
         with:
