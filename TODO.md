@@ -11,6 +11,7 @@
   - Automatic endpoint detection and proto definitions from gRPC reflection service
 * Clean-up and fix multi-channel extractor
 * Add more examples to README.md
+* Improve automatic doc generation
 * Support for external block processing
 * Performance tests and comparison
 * NEXT BIG STEP:
