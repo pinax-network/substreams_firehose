@@ -50,6 +50,7 @@ jobs:
       - name: Convert notebook to HTML
         run: |
           jupyter nbconvert --to html index.ipynb
+          mkdir -p site/static
           mv index.html site/static/
       - name: Upload artifacts
         uses: actions/upload-pages-artifact@v1
