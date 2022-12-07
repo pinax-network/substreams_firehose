@@ -48,16 +48,14 @@ jobs:
           cd site/
           jupyter nbconvert --to html index.ipynb
           mv index.html static/
-      - name: Upload Juypter artifacts
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: 'site/static'
       - name: Build docs to HTML
-        run: python -m mkdocs build
-      - name: Upload mkdocs artifacts
+        run: |
+        handsdown --external `git config --get remote.origin.url` --create-configs
+        python -m mkdocs build
+      - name: Upload artifacts
         uses: actions/upload-pages-artifact@v1
         with:
-          path: 'site/docs'
+          path: 'site/'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
