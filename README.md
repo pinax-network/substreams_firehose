@@ -67,7 +67,7 @@ A [`.pylintrc`](.pylintrc) file is provided if you want to run [Pylint](https://
 (.venv) user@dev-eosnation:~/Documents/eos-blockchain-data$ pylint pyfirehose --rcfile=.pylintrc
 ```
 
-Auto-generated documentation can be browsed at [https://krow10.github.io/eos-blockchain-data/](https://krow10.github.io/eos-blockchain-data/).
+Auto-generated documentation can be browsed [here](https://krow10.github.io/eos-blockchain-data/docs).
 
 ## Editing configuration files
 
