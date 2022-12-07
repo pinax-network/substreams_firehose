@@ -9,10 +9,8 @@
 * Finish chain selection and stub creation
   - Handle multiple import dir for stub config
   - Automatic endpoint detection and proto definitions from gRPC reflection service
-* Add support for channel compression methods
 * Clean-up and fix multi-channel extractor
 * Add more examples to README.md
-* Add links to gRPC endpoint tables in README
 * Support for external block processing
 * Performance tests and comparison
 * NEXT BIG STEP:
