@@ -66,7 +66,7 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
     if args.log != 'logs/{datetime}.log':
         if args.log:
             log_filename = args.log
-        logging_handlers.append(logging.FileHandler(log_filename, mode='a+'))
+        logging_handlers.append(logging.FileHandler(log_filename, mode='a+' if not args.overwrite_log else 'w'))
 
     CONSOLE_HANDLER.setLevel(logging.INFO)
     if args.quiet:
