@@ -170,9 +170,9 @@ async def get_secure_channel() -&gt; Generator[grpc.aio.Channel, None, None]:
 <p>Parse data using the given block processor, feeding it previously extracted raw blocks from a gRPC stream.</p>
 <h4 id="arguments">Arguments</h4>
 <p>raw_blocks:
- A sequence of packed blocks (google.protobuf.any_pb2.Any objects) extracted from a gRPC stream.
+    A sequence of packed blocks (google.protobuf.any_pb2.Any objects) extracted from a gRPC stream.
 block_processor:
- A generator function extracting relevant data from a block.</p>
+    A generator function extracting relevant data from a block.</p>
 <h4 id="returns">Returns</h4>
 <p>A list of parsed data in the format returned by the block processor.</p>
 <h4 id="signature_1">Signature</h4>
@@ -186,21 +186,21 @@ block_processor:
 <p>Return raw blocks (or parsed data) for the subset period between <code>start</code> and <code>end</code> using the provided filters.</p>
 <h4 id="arguments_1">Arguments</h4>
 <p>start:
- The stream's starting block.
+    The stream's starting block.
 end:
- The stream's ending block.
+    The stream's ending block.
 secure_channel:
- The gRPC secure channel (SSL/TLS) to extract block from.
+    The gRPC secure channel (SSL/TLS) to extract block from.
 block_processor:
- Optional block processor function for directly parsing raw blocks.
- The function will then return the parsed blocks instead.</p>
+    Optional block processor function for directly parsing raw blocks.
+    The function will then return the parsed blocks instead.</p>
 <p>Discouraged as it might cause congestion issues for the gRPC channel if the block processing takes too long.
 Parsing the blocks <em>after</em> extraction allows for maximum throughput from the gRPC stream.</p>
 <h4 id="returns_1">Returns</h4>
 <p>A list of raw blocks (google.protobuf.any_pb2.Any objects) or parsed data if a block processor is supplied.</p>
 <h4 id="raises">Raises</h4>
 <p>BlockStreamException:
- If an rpc error is encountered. Contains the start, end, and failed block number.</p>
+    If an rpc error is encountered. Contains the start, end, and failed block number.</p>
 <h4 id="signature_2">Signature</h4>
 <pre><code class="language-python">async def stream_blocks(
     start: int,

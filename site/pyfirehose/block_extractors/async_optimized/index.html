@@ -5,15 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="shortcut icon" href="../../../img/favicon.ico" />
-    <title>Async Single Channel - Eos-blockchain-data</title>
+    <title>Async Optimized - Eos-blockchain-data</title>
     <link rel="stylesheet" href="../../../css/theme.css" />
     <link rel="stylesheet" href="../../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Async Single Channel";
-        var mkdocs_page_input_path = "pyfirehose/block_extractors/async_single_channel.md";
+        var mkdocs_page_name = "Async Optimized";
+        var mkdocs_page_input_path = "pyfirehose/block_extractors/async_optimized.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -52,9 +52,7 @@
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../async_multi_channel/">Async Multi Channel</a>
                 </li>
-                <li class="toctree-l2"><a class="reference internal" href="../async_optimized/">Async Optimized</a>
-                </li>
-                <li class="toctree-l2 current"><a class="reference internal current" href="./">Async Single Channel</a>
+                <li class="toctree-l2 current"><a class="reference internal current" href="./">Async Optimized</a>
     <ul class="current">
     <li class="toctree-l3"><a class="reference internal" href="#asyncio_main">asyncio_main</a>
         <ul>
@@ -67,6 +65,8 @@
         </ul>
     </li>
     </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../async_single_channel/">Async Single Channel</a>
                 </li>
                 <li class="toctree-l2"><a class="reference internal" href="../common/">Common</a>
                 </li>
@@ -111,9 +111,9 @@
     <li><a href="../../.." class="icon icon-home" alt="Docs"></a> &raquo;</li>
           <li>Pyfirehose &raquo;</li>
           <li>Block extractors &raquo;</li>
-      <li>Async Single Channel</li>
+      <li>Async Optimized</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/Krow10/eos-blockchain-data/edit/master/docs/pyfirehose/block_extractors/async_single_channel.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/Krow10/eos-blockchain-data/edit/master/docs/pyfirehose/block_extractors/async_optimized.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -121,51 +121,38 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="async-single-channel">Async Single Channel</h1>
+                <h1 id="async-optimized">Async Optimized</h1>
 <p><a href="../../../#eos-blockchain-data-index">Eos-blockchain-data Index</a> /
 <code>pyfirehose</code> /
 <a href="../#block-extractors">Block Extractors</a> /
-Async Single Channel</p>
+Async Optimized</p>
 <blockquote>
-<p>Auto-generated documentation for <a href="https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/block_extractors/async_single_channel.py">pyfirehose.block_extractors.async_single_channel</a> module.</p>
+<p>Auto-generated documentation for <a href="https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/block_extractors/async_optimized.py">pyfirehose.block_extractors.async_optimized</a> module.</p>
 </blockquote>
 <ul>
-<li><a href="#async-single-channel">Async Single Channel</a></li>
+<li><a href="#async-optimized">Async Optimized</a></li>
 <li><a href="#asyncio_main">asyncio_main</a></li>
 </ul>
 <h2 id="asyncio_main">asyncio_main</h2>
-<p><a href="https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/block_extractors/async_single_channel.py#L30">Show source in async_single_channel.py:30</a></p>
+<p><a href="https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/block_extractors/async_optimized.py#L25">Show source in async_optimized.py:25</a></p>
 <p>Extract blocks from a gRPC channel as raw blocks for later processing.</p>
-<p>Using asynchronous directives, a number of workers will be periodically spawned to
+<p>Using asynchronous directives, a <em>fixed</em> amount of workers will be initially spawned to
 extract data from the gRPC channel until all blocks have been retrieved.
 The returned list can then be parsed for extracting relevant data from the blocks.</p>
 <h4 id="arguments">Arguments</h4>
 <p>period_start:
- The first block number of the targeted period.
+    The first block number of the targeted period.
 period_end:
- The last block number of the targeted period.
+    The last block number of the targeted period.
 initial_tasks:
- The initial number of concurrent tasks to start for streaming blocks.
-workload:
- The number of blocks to extract for each task.
-auto_adjust_frequency:
- Enable the task spawner to auto adjust the task spawning frequency based on the tasks' average runtime.
-spawn_frequency:
- The sleep time (in seconds) for the spawner to wait before trying to spawn a new task.
- Will be overridden if <code>auto_adjust_frequency</code> is enabled.
+    The initial number of concurrent tasks to start for streaming blocks.
 kwargs:
- Additional keyword arguments to pass to the gRPC request (must match .proto file definition).</p>
+    Additional keyword arguments to pass to the gRPC request (must match .proto file definition).</p>
 <h4 id="returns">Returns</h4>
 <p>A list of raw blocks (google.protobuf.any_pb2.Any objects) that can later be processed.</p>
 <h4 id="signature">Signature</h4>
 <pre><code class="language-python">async def asyncio_main(
-    period_start: int,
-    period_end: int,
-    initial_tasks: int = 25,
-    workload: int = 100,
-    auto_adjust_frequency: bool = False,
-    spawn_frequency: float = 0.1,
-    **kwargs
+    period_start: int, period_end: int, initial_tasks: int = 25, **kwargs
 ) -&gt; list[Message]:
     ...
 </code></pre>
@@ -173,8 +160,8 @@ kwargs:
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../async_optimized/" class="btn btn-neutral float-left" title="Async Optimized"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../common/" class="btn btn-neutral float-right" title="Common">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../async_multi_channel/" class="btn btn-neutral float-left" title="Async Multi Channel"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../async_single_channel/" class="btn btn-neutral float-right" title="Async Single Channel">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -201,10 +188,10 @@ kwargs:
         </span>
     
     
-      <span><a href="../async_optimized/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../async_multi_channel/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../common/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../async_single_channel/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

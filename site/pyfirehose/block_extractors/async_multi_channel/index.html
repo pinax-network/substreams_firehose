@@ -141,20 +141,20 @@ extract data from <em>multiple</em> gRPC channels until all blocks have been ret
 The returned list can then be parsed for extracting relevant data from the blocks.</p>
 <h4 id="arguments">Arguments</h4>
 <p>period_start:
- The first block number of the targeted period.
+    The first block number of the targeted period.
 period_end:
- The last block number of the targeted period.
+    The last block number of the targeted period.
 initial_tasks:
- The initial number of concurrent tasks to start for streaming blocks.
+    The initial number of concurrent tasks to start for streaming blocks.
 workload:
- The number of blocks to extract for each task.
+    The number of blocks to extract for each task.
 auto_adjust_frequency:
- Enable the task spawner to auto adjust the task spawning frequency based on the tasks' average runtime.
+    Enable the task spawner to auto adjust the task spawning frequency based on the tasks' average runtime.
 spawn_frequency:
- The sleep time (in seconds) for the spawner to wait before trying to spawn a new task.
- Will be overridden if <code>auto_adjust_frequency</code> is enabled.
+    The sleep time (in seconds) for the spawner to wait before trying to spawn a new task.
+    Will be overridden if <code>auto_adjust_frequency</code> is enabled.
 kwargs:
- Additional keyword arguments to pass to the gRPC request (must match .proto file definition).</p>
+    Additional keyword arguments to pass to the gRPC request (must match .proto file definition).</p>
 <h4 id="returns">Returns</h4>
 <p>A list of raw blocks (google.protobuf.any_pb2.Any objects) that can later be processed.</p>
 <h4 id="signature">Signature</h4>
