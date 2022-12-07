@@ -119,8 +119,8 @@ dist
 # Python cache
 __pycache__/
 
-# Helper script for running program
-run.sh
+# Helper scripts
+*.sh
 
 # Jupyer notebook cache
 .ipynb_checkpoints
