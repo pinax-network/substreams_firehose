@@ -32,7 +32,39 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
     logging_handlers = []
     args = parse_arguments()
 
-    # === Arguments checking ===
+    # === Logging setup ===
+
+    log_filename = 'logs/' + datetime.today().strftime('%Y-%m-%d_%H-%M-%S') + '.log'
+    if args.log != 'logs/{datetime}.log':
+        if args.log:
+            log_filename = args.log
+        logging_handlers.append(logging.FileHandler(log_filename, mode='a+' if not args.overwrite_log else 'w'))
+
+    CONSOLE_HANDLER.setLevel(logging.INFO)
+    if args.quiet:
+        CONSOLE_HANDLER.setLevel(logging.ERROR) # Keep only errors and critical messages
+
+    logging_handlers.append(CONSOLE_HANDLER)
+
+    logging.basicConfig(
+        handlers=logging_handlers,
+        level=logging.DEBUG,
+        format='%(asctime)s:T+%(relativeCreated)d %(levelname)s %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S',
+        force=True
+    )
+
+    logging.addLevelName(logging.DEBUG, '[DEBUG]')
+    logging.addLevelName(logging.INFO, '[*]')
+    logging.addLevelName(logging.WARNING, '[!]')
+    logging.addLevelName(logging.ERROR, '[ERROR]')
+    logging.addLevelName(logging.CRITICAL, '[CRITICAL]')
+
+    logging.debug('Script arguments: %s', args)
+    logging.debug('Main config: %s', pformat(vars(Config)))
+    logging.debug('Stub config: %s', pformat(vars(StubConfig)))
+
+    # === Config loading ===
 
     try:
         stub_loaded = load_config(args.config, args.grpc_entry)
@@ -48,6 +80,15 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
         logging.critical('Stub config should be supplied either in the main config file or through the CLI.')
         return 1
 
+    # === JWT token validation ===
+
+    jwt = get_auth_token()
+    if not jwt:
+        logging.critical('Could not get authentication token from endpoint (%s), aborting...', Config.AUTH_ENDPOINT)
+        return 1
+
+    # === Arguments checking ===
+
     try:
         args.start = check_period(args.start)
         args.end = check_period(args.end)
@@ -61,16 +102,6 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
     out_file = f'jsonl/{Config.CHAIN}_{args.start}_to_{args.end}.jsonl'
     if args.out_file != 'jsonl/{chain}_{start}_to_{end}.jsonl':
         out_file = args.out_file
-
-    log_filename = 'logs/' + datetime.today().strftime('%Y-%m-%d_%H-%M-%S') + '.log'
-    if args.log != 'logs/{datetime}.log':
-        if args.log:
-            log_filename = args.log
-        logging_handlers.append(logging.FileHandler(log_filename, mode='a+' if not args.overwrite_log else 'w'))
-
-    CONSOLE_HANDLER.setLevel(logging.INFO)
-    if args.quiet:
-        CONSOLE_HANDLER.setLevel(logging.ERROR) # Keep only errors and critical messages
 
     try:
         block_extractor = getattr(
@@ -102,35 +133,6 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
             request_parameters_args[key] = int(value) if value.isdigit() else value
 
     args.request_parameters = request_parameters_args
-
-    # === Logging setup ===
-
-    logging_handlers.append(CONSOLE_HANDLER)
-
-    logging.basicConfig(
-        handlers=logging_handlers,
-        level=logging.DEBUG,
-        format='%(asctime)s:T+%(relativeCreated)d %(levelname)s %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S',
-        force=True
-    )
-
-    logging.addLevelName(logging.DEBUG, '[DEBUG]')
-    logging.addLevelName(logging.INFO, '[*]')
-    logging.addLevelName(logging.WARNING, '[!]')
-    logging.addLevelName(logging.ERROR, '[ERROR]')
-    logging.addLevelName(logging.CRITICAL, '[CRITICAL]')
-
-    logging.debug('Script arguments: %s', args)
-    logging.debug('Main config: %s', pformat(vars(Config)))
-    logging.debug('Stub config: %s', pformat(vars(StubConfig)))
-
-    # === JWT token validation ===
-
-    jwt = get_auth_token()
-    if not jwt:
-        logging.critical('Could not get authentication token from endpoint (%s), aborting...', Config.AUTH_ENDPOINT)
-        return 1
 
     # === Main methods calls ===
 
