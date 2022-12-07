@@ -45,7 +45,7 @@ jobs:
           pip install -r site/requirements.txt
       - name: Build docs to HTML
         run: |
-          handsdown --external $(git config --get remote.origin.url) --create-configs
+          handsdown --external $(git config --get remote.origin.url)
           python -m mkdocs build
       - name: Convert notebook to HTML
         run: |
