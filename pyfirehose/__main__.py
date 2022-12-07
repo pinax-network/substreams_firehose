@@ -114,7 +114,7 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
         logging.critical('Could not load block extractor function: %s', exception)
         raise
 
-    module, function = ('block_processors.dfuse.default', f'{Config.CHAIN.lower()}_block_processor')
+    module, function = ('block_processors.dfuse.default', 'default_block_processor')
     if args.custom_processor:
         module, function = args.custom_processor.rsplit('.', 1)
         module = f'block_processors.{module}'

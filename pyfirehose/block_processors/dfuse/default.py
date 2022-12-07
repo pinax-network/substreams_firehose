@@ -1,7 +1,8 @@
 """
 SPDX-License-Identifier: MIT
 
-This module provides the default block processors for the Firehose supported chains (see https://docs.dfuse.eosnation.io/eosio/public-apis/reference/network-endpoints/). # pylint: disable=line-too-long
+This module provides default block processors for *Firehose v1* supported chains
+(see https://docs.dfuse.eosnation.io/eosio/public-apis/reference/network-endpoints/).
 """
 
 import json
@@ -11,32 +12,15 @@ from datetime import datetime
 from google.protobuf.message import Message
 from proto.generated.dfuse.eosio.codec.v1 import codec_pb2
 
-def eos_block_processor(raw_block: Message) -> dict:
+def default_block_processor(raw_block: Message) -> dict:
     """
     Yield a processed transaction from a block returning relevant properties.
 
-    The signature of the function is crucial: it must take a `Block` object
-    (properties defined in the `proto/codec.proto` file) and return a dict
-    containing the desired properties for later storage in the `.jsonl` file.
-
-    The basic template for processing transactions should look like this:
-    ```
-        for transaction_trace in block.filtered_transaction_traces: # Gets every filtered TransactionTrace from a Block
-            for action_trace in transaction_trace.action_traces: # Gets every ActionTrace within a TransactionTrace
-                if not action_trace.filtering_matched: # Only keep 'transfer' actions that matched the filters
-                    continue
-
-                data = {}
-
-                # Process the data...
-
-                yield data
-    ```
-    See `proto/codec.proto` file for a full list of available objects and properties.
+    See `proto/codec.proto` file for a full list of available properties.
 
     Args:
-        block:
-            The block to process transaction from.
+        raw_block:
+            Raw block received from the gRPC stream.
 
     Yields:
         A dictionary containing the extracted block data.
@@ -93,21 +77,3 @@ def eos_block_processor(raw_block: Message) -> dict:
 
             logging.debug('Data: %s', data)
             yield data
-
-def wax_block_processor(raw_block: Message) -> dict:
-    """
-    Same as eos_block_processor.
-    """
-    yield from eos_block_processor(raw_block)
-
-def kylin_block_processor(raw_block: Message) -> dict:
-    """
-    Same as eos_block_processor.
-    """
-    yield from eos_block_processor(raw_block)
-
-def jungle4_block_processor(raw_block: Message) -> dict:
-    """
-    Same as eos_block_processor.
-    """
-    yield from eos_block_processor(raw_block)
