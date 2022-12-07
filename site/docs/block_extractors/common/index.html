@@ -13,7 +13,7 @@
     
     
       
-        <title>Tests - Eos-blockchain-data</title>
+        <title>Common - Eos-blockchain-data</title>
       
     
     
@@ -62,7 +62,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#tests" class="md-skip">
+        <a href="#common" class="md-skip">
           Skip to content
         </a>
       
@@ -95,7 +95,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Tests
+              Common
             
           </span>
         </div>
@@ -218,12 +218,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
       
       
       
@@ -246,7 +248,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../block_extractors/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         Block Extractors
       </a>
     </li>
@@ -260,7 +262,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../block_extractors/async_multi_channel/" class="md-nav__link">
+      <a href="../async_multi_channel/" class="md-nav__link">
         Async Multi Channel
       </a>
     </li>
@@ -274,7 +276,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../block_extractors/async_optimized/" class="md-nav__link">
+      <a href="../async_optimized/" class="md-nav__link">
         Async Optimized
       </a>
     </li>
@@ -288,7 +290,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../block_extractors/async_single_channel/" class="md-nav__link">
+      <a href="../async_single_channel/" class="md-nav__link">
         Async Single Channel
       </a>
     </li>
@@ -300,11 +302,147 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../block_extractors/common/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Common
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Common
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#get_secure_channel" class="md-nav__link">
+    get_secure_channel
+  </a>
+  
+    <nav class="md-nav" aria-label="get_secure_channel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yields" class="md-nav__link">
+    Yields
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#process_blocks" class="md-nav__link">
+    process_blocks
+  </a>
+  
+    <nav class="md-nav" aria-label="process_blocks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arguments" class="md-nav__link">
+    Arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature_1" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stream_blocks" class="md-nav__link">
+    stream_blocks
+  </a>
+  
+    <nav class="md-nav" aria-label="stream_blocks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arguments_1" class="md-nav__link">
+    Arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raises" class="md-nav__link">
+    Raises
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature_2" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -451,14 +589,12 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
       
       
       
@@ -507,7 +643,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../block_extractors/" class="md-nav__link">
+      <a href="../../pyfirehose/block_extractors/" class="md-nav__link">
         Block Extractors
       </a>
     </li>
@@ -521,7 +657,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../block_extractors/async_multi_channel/" class="md-nav__link">
+      <a href="../../pyfirehose/block_extractors/async_multi_channel/" class="md-nav__link">
         Async Multi Channel
       </a>
     </li>
@@ -535,7 +671,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../block_extractors/async_optimized/" class="md-nav__link">
+      <a href="../../pyfirehose/block_extractors/async_optimized/" class="md-nav__link">
         Async Optimized
       </a>
     </li>
@@ -549,7 +685,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../block_extractors/async_single_channel/" class="md-nav__link">
+      <a href="../../pyfirehose/block_extractors/async_single_channel/" class="md-nav__link">
         Async Single Channel
       </a>
     </li>
@@ -563,7 +699,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../block_extractors/common/" class="md-nav__link">
+      <a href="../../pyfirehose/block_extractors/common/" class="md-nav__link">
         Common
       </a>
     </li>
@@ -610,7 +746,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../block_processors/" class="md-nav__link">
+      <a href="../../pyfirehose/block_processors/" class="md-nav__link">
         Block Processors
       </a>
     </li>
@@ -683,7 +819,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../proto/generated/" class="md-nav__link">
+      <a href="../../pyfirehose/proto/generated/" class="md-nav__link">
         Generated
       </a>
     </li>
@@ -709,14 +845,12 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_4" type="checkbox" id="__nav_5_4" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_4" type="checkbox" id="__nav_5_4" >
       
       
       
@@ -737,21 +871,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../pyfirehose/tests/" class="md-nav__link">
         Tests
       </a>
-      
     </li>
   
 
@@ -790,6 +914,116 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#get_secure_channel" class="md-nav__link">
+    get_secure_channel
+  </a>
+  
+    <nav class="md-nav" aria-label="get_secure_channel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yields" class="md-nav__link">
+    Yields
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#process_blocks" class="md-nav__link">
+    process_blocks
+  </a>
+  
+    <nav class="md-nav" aria-label="process_blocks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arguments" class="md-nav__link">
+    Arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature_1" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stream_blocks" class="md-nav__link">
+    stream_blocks
+  </a>
+  
+    <nav class="md-nav" aria-label="stream_blocks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arguments_1" class="md-nav__link">
+    Arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raises" class="md-nav__link">
+    Raises
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature_2" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -802,22 +1036,81 @@
                 
                   
 
-  <a href="https://github.com/Krow10/eos-blockchain-data/edit/master/docs/pyfirehose/tests/index.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/Krow10/eos-blockchain-data/edit/master/docs/block_extractors/common.md" title="Edit this page" class="md-content__button md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
 
 
-<h1 id="tests">Tests</h1>
+<h1 id="common">Common</h1>
 <p><a href="../../#eos-blockchain-data-index">Eos-blockchain-data Index</a> /
-<code>pyfirehose</code> /
-Tests</p>
+<a href="../#block-extractors">Block Extractors</a> /
+Common</p>
 <blockquote>
-<p>Auto-generated documentation for <a href="https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/tests/__init__.py">pyfirehose.tests</a> module.</p>
+<p>Auto-generated documentation for <a href="https://github.com/Krow10/eos-blockchain-data/blob/main/block_extractors/common.py">block_extractors.common</a> module.</p>
 </blockquote>
 <ul>
-<li><a href="#tests">Tests</a></li>
+<li><a href="#common">Common</a></li>
+<li><a href="#get_secure_channel">get_secure_channel</a></li>
+<li><a href="#process_blocks">process_blocks</a></li>
+<li><a href="#stream_blocks">stream_blocks</a></li>
 </ul>
+<h2 id="get_secure_channel">get_secure_channel</h2>
+<p><a href="https://github.com/Krow10/eos-blockchain-data/blob/main/block_extractors/common.py#L20">Show source in common.py:20</a></p>
+<p>Instantiate a secure gRPC channel as an asynchronous context manager for use by block extractors.</p>
+<h4 id="yields">Yields</h4>
+<p>A grpc.aio.Channel as an asynchronous context manager.</p>
+<h4 id="signature">Signature</h4>
+<pre><code class="language-python">@asynccontextmanager
+async def get_secure_channel() -&gt; Generator[grpc.aio.Channel, None, None]:
+    ...
+</code></pre>
+<h2 id="process_blocks">process_blocks</h2>
+<p><a href="https://github.com/Krow10/eos-blockchain-data/blob/main/block_extractors/common.py#L45">Show source in common.py:45</a></p>
+<p>Parse data using the given block processor, feeding it previously extracted raw blocks from a gRPC stream.</p>
+<h4 id="arguments">Arguments</h4>
+<p>raw_blocks:
+    A sequence of packed blocks (google.protobuf.any_pb2.Any objects) extracted from a gRPC stream.
+block_processor:
+    A generator function extracting relevant data from a block.</p>
+<h4 id="returns">Returns</h4>
+<p>A list of parsed data in the format returned by the block processor.</p>
+<h4 id="signature_1">Signature</h4>
+<pre><code class="language-python">def process_blocks(
+    raw_blocks: Sequence[Message], block_processor: Callable[[Message], dict]
+) -&gt; list[dict]:
+    ...
+</code></pre>
+<h2 id="stream_blocks">stream_blocks</h2>
+<p><a href="https://github.com/Krow10/eos-blockchain-data/blob/main/block_extractors/common.py#L67">Show source in common.py:67</a></p>
+<p>Return raw blocks (or parsed data) for the subset period between <code>start</code> and <code>end</code> using the provided filters.</p>
+<h4 id="arguments_1">Arguments</h4>
+<p>start:
+    The stream's starting block.
+end:
+    The stream's ending block.
+secure_channel:
+    The gRPC secure channel (SSL/TLS) to extract block from.
+block_processor:
+    Optional block processor function for directly parsing raw blocks.
+    The function will then return the parsed blocks instead.</p>
+<p>Discouraged as it might cause congestion issues for the gRPC channel if the block processing takes too long.
+Parsing the blocks <em>after</em> extraction allows for maximum throughput from the gRPC stream.</p>
+<h4 id="returns_1">Returns</h4>
+<p>A list of raw blocks (google.protobuf.any_pb2.Any objects) or parsed data if a block processor is supplied.</p>
+<h4 id="raises">Raises</h4>
+<p>BlockStreamException:
+    If an rpc error is encountered. Contains the start, end, and failed block number.</p>
+<h4 id="signature_2">Signature</h4>
+<pre><code class="language-python">async def stream_blocks(
+    start: int,
+    end: int,
+    secure_channel: grpc.aio.Channel,
+    block_processor: Optional[Callable[[Message], dict]] = None,
+    **kwargs
+) -&gt; list[Message | dict]:
+    ...
+</code></pre>
 
 
 
@@ -838,7 +1131,7 @@ Tests</p>
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="../proto/generated/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Generated" rel="prev">
+        <a href="../async_single_channel/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Async Single Channel" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -847,11 +1140,26 @@ Tests</p>
               <span class="md-footer__direction">
                 Previous
               </span>
-              Generated
+              Async Single Channel
             </div>
           </div>
         </a>
       
+      
+        
+        <a href="../../block_processors/" class="md-footer__link md-footer__link--next" aria-label="Next: Block Processors" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Block Processors
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
       
     </nav>
   
