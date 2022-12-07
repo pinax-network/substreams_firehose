@@ -31,7 +31,7 @@ async def asyncio_main(period_start: int, period_end: int, #pylint: disable=too-
               initial_tasks: int = 25, workload: int = 100, auto_adjust_frequency: bool = False,
               spawn_frequency: float = 0.1, **kwargs) -> list[Message]:
     """
-    Extract blocks from a Firehose endpoint as raw blocks for later processing.
+    Extract blocks from a gRPC channel as raw blocks for later processing.
 
     Using asynchronous directives, a number of workers will be periodically spawned to
     extract data from the gRPC channel until all blocks have been retrieved.
@@ -51,10 +51,8 @@ async def asyncio_main(period_start: int, period_end: int, #pylint: disable=too-
         spawn_frequency:
             The sleep time (in seconds) for the spawner to wait before trying to spawn a new task.
             Will be overridden if `auto_adjust_frequency` is enabled.
-        custom_include_expr:
-            A custom Firehose filter for tagging blocks as included.
-        custom_exclude_expr:
-            A custom Firehose filter for excluding blocks from the results.
+        kwargs:
+            Additional keyword arguments to pass to the gRPC request (must match .proto file definition).
 
     Returns:
         A list of raw blocks (google.protobuf.any_pb2.Any objects) that can later be processed.

@@ -27,7 +27,7 @@ CONSOLE_HANDLER = logging.StreamHandler()
 
 def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-many-locals, too-many-return-statements
     """
-    Main function for parsing arguments, setting up logging and running asyncio `run` function.
+    Main function for parsing arguments, setting up logging and running asyncio main loop.
     """
     logging_handlers = []
     args = parse_arguments()
@@ -42,7 +42,8 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
 
     CONSOLE_HANDLER.setLevel(logging.INFO)
     if args.quiet:
-        CONSOLE_HANDLER.setLevel(logging.ERROR) # Keep only errors and critical messages
+        # Keep only errors and critical messages
+        CONSOLE_HANDLER.setLevel(logging.ERROR)
 
     logging_handlers.append(CONSOLE_HANDLER)
 
@@ -61,8 +62,6 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
     logging.addLevelName(logging.CRITICAL, '[CRITICAL]')
 
     logging.debug('Script arguments: %s', args)
-    logging.debug('Main config: %s', pformat(vars(Config)))
-    logging.debug('Stub config: %s', pformat(vars(StubConfig)))
 
     # === Config loading ===
 
@@ -73,12 +72,15 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
 
     if args.stub:
         try:
-            load_stub_config(args.stub) # TODO: Add dict/JSON parsing
+            load_stub_config(args.stub)
         except (HjsonDecodeError, ImportError, KeyError):
             return 1
     elif not stub_loaded:
-        logging.critical('Stub config should be supplied either in the main config file or through the CLI.')
+        logging.critical('Stub config should be supplied either in the main config file or through the CLI option.')
         return 1
+
+    logging.debug('Main config: %s', pformat(vars(Config)))
+    logging.debug('Stub config: %s', pformat(vars(StubConfig)))
 
     # === JWT token validation ===
 

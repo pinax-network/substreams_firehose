@@ -18,11 +18,11 @@ class BlockStreamException(Exception):
         failed:
             The block that failed processing.
     """
-    def __init__(self, start: int, end: int, failed: int):
+    def __init__(self, start: int, end: int, failed: int) -> None:
         self.start = start
         self.end = end
         self.failed = failed
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (f'Block streaming failed for block #{self.failed} in range [{self.start}, {self.end}]'
                 f' ({self.end - self.failed} blocks remaining)')

@@ -22,9 +22,9 @@ from block_extractors.common import stream_blocks
 from config import Config
 from exceptions import BlockStreamException
 
-async def asyncio_main(period_start: int, period_end: int, initial_tasks: int = 25, **kwargs) -> list[Message]: #pylint: disable=too-many-arguments
+async def asyncio_main(period_start: int, period_end: int, initial_tasks: int = 25, **kwargs) -> list[Message]:
     """
-    Extract blocks from a Firehose endpoint as raw blocks for later processing.
+    Extract blocks from a gRPC channel as raw blocks for later processing.
 
     Using asynchronous directives, a *fixed* amount of workers will be initially spawned to
     extract data from the gRPC channel until all blocks have been retrieved.
@@ -37,10 +37,8 @@ async def asyncio_main(period_start: int, period_end: int, initial_tasks: int = 
             The last block number of the targeted period.
         initial_tasks:
             The initial number of concurrent tasks to start for streaming blocks.
-        custom_include_expr:
-            A custom Firehose filter for tagging blocks as included.
-        custom_exclude_expr:
-            A custom Firehose filter for excluding blocks from the results.
+        kwargs:
+            Additional keyword arguments to pass to the gRPC request (must match .proto file definition).
 
     Returns:
         A list of raw blocks (google.protobuf.any_pb2.Any objects) that can later be processed.

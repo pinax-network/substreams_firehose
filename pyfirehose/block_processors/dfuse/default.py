@@ -1,7 +1,7 @@
 """
 SPDX-License-Identifier: MIT
 
-This module provides default block processors for *Firehose v1* supported chains
+This module provides a default block processor for *Firehose v1* supported chains
 (see https://docs.dfuse.eosnation.io/eosio/public-apis/reference/network-endpoints/).
 """
 

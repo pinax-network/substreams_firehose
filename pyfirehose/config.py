@@ -1,7 +1,8 @@
 """
 SPDX-License-Identifier: MIT
 
-This module ...
+This module parses the main config and stub config files for use by the application.
+Refer to the README.md and comments within the config files for more details about each parameters.
 """
 
 import inspect
@@ -10,6 +11,7 @@ import logging
 import os
 from argparse import ArgumentTypeError
 from dataclasses import dataclass
+from types import ModuleType
 from typing import Any, ClassVar, Optional
 
 # https://hjson.github.io/hjson-py/ -- allow comments in JSON files for configuration purposes
@@ -18,12 +20,18 @@ from grpc import Compression
 
 @dataclass
 class StubConfig:
+    """
+    Holds the stub config.
+    """
     REQUEST_OBJECT: ClassVar[Any]
     REQUEST_PARAMETERS: ClassVar[dict]
     STUB_OBJECT: ClassVar[Any]
 
 @dataclass
 class Config:
+    """
+    Holds the main config.
+    """
     API_KEY: ClassVar[str]
     AUTH_ENDPOINT: ClassVar[str]
     CHAIN: ClassVar[str]
@@ -33,7 +41,17 @@ class Config:
     GRPC_ENDPOINT: ClassVar[str]
     MAX_BLOCK_SIZE: ClassVar[int]
 
-def import_all_from_module(module_name: str):
+def import_all_from_module(module_name: str) -> list[ModuleType]:
+    """
+    Dynamically import all python files located in the specified module's folder.
+
+    Args:
+        module_name:
+            Name of the module to import files from.
+
+    Returns:
+        The list of imported modules.
+    """
     module = importlib.import_module(module_name)
     module_path = inspect.getattr_static(module, '__path__')[0]
 
@@ -45,6 +63,29 @@ def import_all_from_module(module_name: str):
     return imported
 
 def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
+    """
+    Load the main config from the specified file. If a gRPC entry id is specified, it overwrites the default specified
+    in the config.
+
+    Args:
+        file:
+            Filepath to the main config file.
+        grpc_entry_id:
+            Id of a gRPC entry present in the "grpc" array of the main config file.
+
+    Returns:
+        A boolean indicating if the stub config file has also been loaded.
+
+    Raises:
+        ArgumentTypeError:
+            If the specified compression argument for a gRPC endpoint is not one of "gzip" or "deflate".
+        HjsonDecodeError:
+            If the hjson module fails to parse the config file.
+        ImportError:
+            If the stub config files fails to import the specified modules.
+        KeyError:
+            If a required key is missing from the config file.
+    """
     with open(file, 'r', encoding='utf8') as config_file:
         try:
             options = hjson.load(config_file)
@@ -91,7 +132,22 @@ def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
 
     return True
 
-def load_stub_config(stub: str | dict):
+def load_stub_config(stub: str | dict) -> None:
+    """
+    Load the stub config from a file (str) or directly from a key-value dictionary.
+
+    Args:
+        stub:
+            The stub to load either as a filepath or a dictionary.
+
+    Raises:
+        HjsonDecodeError:
+            If the hjson module fails to parse the config file.
+        ImportError:
+            If the specified stub or request object cannot be imported.
+        KeyError:
+            If a required key is missing from the config file.
+    """
     stub_config = stub
     # Load stub config from external file
     if isinstance(stub, str):

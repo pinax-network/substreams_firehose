@@ -20,7 +20,7 @@ from utils import get_current_task_name
 @asynccontextmanager
 async def get_secure_channel() -> Generator[grpc.aio.Channel, None, None]:
     """
-    Instantiate a secure gRPC channel as an asynchronous context manager used by block extractors.
+    Instantiate a secure gRPC channel as an asynchronous context manager for use by block extractors.
 
     Yields:
         A grpc.aio.Channel as an asynchronous context manager.
@@ -36,24 +36,24 @@ async def get_secure_channel() -> Generator[grpc.aio.Channel, None, None]:
         creds,
         # See https://github.com/grpc/grpc/blob/master/include/grpc/impl/codegen/grpc_types.h#L141 for a list of options
         options=[
-            ('grpc.max_receive_message_length', Config.MAX_BLOCK_SIZE), # default is 8MB
-            ('grpc.max_send_message_length', Config.MAX_BLOCK_SIZE), # default is 8MB
+            ('grpc.max_receive_message_length', Config.MAX_BLOCK_SIZE),
+            ('grpc.max_send_message_length', Config.MAX_BLOCK_SIZE),
         ],
         compression=Config.COMPRESSION
     )
 
 def process_blocks(raw_blocks: Sequence[Message], block_processor: Callable[[Message], dict]) -> list[dict]:
     """
-    Parse data using the given `block_processor` from previously extracted raw blocks into a file.
+    Parse data using the given block processor, feeding it previously extracted raw blocks from a gRPC stream.
 
     Args:
         raw_blocks:
-            A sequence of packed blocks (google.protobuf.any_pb2.Any objects) extracted from Firehose.
+            A sequence of packed blocks (google.protobuf.any_pb2.Any objects) extracted from a gRPC stream.
         block_processor:
-            A generator function extracting relevant properties from a block.
+            A generator function extracting relevant data from a block.
 
     Returns:
-        The list of parsed information.
+        A list of parsed data in the format returned by the block processor.
     """
     data = []
     for raw_block in raw_blocks:
@@ -64,7 +64,7 @@ def process_blocks(raw_blocks: Sequence[Message], block_processor: Callable[[Mes
 
     return data
 
-async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel, #pylint: disable=too-many-arguments
+async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel,
                         block_processor: Optional[Callable[[Message], dict]] = None, **kwargs) -> list[Message | dict]:
     """
     Return raw blocks (or parsed data) for the subset period between `start` and `end` using the provided filters.
@@ -75,17 +75,13 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel, 
         end:
             The stream's ending block.
         secure_channel:
-            The gRPC secure channel (SSL/TLS) to fetch block from the Firehose endpoint.
-        custom_include_expr:
-            A custom Firehose filter for tagging blocks as included.
-        custom_exclude_expr:
-            A custom Firehose filter for excluding blocks from the results.
+            The gRPC secure channel (SSL/TLS) to extract block from.
         block_processor:
             Optional block processor function for directly parsing raw blocks.
             The function will then return the parsed blocks instead.
 
             Discouraged as it might cause congestion issues for the gRPC channel if the block processing takes too long.
-            Parsing the blocks *after* extraction allows for maximum throughput from the block stream.
+            Parsing the blocks *after* extraction allows for maximum throughput from the gRPC stream.
 
     Returns:
         A list of raw blocks (google.protobuf.any_pb2.Any objects) or parsed data if a block processor is supplied.
@@ -97,7 +93,8 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel, 
     data = []
     current_block_number = start
     stub = StubConfig.STUB_OBJECT(secure_channel)
-    # Move request parameters to dict to allow CLI keyword argument to override the stub config
+
+    # Move request parameters to dict to allow CLI keyword arguments to override the stub config
     request_parameters = {
         'start_block_num': start,
         'stop_block_num': end,
@@ -114,7 +111,7 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel, 
     try:
         # Duplicate code for moving invariant out of loop, preventing condition check on every block streamed
         if block_processor:
-            async for response in stub.Blocks(StubConfig.REQUEST_OBJECT(**request_parameters)): #pylint: disable=no-member
+            async for response in stub.Blocks(StubConfig.REQUEST_OBJECT(**request_parameters)):
                 logging.debug('[%s] Getting block number #%i (%i blocks remaining)...',
                     get_current_task_name(),
                     current_block_number,
@@ -126,7 +123,7 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel, 
                 for blob in block_processor(response.block):
                     data.append(blob)
         else:
-            async for response in stub.Blocks(StubConfig.REQUEST_OBJECT(**request_parameters)): #pylint: disable=no-member
+            async for response in stub.Blocks(StubConfig.REQUEST_OBJECT(**request_parameters)):
                 logging.debug('[%s] Getting block number #%i (%i blocks remaining)...',
                     get_current_task_name(),
                     current_block_number,
