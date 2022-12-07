@@ -50,8 +50,8 @@ jobs:
           mv index.html static/
       - name: Build docs to HTML
         run: |
-        handsdown --external `git config --get remote.origin.url` --create-configs
-        python -m mkdocs build
+          handsdown --external $(git config --get remote.origin.url) --create-configs
+          python -m mkdocs build
       - name: Upload artifacts
         uses: actions/upload-pages-artifact@v1
         with:
