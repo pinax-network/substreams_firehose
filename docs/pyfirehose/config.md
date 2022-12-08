@@ -107,16 +107,16 @@ Load the stub config from a file (str) or directly from a key-value dictionary.
 #### Arguments
 
 stub:
-    The stub to load either as a filepath or a dictionary.
+ The stub to load either as a filepath or a dictionary.
 
 #### Raises
 
 HjsonDecodeError:
-    If the hjson module fails to parse the config file.
+ If the hjson module fails to parse the config file.
 ImportError:
-    If the specified stub or request object cannot be imported.
+ If the specified stub or request object cannot be imported.
 KeyError:
-    If a required key is missing from the config file.
+ If a required key is missing from the config file.
 
 #### Signature
 
