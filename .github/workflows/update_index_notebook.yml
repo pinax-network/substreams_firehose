@@ -30,12 +30,12 @@ jobs:
         uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-            python-version: "3.10"
+            python-version: "3.11"
       - run: |
           python -m pip install --upgrade pip
           pip install -r site/requirements.txt
       - name: Update analysis notebook
-        run: jupyter nbconvert --to notebook --execute site/index.ipynb --ExecutePreprocessor.kernel_name='python3' --inplace
+        run: jupyter nbconvert --to notebook --execute index.ipynb --ExecutePreprocessor.kernel_name='python3' --inplace
       - name: Commit updated notebook
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
