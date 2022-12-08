@@ -17,9 +17,9 @@ from pyfirehose.config import Config
 
 def date_to_block_num(date: datetime, jwt: Optional[str] = None) -> int:
     """
-    Queries the DFUSE_GRAPHQL_ENDPOINT specified in the `.env` file for the block number associated with a given date time.
+    Queries the `graphql_endpoint` specified in the main config file for the block number associated with a given date time.
 
-    Cache the results for 30 days.
+    Cache the results for the duration specified in the main config file (`graphql_cache`, default is 30 days).
 
     Args:
         date: A date to retrieve the associated block number.
@@ -72,7 +72,7 @@ def date_to_block_num(date: datetime, jwt: Optional[str] = None) -> int:
 
 def get_auth_token(use_cache: bool = True) -> str:
     """
-    Fetch a JWT authorization token from the authentication endpoints defined in `.env` file.
+    Fetch a JWT authorization token from the authentication endpoints defined in the main config file.
 
     Cache the token for 24-hour use.
 
