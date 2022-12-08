@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from proto.generated.sf.substreams.v1 import substreams_pb2 as sf_dot_substreams_dot_v1_dot_substreams__pb2
+from pyfirehose.proto.generated.sf.substreams.v1 import substreams_pb2 as sf_dot_substreams_dot_v1_dot_substreams__pb2
 
 
 class StreamStub(object):

@@ -47,8 +47,7 @@ def import_all_from_module(module_name: str) -> list[ModuleType]:
     Dynamically import all python files located in the specified module's folder.
 
     Args:
-        module_name:
-            Name of the module to import files from.
+        module_name: Name of the module to import files from.
 
     Returns:
         The list of imported modules.
@@ -69,23 +68,17 @@ def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
     in the config.
 
     Args:
-        file:
-            Filepath to the main config file.
-        grpc_entry_id:
-            Id of a gRPC entry present in the "grpc" array of the main config file.
+        file: Filepath to the main config file.
+        grpc_entry_id: Id of a gRPC entry present in the "grpc" array of the main config file.
 
     Returns:
         A boolean indicating if the stub config file has also been loaded.
 
     Raises:
-        ArgumentTypeError:
-            If the specified compression argument for a gRPC endpoint is not one of "gzip" or "deflate".
-        HjsonDecodeError:
-            If the hjson module fails to parse the config file.
-        ImportError:
-            If the stub config files fails to import the specified modules.
-        KeyError:
-            If a required key is missing from the config file.
+        ArgumentTypeError: If the specified compression argument for a gRPC endpoint is not one of "gzip" or "deflate".
+        HjsonDecodeError: If the hjson module fails to parse the config file.
+        ImportError: If the stub config files fails to import the specified modules.
+        KeyError: If a required key is missing from the config file.
     """
     with open(file, 'r', encoding='utf8') as config_file:
         try:
@@ -161,7 +154,7 @@ def load_stub_config(stub: str | dict) -> None:
                 raise
 
     try:
-        import_dir_module = f'proto.generated.{stub_config["python_import_dir"]}'
+        import_dir_module = f'pyfirehose.proto.generated.{stub_config["python_import_dir"]}'
         imported = import_all_from_module(import_dir_module)
 
         for module in imported:
@@ -178,7 +171,7 @@ def load_stub_config(stub: str | dict) -> None:
         if not StubConfig.STUB_OBJECT:
             logging.critical('Could not load stub object from config: unable to locate "%sStub" in "%s" module',
                 stub_config['name'],
-                f'proto.generated.{stub_config["python_import_dir"]}')
+                f'pyfirehose.proto.generated.{stub_config["python_import_dir"]}')
             raise ImportError
 
         if not StubConfig.REQUEST_OBJECT:

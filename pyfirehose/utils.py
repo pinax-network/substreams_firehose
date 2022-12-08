@@ -13,7 +13,7 @@ from typing import Optional
 
 from requests_cache import CachedSession
 
-from config import Config
+from pyfirehose.config import Config
 
 def date_to_block_num(date: datetime, jwt: Optional[str] = None) -> int:
     """
@@ -22,10 +22,8 @@ def date_to_block_num(date: datetime, jwt: Optional[str] = None) -> int:
     Cache the results for 30 days.
 
     Args:
-        date:
-            A date to retrieve the associated block number.
-        jwt:
-            A JWT token used for authenticating with the GraphQL API (will be fetched automatically if not specified).
+        date: A date to retrieve the associated block number.
+        jwt: A JWT token used for authenticating with the GraphQL API (will be fetched automatically if not specified).
 
     Returns:
         The block number associated with the given date time.
@@ -79,8 +77,7 @@ def get_auth_token(use_cache: bool = True) -> str:
     Cache the token for 24-hour use.
 
     Args:
-        use_cache:
-            A boolean enabling/disabling fetching the cache for the JWT token request.
+        use_cache: A boolean enabling/disabling fetching the cache for the JWT token request.
 
     Returns:
         The JWT token or an empty string if the request failed.

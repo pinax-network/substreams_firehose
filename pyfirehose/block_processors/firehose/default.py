@@ -7,7 +7,7 @@ import logging
 
 from google.protobuf.message import Message
 
-from proto.generated.sf.antelope.type.v1 import type_pb2
+from pyfirehose.proto.generated.sf.antelope.type.v1 import type_pb2
 
 def default_block_processor(raw_block: Message) -> dict:
     block = type_pb2.Block()

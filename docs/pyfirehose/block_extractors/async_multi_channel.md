@@ -1,7 +1,7 @@
 # Async Multi Channel
 
 [Eos-blockchain-data Index](../../README.md#eos-blockchain-data-index) /
-`pyfirehose` /
+[Pyfirehose](../index.md#pyfirehose) /
 [Block Extractors](./index.md#block-extractors) /
 Async Multi Channel
 
@@ -22,21 +22,15 @@ The returned list can then be parsed for extracting relevant data from the block
 
 #### Arguments
 
-period_start:
- The first block number of the targeted period.
-period_end:
- The last block number of the targeted period.
-initial_tasks:
- The initial number of concurrent tasks to start for streaming blocks.
-workload:
- The number of blocks to extract for each task.
-auto_adjust_frequency:
- Enable the task spawner to auto adjust the task spawning frequency based on the tasks' average runtime.
-spawn_frequency:
- The sleep time (in seconds) for the spawner to wait before trying to spawn a new task.
- Will be overridden if `auto_adjust_frequency` is enabled.
-kwargs:
- Additional keyword arguments to pass to the gRPC request (must match .proto file definition).
+- `period_start` - The first block number of the targeted period.
+- `period_end` - The last block number of the targeted period.
+- `initial_tasks` - The initial number of concurrent tasks to start for streaming blocks.
+- `workload` - The number of blocks to extract for each task.
+- `auto_adjust_frequency` - Enable the task spawner to auto adjust the task spawning frequency based on the tasks' average
+runtime.
+- `spawn_frequency` - The sleep time (in seconds) for the spawner to wait before trying to spawn a new task.
+Will be overridden if `auto_adjust_frequency` is enabled.
+- `kwargs` - Additional keyword arguments to pass to the gRPC request (must match .proto file definition).
 
 #### Returns
 

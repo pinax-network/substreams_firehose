@@ -17,11 +17,11 @@ from pprint import pformat
 
 from hjson import HjsonDecodeError
 
-from args import check_period, parse_arguments
-from block_extractors.common import process_blocks
-from config import Config, StubConfig
-from config import load_config, load_stub_config
-from utils import get_auth_token
+from pyfirehose.args import check_period, parse_arguments
+from pyfirehose.block_extractors.common import process_blocks
+from pyfirehose.config import Config, StubConfig
+from pyfirehose.config import load_config, load_stub_config
+from pyfirehose.utils import get_auth_token
 
 CONSOLE_HANDLER = logging.StreamHandler()
 
@@ -108,7 +108,7 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
     try:
         block_extractor = getattr(
             importlib.import_module(
-                f'block_extractors.async_{args.extractor + "_channel" if args.extractor != "optimized" else args.extractor}'
+                f'pyfirehose.block_extractors.async_{args.extractor + ("_channel" if args.extractor != "optimized" else "")}'
             ),
             'asyncio_main'
         )
@@ -116,10 +116,10 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
         logging.critical('Could not load block extractor function: %s', exception)
         raise
 
-    module, function = ('block_processors.dfuse.default', 'default_block_processor')
+    module, function = ('pyfirehose.block_processors.dfuse.default', 'default_block_processor')
     if args.custom_processor:
         module, function = args.custom_processor.rsplit('.', 1)
-        module = f'block_processors.{module}'
+        module = f'pyfirehose.block_processors.{module}'
 
     try:
         block_processor = getattr(importlib.import_module(module), function)

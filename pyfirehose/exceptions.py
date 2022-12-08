@@ -11,12 +11,9 @@ class BlockStreamException(Exception):
     The information will be used to start another task for the remaining blocks to be processed.
 
     Attributes:
-        start:
-            The block stream's starting block.
-        end:
-            The block stream's ending block.
-        failed:
-            The block that failed processing.
+        start: The block stream's starting block.
+        end: The block stream's ending block.
+        failed: The block that failed processing.
     """
     def __init__(self, start: int, end: int, failed: int) -> None:
         self.start = start

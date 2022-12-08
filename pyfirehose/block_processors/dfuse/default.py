@@ -10,7 +10,7 @@ import logging
 from datetime import datetime
 
 from google.protobuf.message import Message
-from proto.generated.dfuse.eosio.codec.v1 import codec_pb2
+from pyfirehose.proto.generated.dfuse.eosio.codec.v1 import codec_pb2
 
 def default_block_processor(raw_block: Message) -> dict:
     """
@@ -19,8 +19,7 @@ def default_block_processor(raw_block: Message) -> dict:
     See `proto/codec.proto` file for a full list of available properties.
 
     Args:
-        raw_block:
-            Raw block received from the gRPC stream.
+        raw_block: Raw block received from the gRPC stream.
 
     Yields:
         A dictionary containing the extracted block data.

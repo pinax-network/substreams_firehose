@@ -26,7 +26,7 @@ foo@bar:~/eos-blockchain-data$ mv pyfirehose/sample.config.hjson pyfirehose/conf
 foo@bar:~/eos-blockchain-data$ python3 -m venv .venv # Create virtual environnement
 foo@bar:~/eos-blockchain-data$ source .venv/bin/activate # Activate virtual environnement
 (.venv) foo@bar:~/eos-blockchain-data$ pip install -r requirements.txt # Install dependencies
-(.venv) foo@bar:~/eos-blockchain-data$ python pyfirehose -h
+(.venv) foo@bar:~/eos-blockchain-data$ python -m pyfirehose -h
 usage: pyfirehose [-h] [-c CONFIG] [-s STUB] [-o OUT_FILE] [-l [LOG]] [-q] [-g GRPC_ENTRY] [-e {optimized,single,multi}] [-p CUSTOM_PROCESSOR]
                   [--no-json-output] [--overwrite-log] [--request-parameters ...]
                   start end

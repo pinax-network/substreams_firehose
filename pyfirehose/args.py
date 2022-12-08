@@ -7,22 +7,20 @@ This module is used for argument parsing and checking for the main script.
 import argparse
 from datetime import datetime
 
-from utils import date_to_block_num
+from pyfirehose.utils import date_to_block_num
 
 def check_period(arg_period: str) -> int:
     """
     Convert the specified period argument, from a integer or a date, to a block number.
 
     Args:
-        arg_period:
-            A period argument from the ArgumentParser.
+        arg_period: A period argument from the ArgumentParser.
 
     Returns:
         A integer representing the corresponding block number.
 
     Raises:
-        ArgumentTypeError:
-            If the period cannot be parsed.
+        ArgumentTypeError: If the period cannot be parsed.
     """
     try:
         arg_period = int(arg_period)

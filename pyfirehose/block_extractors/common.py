@@ -12,10 +12,10 @@ from typing import Callable, Optional, Sequence
 import grpc
 from google.protobuf.message import Message
 
-from config import Config, StubConfig
-from exceptions import BlockStreamException
-from utils import get_auth_token
-from utils import get_current_task_name
+from pyfirehose.config import Config, StubConfig
+from pyfirehose.exceptions import BlockStreamException
+from pyfirehose.utils import get_auth_token
+from pyfirehose.utils import get_current_task_name
 
 @asynccontextmanager
 async def get_secure_channel() -> Generator[grpc.aio.Channel, None, None]:
@@ -47,10 +47,8 @@ def process_blocks(raw_blocks: Sequence[Message], block_processor: Callable[[Mes
     Parse data using the given block processor, feeding it previously extracted raw blocks from a gRPC stream.
 
     Args:
-        raw_blocks:
-            A sequence of packed blocks (google.protobuf.any_pb2.Any objects) extracted from a gRPC stream.
-        block_processor:
-            A generator function extracting relevant data from a block.
+        raw_blocks: A sequence of packed blocks (google.protobuf.any_pb2.Any objects) extracted from a gRPC stream.
+        block_processor: A generator function extracting relevant data from a block.
 
     Returns:
         A list of parsed data in the format returned by the block processor.
@@ -67,28 +65,22 @@ def process_blocks(raw_blocks: Sequence[Message], block_processor: Callable[[Mes
 async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel,
                         block_processor: Optional[Callable[[Message], dict]] = None, **kwargs) -> list[Message | dict]:
     """
-    Return raw blocks (or parsed data) for the subset period between `start` and `end` using the provided filters.
+    Return raw blocks (or parsed data) for the subset period between `start` and `end`.
 
     Args:
-        start:
-            The stream's starting block.
-        end:
-            The stream's ending block.
-        secure_channel:
-            The gRPC secure channel (SSL/TLS) to extract block from.
-        block_processor:
-            Optional block processor function for directly parsing raw blocks.
-            The function will then return the parsed blocks instead.
-
-            Discouraged as it might cause congestion issues for the gRPC channel if the block processing takes too long.
-            Parsing the blocks *after* extraction allows for maximum throughput from the gRPC stream.
+        start: The stream's starting block.
+        end: The stream's ending block.
+        secure_channel: The gRPC secure channel (SSL/TLS) to extract block from.
+        block_processor: Optional block processor function for directly parsing raw blocks.
+        The function will then return the parsed blocks instead.
+        Discouraged as it might cause congestion issues for the gRPC channel if the block processing takes too long.
+        Parsing the blocks *after* extraction allows for maximum throughput from the gRPC stream.
 
     Returns:
         A list of raw blocks (google.protobuf.any_pb2.Any objects) or parsed data if a block processor is supplied.
 
     Raises:
-        BlockStreamException:
-            If an rpc error is encountered. Contains the start, end, and failed block number.
+        BlockStreamException: If an rpc error is encountered. Contains the start, end, and failed block number.
     """
     data = []
     current_block_number = start

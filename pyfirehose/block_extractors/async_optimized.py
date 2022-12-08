@@ -17,10 +17,10 @@ import logging
 
 from google.protobuf.message import Message
 
-from block_extractors.common import get_secure_channel
-from block_extractors.common import stream_blocks
-from config import Config
-from exceptions import BlockStreamException
+from pyfirehose.block_extractors.common import get_secure_channel
+from pyfirehose.block_extractors.common import stream_blocks
+from pyfirehose.config import Config
+from pyfirehose.exceptions import BlockStreamException
 
 async def asyncio_main(period_start: int, period_end: int, initial_tasks: int = 25, **kwargs) -> list[Message]:
     """
@@ -31,14 +31,10 @@ async def asyncio_main(period_start: int, period_end: int, initial_tasks: int = 
     The returned list can then be parsed for extracting relevant data from the blocks.
 
     Args:
-        period_start:
-            The first block number of the targeted period.
-        period_end:
-            The last block number of the targeted period.
-        initial_tasks:
-            The initial number of concurrent tasks to start for streaming blocks.
-        kwargs:
-            Additional keyword arguments to pass to the gRPC request (must match .proto file definition).
+        period_start: The first block number of the targeted period.
+        period_end: The last block number of the targeted period.
+        initial_tasks: The initial number of concurrent tasks to start for streaming blocks.
+        kwargs: Additional keyword arguments to pass to the gRPC request (must match .proto file definition).
 
     Returns:
         A list of raw blocks (google.protobuf.any_pb2.Any objects) that can later be processed.

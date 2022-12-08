@@ -1,7 +1,7 @@
 # Common
 
 [Eos-blockchain-data Index](../../README.md#eos-blockchain-data-index) /
-`pyfirehose` /
+[Pyfirehose](../index.md#pyfirehose) /
 [Block Extractors](./index.md#block-extractors) /
 Common
 
@@ -40,10 +40,8 @@ Parse data using the given block processor, feeding it previously extracted raw 
 
 #### Arguments
 
-raw_blocks:
- A sequence of packed blocks (google.protobuf.any_pb2.Any objects) extracted from a gRPC stream.
-block_processor:
- A generator function extracting relevant data from a block.
+- `raw_blocks` - A sequence of packed blocks (google.protobuf.any_pb2.Any objects) extracted from a gRPC stream.
+- `block_processor` - A generator function extracting relevant data from a block.
 
 #### Returns
 
@@ -62,22 +60,17 @@ def process_blocks(
 
 ## stream_blocks
 
-[Show source in common.py:67](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/block_extractors/common.py#L67)
+[Show source in common.py:65](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/block_extractors/common.py#L65)
 
-Return raw blocks (or parsed data) for the subset period between `start` and `end` using the provided filters.
+Return raw blocks (or parsed data) for the subset period between `start` and `end`.
 
 #### Arguments
 
-start:
- The stream's starting block.
-end:
- The stream's ending block.
-secure_channel:
- The gRPC secure channel (SSL/TLS) to extract block from.
-block_processor:
- Optional block processor function for directly parsing raw blocks.
- The function will then return the parsed blocks instead.
-
+- `start` - The stream's starting block.
+- `end` - The stream's ending block.
+- `secure_channel` - The gRPC secure channel (SSL/TLS) to extract block from.
+- `block_processor` - Optional block processor function for directly parsing raw blocks.
+The function will then return the parsed blocks instead.
 Discouraged as it might cause congestion issues for the gRPC channel if the block processing takes too long.
 Parsing the blocks *after* extraction allows for maximum throughput from the gRPC stream.
 
@@ -87,8 +80,7 @@ A list of raw blocks (google.protobuf.any_pb2.Any objects) or parsed data if a b
 
 #### Raises
 
-BlockStreamException:
- If an rpc error is encountered. Contains the start, end, and failed block number.
+- `BlockStreamException` - If an rpc error is encountered. Contains the start, end, and failed block number.
 
 #### Signature
 
