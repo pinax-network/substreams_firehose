@@ -1,0 +1,7 @@
+{
+	"python_import_dir": "sf.substreams.v1",
+	"name": "Stream",
+	"request": "Request",
+	"parameters": {
+	}
+}

@@ -12,7 +12,7 @@ _sym_db = _symbol_database.Default()
 
 
 from google.protobuf import descriptor_pb2 as google_dot_protobuf_dot_descriptor__pb2
-from sf.substreams.v1 import modules_pb2 as sf_dot_substreams_dot_v1_dot_modules__pb2
+from pyfirehose.proto.generated.sf.substreams.v1 import modules_pb2 as sf_dot_substreams_dot_v1_dot_modules__pb2
 
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1esf/substreams/v1/package.proto\x12\x10sf.substreams.v1\x1a google/protobuf/descriptor.proto\x1a\x1esf/substreams/v1/modules.proto\"\x83\x02\n\x07Package\x12\x39\n\x0bproto_files\x18\x01 \x03(\x0b\x32$.google.protobuf.FileDescriptorProto\x12\x0f\n\x07version\x18\x05 \x01(\x04\x12*\n\x07modules\x18\x06 \x01(\x0b\x32\x19.sf.substreams.v1.Modules\x12\x35\n\x0bmodule_meta\x18\x07 \x03(\x0b\x32 .sf.substreams.v1.ModuleMetadata\x12\x37\n\x0cpackage_meta\x18\x08 \x03(\x0b\x32!.sf.substreams.v1.PackageMetadataJ\x04\x08\x02\x10\x03J\x04\x08\x03\x10\x04J\x04\x08\x04\x10\x05\"J\n\x0fPackageMetadata\x12\x0f\n\x07version\x18\x01 \x01(\t\x12\x0b\n\x03url\x18\x02 \x01(\t\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x0b\n\x03\x64oc\x18\x04 \x01(\t\"4\n\x0eModuleMetadata\x12\x15\n\rpackage_index\x18\x01 \x01(\x04\x12\x0b\n\x03\x64oc\x18\x02 \x01(\tBFZDgithub.com/streamingfast/substreams/pb/sf/substreams/v1;pbsubstreamsb\x06proto3')
