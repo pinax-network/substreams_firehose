@@ -40,6 +40,7 @@ class Config:
     GRAPHQL_CACHE: ClassVar[int]
     GRPC_ENDPOINT: ClassVar[str]
     MAX_BLOCK_SIZE: ClassVar[int]
+    MAX_FAILED_BLOCK_RETRIES: ClassVar[int]
 
 def import_all_from_module(module_name: str) -> list[ModuleType]:
     """
@@ -102,13 +103,14 @@ def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
         default_auth = options['auth'][default_grpc['auth']]
         default_stub = default_grpc['stub'] if 'stub' in default_grpc else ''
 
-        Config.API_KEY 			= default_auth['api_key']
-        Config.AUTH_ENDPOINT 	= default_auth['endpoint']
-        Config.CHAIN 			= default_grpc['chain']
-        Config.GRAPHQL_ENDPOINT = options['graphql_endpoint']
-        Config.GRAPHQL_CACHE 	= options['graphql_cache']
-        Config.GRPC_ENDPOINT 	= default_grpc['url']
-        Config.MAX_BLOCK_SIZE 	= options['max_block_size']
+        Config.API_KEY 					= default_auth['api_key']
+        Config.AUTH_ENDPOINT 			= default_auth['endpoint']
+        Config.CHAIN 					= default_grpc['chain']
+        Config.GRAPHQL_ENDPOINT 		= options['graphql_endpoint']
+        Config.GRAPHQL_CACHE 			= options['graphql_cache']
+        Config.GRPC_ENDPOINT 			= default_grpc['url']
+        Config.MAX_BLOCK_SIZE 			= options['max_block_size']
+        Config.MAX_FAILED_BLOCK_RETRIES = options['max_failed_block_retries']
     except KeyError as error:
         logging.exception('Error parsing main config file (%s): %s', file, error)
         raise

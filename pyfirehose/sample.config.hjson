@@ -3,7 +3,10 @@
 	"default": "eos_firehose_v2",
 
 	// Maximum block size (in KB) allowed for streaming block in the gRPC channel
-	"max_block_size": 8388608, // 8MB
+	"max_block_size": 67108864, // 64MB
+
+	// Maximum number of retries for extracting failed blocks (set to 0 to disable)
+	"max_failed_block_retries": 1,
 
 	// Authentication endpoints for issuing JWT tokens
 	"auth": {

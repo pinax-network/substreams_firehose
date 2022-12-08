@@ -59,6 +59,7 @@ async def asyncio_main(period_start: int, period_end: int, initial_tasks: int = 
 
     tasks = set()
     data = []
+    failed_counter = {}
     async with get_secure_channel() as secure_channel:
         for i in range(initial_tasks):
             tasks.add(
@@ -80,11 +81,24 @@ async def asyncio_main(period_start: int, period_end: int, initial_tasks: int = 
                 try:
                     data += await task
                 except BlockStreamException as error:
-                    failed_tasks.add(
-                        asyncio.create_task(
-                            stream_blocks(error.failed, error.end, secure_channel, **kwargs)
+                    failed_counter[error.failed] = failed_counter.get(error.failed, 0) + 1
+                    if failed_counter[error.failed] <= Config.MAX_FAILED_BLOCK_RETRIES:
+                        logging.warning('Could not fetch block #%i: retrying... (%i/%i retries)',
+                            error.failed,
+                            failed_counter[error.failed],
+                            Config.MAX_FAILED_BLOCK_RETRIES
                         )
-                    )
+
+                        failed_tasks.add(
+                            asyncio.create_task(
+                                stream_blocks(error.failed, error.end, secure_channel, **kwargs)
+                            )
+                        )
+                    else:
+                        logging.error('Could not fetch block #%i: maximum number of retries reached (%i)',
+                            error.failed,
+                            Config.MAX_FAILED_BLOCK_RETRIES
+                        )
 
             tasks = failed_tasks.copy()
 
