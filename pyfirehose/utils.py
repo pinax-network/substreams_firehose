@@ -5,10 +5,14 @@ This module provides utility functions and enums for other modules.
 """
 
 import asyncio
+import inspect
+import importlib
 import json
 import logging
+import os
 from contextlib import nullcontext
 from datetime import datetime, timedelta
+from types import ModuleType
 from typing import Optional
 
 from requests_cache import CachedSession
@@ -114,3 +118,23 @@ def get_current_task_name() -> str:
 
     # Add leading zeroes for single digit task ids to prevent display flickering with '\r' in the console
     return f'{prefix}-{task_id.zfill(2)}'
+
+def import_all_from_module(module_name: str) -> list[ModuleType]:
+    """
+    Dynamically import all python files located in the specified module's folder.
+
+    Args:
+        module_name: Name of the module to import files from.
+
+    Returns:
+        The list of imported modules.
+    """
+    module = importlib.import_module(module_name)
+    module_path = inspect.getattr_static(module, '__path__')[0]
+
+    imported = []
+    for file in os.listdir(module_path):
+        if file.endswith(".py"):
+            imported.append(importlib.import_module(f'{module_name}.{file.rsplit(".", 1)[0]}'))
+
+    return imported

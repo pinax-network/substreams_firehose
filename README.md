@@ -27,9 +27,9 @@ foo@bar:~/eos-blockchain-data$ python3 -m venv .venv # Create virtual environnem
 foo@bar:~/eos-blockchain-data$ source .venv/bin/activate # Activate virtual environnement
 (.venv) foo@bar:~/eos-blockchain-data$ pip install -r requirements.txt # Install dependencies
 (.venv) foo@bar:~/eos-blockchain-data$ python -m pyfirehose -h
-usage: pyfirehose [-h] [-c CONFIG] [-s STUB] [-o OUT_FILE] [-l [LOG]] [-q] [-g GRPC_ENTRY] [-e {optimized,single,multi}] [-p CUSTOM_PROCESSOR]
-                  [--no-json-output] [--overwrite-log] [--request-parameters ...]
-                  start end
+usage: __main__.py [-h] [-c CONFIG] [-s STUB] [-o OUT_FILE] [-l [LOG]] [-q] [-g GRPC_ENTRY] [-e {optimized,single,multi}] [-p CUSTOM_PROCESSOR]              
+                   [--no-json-output] [--overwrite-log] [--request-parameters ...]
+                   start end
 
 Extract any data from the blockchain. Powered by Firehose (https://eos.firehose.eosnation.io/) and Substreams (https://substreams.streamingfast.io).
 
@@ -52,7 +52,7 @@ options:
   -e {optimized,single,multi}, --extractor {optimized,single,multi}
                         type of extractor used for streaming blocks from the gRPC endpoint (default: optimized)
   -p CUSTOM_PROCESSOR, --custom-processor CUSTOM_PROCESSOR
-                        relative import path to a custom block processing function located in the "block_processors" module (default: None)
+                        name of a custom block processing function located in the "block_processors.processors" module (default: default_block_processor)
   --no-json-output      don't try to convert block processor output to JSON (default: False)
   --overwrite-log       overwrite log file, erasing its content (default is to append) (default: False)
   --request-parameters ...
@@ -159,10 +159,10 @@ Below is a list of the gRPC endpoints which have a default ready-to-use [stub co
 
 ## Writing custom block processors
 
-For even more control over the data extracted, the extraction process uses a modular approach for manipulating `Block` response objects coming from the gRPC stream. A block processing function is used for extracting the data that is later stored in the output file at the end of the block extraction process. Customizing which data is extracted is the objective of writing a custom block processor.
+For even more control over the data extracted, the extraction process uses a modular approach for manipulating `Block` response objects coming from the gRPC stream. A block processing function is used for extracting the data that is later stored in the output file at the end of the block extraction process. Customizing which data is extracted is the main goal of writing a custom block processor.
 
 In order to write custom block processing functions, some conditions must be respected:
-- The function should be placed inside a seperate `.py` file in the [`block_processors`](pyfirehose/block_processors/) module.
+- The function should be placed inside the [`processors.py`](pyfirehose/block_processors/processors.py) file in the [`block_processors`](pyfirehose/block_processors/) module (try to avoid name conflicts).
 - The function should act as a **generator** (using the `yield` keyword) to return the data.
 - The **first parameter** of the function should take the raw block extracted from the gRPC stream.
 
@@ -191,11 +191,11 @@ If using Firehose v1 filters, a typical template for parsing the block data woul
       yield data # Make the function act as a generator
 ```
 
-See the default block processors (available as `default.py` files in the [`block_processors/`](pyfirehose/block_processors) subfolders) for more details.
+See the block processors in the [`block_processors/processors.py`](pyfirehose/block_processors/processors.py) file for more details. The default one extract all the block information (as defined in the proto files) as JSON.
 
-You can then use custom block processors through the command-line using the `--custom-processor` argument and providing the relative import path **from the `block_processors` submodule**. 
+You can then use custom block processors through the command-line using the `--custom-processor` (or `-p`) argument and providing the name of the function. 
 
-For example, let's say you've implemented a custom function `my_block_processor` in `custom.py`. The `custom.py` script should reside at the root or in a subdirectory inside the `block_processors` folder (let's say it's at the root for this example). You would then pass the argument as `--custom-processor custom.my_block_processor`. The script will locate it inside the `block_processors` module and use the `my_block_processor` function to parse block data and extract it to the output file.
+For example, let's say you've implemented a custom function `my_block_processor` in `processors.py`. You would then pass the argument as `--custom-processor my_block_processor`. The script will locate it inside the `processors.py` module and use the `my_block_processor` function to parse block data and extract it to the output file.
 
 ## Additional information
 

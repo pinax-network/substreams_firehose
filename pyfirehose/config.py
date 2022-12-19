@@ -5,18 +5,16 @@ This module parses the main config and stub config files for use by the applicat
 Refer to the README.md and comments within the config files for more details about each parameters.
 """
 
-import inspect
-import importlib
 import logging
-import os
 from argparse import ArgumentTypeError
 from dataclasses import dataclass
-from types import ModuleType
 from typing import Any, ClassVar, Optional
 
 # https://hjson.github.io/hjson-py/ -- allow comments in JSON files for configuration purposes
 import hjson
 from grpc import Compression
+
+import pyfirehose.utils as utils
 
 @dataclass
 class StubConfig:
@@ -41,26 +39,6 @@ class Config:
     GRPC_ENDPOINT: ClassVar[str]
     MAX_BLOCK_SIZE: ClassVar[int]
     MAX_FAILED_BLOCK_RETRIES: ClassVar[int]
-
-def import_all_from_module(module_name: str) -> list[ModuleType]:
-    """
-    Dynamically import all python files located in the specified module's folder.
-
-    Args:
-        module_name: Name of the module to import files from.
-
-    Returns:
-        The list of imported modules.
-    """
-    module = importlib.import_module(module_name)
-    module_path = inspect.getattr_static(module, '__path__')[0]
-
-    imported = []
-    for file in os.listdir(module_path):
-        if file.endswith(".py"):
-            imported.append(importlib.import_module(f'{module_name}.{file.rsplit(".", 1)[0]}'))
-
-    return imported
 
 def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
     """
@@ -155,7 +133,7 @@ def load_stub_config(stub: str | dict) -> None:
 
     try:
         import_dir_module = f'pyfirehose.proto.generated.{stub_config["python_import_dir"]}'
-        imported = import_all_from_module(import_dir_module)
+        imported = utils.import_all_from_module(import_dir_module)
 
         for module in imported:
             try:
