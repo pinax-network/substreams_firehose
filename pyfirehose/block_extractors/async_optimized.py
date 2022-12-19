@@ -48,7 +48,7 @@ async def asyncio_main(period_start: int, period_end: int, initial_tasks: int = 
         initial_tasks = 1
 
     logging.info('Streaming %i blocks on %s chain (running %i workers)...',
-        period_end - period_start,
+        period_end - period_start + 1,
         Config.CHAIN,
         initial_tasks
     )

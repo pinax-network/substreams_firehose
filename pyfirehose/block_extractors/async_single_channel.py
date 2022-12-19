@@ -120,7 +120,7 @@ async def asyncio_main(period_start: int, period_end: int, #pylint: disable=too-
     task_start_time = None
 
     logging.info('Streaming %i blocks on %s chain...',
-        period_end - period_start,
+        period_end - period_start + 1,
         Config.CHAIN,
     )
 
