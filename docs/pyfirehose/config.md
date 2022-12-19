@@ -9,13 +9,12 @@ Config
 - [Config](#config)
   - [Config](#config-1)
   - [StubConfig](#stubconfig)
-  - [import_all_from_module](#import_all_from_module)
   - [load_config](#load_config)
   - [load_stub_config](#load_stub_config)
 
 ## Config
 
-[Show source in config.py:31](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/config.py#L31)
+[Show source in config.py:29](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/config.py#L29)
 
 Holds the main config.
 
@@ -30,7 +29,7 @@ class Config:
 
 ## StubConfig
 
-[Show source in config.py:22](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/config.py#L22)
+[Show source in config.py:20](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/config.py#L20)
 
 Holds the stub config.
 
@@ -43,32 +42,9 @@ class StubConfig:
 
 
 
-## import_all_from_module
-
-[Show source in config.py:45](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/config.py#L45)
-
-Dynamically import all python files located in the specified module's folder.
-
-#### Arguments
-
-- `module_name` - Name of the module to import files from.
-
-#### Returns
-
-The list of imported modules.
-
-#### Signature
-
-```python
-def import_all_from_module(module_name: str) -> list[ModuleType]:
-    ...
-```
-
-
-
 ## load_config
 
-[Show source in config.py:65](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/config.py#L65)
+[Show source in config.py:43](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/config.py#L43)
 
 Load the main config from the specified file. If a gRPC entry id is specified, it overwrites the default specified
 in the config.
@@ -100,7 +76,7 @@ def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
 
 ## load_stub_config
 
-[Show source in config.py:130](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/config.py#L130)
+[Show source in config.py:108](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/config.py#L108)
 
 Load the stub config from a file (str) or directly from a key-value dictionary.
 
