@@ -11,6 +11,4 @@ Block Processors
 
 ## Modules
 
-- [Dfuse](dfuse/index.md)
-- [Firehose](firehose/index.md)
-- [Substreams](substreams/index.md)
+- [Processors](./processors.md)

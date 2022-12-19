@@ -10,10 +10,11 @@ Utils
   - [date_to_block_num](#date_to_block_num)
   - [get_auth_token](#get_auth_token)
   - [get_current_task_name](#get_current_task_name)
+  - [import_all_from_module](#import_all_from_module)
 
 ## date_to_block_num
 
-[Show source in utils.py:18](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/utils.py#L18)
+[Show source in utils.py:22](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/utils.py#L22)
 
 Queries the `graphql_endpoint` specified in the main config file for the block number associated with a given date time.
 
@@ -39,7 +40,7 @@ def date_to_block_num(date: datetime, jwt: Optional[str] = None) -> int:
 
 ## get_auth_token
 
-[Show source in utils.py:73](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/utils.py#L73)
+[Show source in utils.py:77](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/utils.py#L77)
 
 Fetch a JWT authorization token from the authentication endpoints defined in the main config file.
 
@@ -64,7 +65,7 @@ def get_auth_token(use_cache: bool = True) -> str:
 
 ## get_current_task_name
 
-[Show source in utils.py:109](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/utils.py#L109)
+[Show source in utils.py:113](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/utils.py#L113)
 
 Helper function for generating a unique task id from an asyncio task.
 
@@ -72,6 +73,29 @@ Helper function for generating a unique task id from an asyncio task.
 
 ```python
 def get_current_task_name() -> str:
+    ...
+```
+
+
+
+## import_all_from_module
+
+[Show source in utils.py:122](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/utils.py#L122)
+
+Dynamically import all python files located in the specified module's folder.
+
+#### Arguments
+
+- `module_name` - Name of the module to import files from.
+
+#### Returns
+
+The list of imported modules.
+
+#### Signature
+
+```python
+def import_all_from_module(module_name: str) -> list[ModuleType]:
     ...
 ```
 
