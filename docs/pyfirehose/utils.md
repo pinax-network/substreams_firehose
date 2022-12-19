@@ -15,9 +15,9 @@ Utils
 
 [Show source in utils.py:18](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/utils.py#L18)
 
-Queries the DFUSE_GRAPHQL_ENDPOINT specified in the `.env` file for the block number associated with a given date time.
+Queries the `graphql_endpoint` specified in the main config file for the block number associated with a given date time.
 
-Cache the results for 30 days.
+Cache the results for the duration specified in the main config file (`graphql_cache`, default is 30 days).
 
 #### Arguments
 
@@ -41,7 +41,7 @@ def date_to_block_num(date: datetime, jwt: Optional[str] = None) -> int:
 
 [Show source in utils.py:73](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/utils.py#L73)
 
-Fetch a JWT authorization token from the authentication endpoints defined in `.env` file.
+Fetch a JWT authorization token from the authentication endpoints defined in the main config file.
 
 Cache the token for 24-hour use.
 

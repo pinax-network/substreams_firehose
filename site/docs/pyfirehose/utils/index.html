@@ -983,8 +983,8 @@ Utils</p>
 </ul>
 <h2 id="date_to_block_num">date_to_block_num</h2>
 <p><a href="https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/utils.py#L18">Show source in utils.py:18</a></p>
-<p>Queries the DFUSE_GRAPHQL_ENDPOINT specified in the <code>.env</code> file for the block number associated with a given date time.</p>
-<p>Cache the results for 30 days.</p>
+<p>Queries the <code>graphql_endpoint</code> specified in the main config file for the block number associated with a given date time.</p>
+<p>Cache the results for the duration specified in the main config file (<code>graphql_cache</code>, default is 30 days).</p>
 <h4 id="arguments">Arguments</h4>
 <ul>
 <li><code>date</code> - A date to retrieve the associated block number.</li>
@@ -998,7 +998,7 @@ Utils</p>
 </code></pre></div>
 <h2 id="get_auth_token">get_auth_token</h2>
 <p><a href="https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/utils.py#L73">Show source in utils.py:73</a></p>
-<p>Fetch a JWT authorization token from the authentication endpoints defined in <code>.env</code> file.</p>
+<p>Fetch a JWT authorization token from the authentication endpoints defined in the main config file.</p>
 <p>Cache the token for 24-hour use.</p>
 <h4 id="arguments_1">Arguments</h4>
 <ul>
