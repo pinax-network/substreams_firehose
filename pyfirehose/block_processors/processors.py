@@ -89,6 +89,7 @@ def filtered_block_processor(raw_block: Message) -> dict:
         A dictionary containing the filtered block data.
 
     Example:
+    ```json
     {
         "account": "eosio.bpay",
         "date": "2022-10-21 00:03:31",
@@ -103,6 +104,7 @@ def filtered_block_processor(raw_block: Message) -> dict:
         "contract": "eosio.token",
         "action": "transfer"
     }
+    ```
     """
     block = _unpack_block(raw_block)
     for transaction_trace in block.filtered_transaction_traces:
