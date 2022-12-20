@@ -14,7 +14,8 @@ from typing import Any, ClassVar, Optional
 import hjson
 from grpc import Compression
 
-import pyfirehose.utils as utils
+# Prevent circular import between utils and config modules
+import pyfirehose.utils as utils #pylint: disable=consider-using-from-import
 
 @dataclass
 class StubConfig:

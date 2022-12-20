@@ -21,7 +21,7 @@ from pyfirehose.config import Config
 
 def date_to_block_num(date: datetime, jwt: Optional[str] = None) -> int:
     """
-    Queries the `graphql_endpoint` specified in the main config file for the block number associated with a given date time.
+    Query the `graphql_endpoint` specified in the main config file for the block number associated with a given date time.
 
     Cache the results for the duration specified in the main config file (`graphql_cache`, default is 30 days).
 

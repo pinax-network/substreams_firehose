@@ -21,7 +21,7 @@ def _unpack_block(raw_block: Message, block_type_name: Optional[str] = 'Block') 
     It requires the compiled proto to be present in the `proto.generated` submodule
     with the block type named as `Block` by default.
 
-    See the [protobuf `Any` docs](https://googleapis.dev/python/protobuf/latest/google/protobuf/any_pb2.html) for more info.
+    See google's [protobuf docs](https://googleapis.dev/python/protobuf/latest/google/protobuf/any_pb2.html) for more info.
 
     Args:
         raw_block: `Any` message type representing a raw block from the gRPC stream.
