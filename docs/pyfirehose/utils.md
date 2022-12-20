@@ -16,7 +16,7 @@ Utils
 
 [Show source in utils.py:22](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/utils.py#L22)
 
-Queries the `graphql_endpoint` specified in the main config file for the block number associated with a given date time.
+Query the `graphql_endpoint` specified in the main config file for the block number associated with a given date time.
 
 Cache the results for the duration specified in the main config file (`graphql_cache`, default is 30 days).
 
