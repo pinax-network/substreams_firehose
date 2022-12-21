@@ -907,15 +907,15 @@ in the config.</p>
 <p><a href="https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/config.py#L109">Show source in config.py:109</a></p>
 <p>Load the stub config from a file (str) or directly from a key-value dictionary.</p>
 <h4 id="arguments_1">Arguments</h4>
-<p>stub:
-    The stub to load either as a filepath or a dictionary.</p>
+<ul>
+<li><code>stub</code> - The stub to load either as a filepath or a dictionary.</li>
+</ul>
 <h4 id="raises_1">Raises</h4>
-<p>HjsonDecodeError:
-    If the hjson module fails to parse the config file.
-ImportError:
-    If the specified stub or request object cannot be imported.
-KeyError:
-    If a required key is missing from the config file.</p>
+<ul>
+<li><code>HjsonDecodeError</code> - If the hjson module fails to parse the config file.</li>
+<li><code>ImportError</code> - If the specified stub or request object cannot be imported.</li>
+<li><code>KeyError</code> - If a required key is missing from the config file.</li>
+</ul>
 <h4 id="signature_3">Signature</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">def</span> <span class="nf">load_stub_config</span><span class="p">(</span><span class="n">stub</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="o">...</span>
