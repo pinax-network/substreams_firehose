@@ -3,5 +3,88 @@
 	"name": "Stream",
 	"request": "Request",
 	"parameters": {
+		"output_modules": [
+			"map_transfers"
+		],
+		"modules": {
+			"modules": [
+				{
+					"name": "map_actions",
+					"kindMap": {
+						"outputType": "proto:antelope.token.v1.eosio.token"
+					},
+					"binaryIndex": 0,
+					"binaryEntrypoint": "map_actions",
+					"inputs": [
+						{
+							"source": {
+								"type": "sf.antelope.type.v2.Block"
+							}
+						}
+					],
+					"initialBlock": "2",
+					"output": {
+						"type": "proto:antelope.token.v1.eosio.token"
+					}
+				},
+				{
+					"name": "map_transfers",
+					"kindMap": {
+						"outputType": "proto:antelope.token.v1.eosio.token"
+					},
+					"binaryIndex": 0,
+					"binaryEntrypoint": "map_transfers",
+					"inputs": [
+						{
+							"map": {
+								"moduleName": "map_actions"
+							}
+						}
+					],
+					"initialBlock": "2",
+					"output": {
+						"type": "proto:antelope.token.v1.eosio.token"
+					}
+				},
+				{
+					"name": "map_transfers_eosio_token",
+					"kindMap": {
+						"outputType": "proto:antelope.token.v1.eosio.token"
+					},
+					"binaryIndex": 0,
+					"binaryEntrypoint": "map_transfers_eosio_token",
+					"inputs": [
+						{
+							"map": {
+								"moduleName": "map_transfers"
+							}
+						}
+					],
+					"initialBlock": "2",
+					"output": {
+						"type": "proto:antelope.token.v1.eosio.token"
+					}
+				},
+				{
+					"name": "map_transfers_accounts",
+					"kindMap": {
+						"outputType": "proto:antelope.token.v1.eosio.token"
+					},
+					"binaryIndex": 0,
+					"binaryEntrypoint": "map_transfers_accounts",
+					"inputs": [
+						{
+							"map": {
+								"moduleName": "map_transfers"
+							}
+						}
+					],
+					"initialBlock": "2",
+					"output": {
+						"type": "proto:antelope.token.v1.eosio.token"
+					}
+				}
+			]
+		}
 	}
 }

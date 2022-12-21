@@ -1,4 +1,6 @@
 # TODO
+* Simplify stub config
+  - Use `ParseDict` from google protobuf library
 * Better protobuf generation
   - Fix generated python module import paths
     + https://github.com/protocolbuffers/protobuf/issues/1491

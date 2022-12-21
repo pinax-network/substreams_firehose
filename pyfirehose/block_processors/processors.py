@@ -39,7 +39,6 @@ def _unpack_block(raw_block: Message, block_type_name: Optional[str] = 'Block') 
     """
     block = None
     block_type = raw_block.type_url.split("/")[1].rsplit(".", 1)[0]
-    logging.debug('Block type : %s', block_type)
 
     imported = import_all_from_module(f'pyfirehose.proto.generated.{block_type}')
     for module in imported:

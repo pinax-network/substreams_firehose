@@ -111,16 +111,12 @@ def load_stub_config(stub: str | dict) -> None:
     Load the stub config from a file (str) or directly from a key-value dictionary.
 
     Args:
-        stub:
-            The stub to load either as a filepath or a dictionary.
+        stub: The stub to load either as a filepath or a dictionary.
 
     Raises:
-        HjsonDecodeError:
-            If the hjson module fails to parse the config file.
-        ImportError:
-            If the specified stub or request object cannot be imported.
-        KeyError:
-            If a required key is missing from the config file.
+        HjsonDecodeError: If the hjson module fails to parse the config file.
+        ImportError: If the specified stub or request object cannot be imported.
+        KeyError: If a required key is missing from the config file.
     """
     stub_config = stub
     # Load stub config from external file

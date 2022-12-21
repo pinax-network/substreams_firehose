@@ -1,6 +1,6 @@
-# EOSNation - Blockchain Data for Analytics (Python version)
+# EOSNation - PyFirehose
 
-> Aggregates historical blockchain data & outputs result in JSONL format (powered by [**Firehose**](https://eos.firehose.eosnation.io/) and [**Substreams**](https://substreams.streamingfast.io))
+> Extract historical blockchain data and outputs results in JSONL format (powered by [**Firehose**](https://eos.firehose.eosnation.io/) and [**Substreams**](https://substreams.streamingfast.io))
 
 [![Pylint](https://github.com/Krow10/eos-blockchain-data/actions/workflows/pylint.yml/badge.svg)](https://github.com/Krow10/eos-blockchain-data/actions/workflows/pylint.yml)
 
