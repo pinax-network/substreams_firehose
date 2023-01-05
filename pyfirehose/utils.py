@@ -17,7 +17,7 @@ from typing import Optional
 
 from requests_cache import CachedSession
 
-from pyfirehose.config import Config
+from pyfirehose.config.utils import Config
 
 def date_to_block_num(date: datetime, jwt: Optional[str] = None) -> int:
     """

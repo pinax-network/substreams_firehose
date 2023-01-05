@@ -153,9 +153,7 @@ def load_stub_config(stub: str | dict) -> None:
             logging.critical('Could not load request object from config: unable to locate "%s"', stub_config['request'])
             raise ImportError
 
-        StubConfig.REQUEST_PARAMETERS = {}
-        for key, value in stub_config['parameters'].items():
-            StubConfig.REQUEST_PARAMETERS[key] = value
+        StubConfig.REQUEST_PARAMETERS = stub_config['parameters']
     except ImportError as error:
         logging.exception('Error importing modules from specified directory (%s): %s',
             stub_config['python_import_dir'],

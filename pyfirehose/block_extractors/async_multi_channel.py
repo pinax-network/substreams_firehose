@@ -23,7 +23,7 @@ from google.protobuf.message import Message
 
 from pyfirehose.block_extractors.common import get_secure_channel
 from pyfirehose.block_extractors.common import stream_blocks
-from pyfirehose.config import Config
+from pyfirehose.config.utils import Config
 from pyfirehose.exceptions import BlockStreamException
 from pyfirehose.utils import get_current_task_name
 
