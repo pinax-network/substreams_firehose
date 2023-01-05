@@ -120,7 +120,7 @@ dist
 __pycache__/
 
 # Helper scripts
-*.sh
+/*.sh
 
 # Jupyer notebook cache
 .ipynb_checkpoints
