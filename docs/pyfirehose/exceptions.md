@@ -1,17 +1,17 @@
 # Exceptions
 
-[Eos-blockchain-data Index](../README.md#eos-blockchain-data-index) /
+[Pyfirehose Index](../README.md#pyfirehose-index) /
 [Pyfirehose](./index.md#pyfirehose) /
 Exceptions
 
-> Auto-generated documentation for [pyfirehose.exceptions](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/exceptions.py) module.
+> Auto-generated documentation for [pyfirehose.exceptions](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/exceptions.py) module.
 
 - [Exceptions](#exceptions)
   - [BlockStreamException](#blockstreamexception)
 
 ## BlockStreamException
 
-[Show source in exceptions.py:7](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/exceptions.py#L7)
+[Show source in exceptions.py:7](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/exceptions.py#L7)
 
 Thrown by a task when failing to process a block.
 

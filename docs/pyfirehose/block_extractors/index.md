@@ -1,10 +1,10 @@
 # Block Extractors
 
-[Eos-blockchain-data Index](../../README.md#eos-blockchain-data-index) /
+[Pyfirehose Index](../../README.md#pyfirehose-index) /
 [Pyfirehose](../index.md#pyfirehose) /
 Block Extractors
 
-> Auto-generated documentation for [pyfirehose.block_extractors](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/block_extractors/__init__.py) module.
+> Auto-generated documentation for [pyfirehose.block_extractors](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_extractors/__init__.py) module.
 
 - [Block Extractors](#block-extractors)
   - [Modules](#modules)

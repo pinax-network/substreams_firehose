@@ -1,10 +1,10 @@
 # Utils
 
-[Eos-blockchain-data Index](../README.md#eos-blockchain-data-index) /
+[Pyfirehose Index](../README.md#pyfirehose-index) /
 [Pyfirehose](./index.md#pyfirehose) /
 Utils
 
-> Auto-generated documentation for [pyfirehose.utils](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/utils.py) module.
+> Auto-generated documentation for [pyfirehose.utils](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py) module.
 
 - [Utils](#utils)
   - [date_to_block_num](#date_to_block_num)
@@ -14,7 +14,7 @@ Utils
 
 ## date_to_block_num
 
-[Show source in utils.py:22](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/utils.py#L22)
+[Show source in utils.py:22](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L22)
 
 Query the `graphql_endpoint` specified in the main config file for the block number associated with a given date time.
 
@@ -40,7 +40,7 @@ def date_to_block_num(date: datetime, jwt: Optional[str] = None) -> int:
 
 ## get_auth_token
 
-[Show source in utils.py:77](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/utils.py#L77)
+[Show source in utils.py:77](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L77)
 
 Fetch a JWT authorization token from the authentication endpoints defined in the main config file.
 
@@ -65,7 +65,7 @@ def get_auth_token(use_cache: bool = True) -> str:
 
 ## get_current_task_name
 
-[Show source in utils.py:113](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/utils.py#L113)
+[Show source in utils.py:113](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L113)
 
 Helper function for generating a unique task id from an asyncio task.
 
@@ -80,7 +80,7 @@ def get_current_task_name() -> str:
 
 ## import_all_from_module
 
-[Show source in utils.py:122](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/utils.py#L122)
+[Show source in utils.py:122](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L122)
 
 Dynamically import all python files located in the specified module's folder.
 

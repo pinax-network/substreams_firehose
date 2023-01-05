@@ -1,18 +1,18 @@
 # Async Single Channel
 
-[Eos-blockchain-data Index](../../README.md#eos-blockchain-data-index) /
+[Pyfirehose Index](../../README.md#pyfirehose-index) /
 [Pyfirehose](../index.md#pyfirehose) /
 [Block Extractors](./index.md#block-extractors) /
 Async Single Channel
 
-> Auto-generated documentation for [pyfirehose.block_extractors.async_single_channel](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/block_extractors/async_single_channel.py) module.
+> Auto-generated documentation for [pyfirehose.block_extractors.async_single_channel](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_extractors/async_single_channel.py) module.
 
 - [Async Single Channel](#async-single-channel)
   - [asyncio_main](#asyncio_main)
 
 ## asyncio_main
 
-[Show source in async_single_channel.py:28](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/block_extractors/async_single_channel.py#L28)
+[Show source in async_single_channel.py:28](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_extractors/async_single_channel.py#L28)
 
 Extract blocks from a gRPC channel as raw blocks for later processing.
 

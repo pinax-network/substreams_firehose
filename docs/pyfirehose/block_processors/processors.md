@@ -1,11 +1,11 @@
 # Processors
 
-[Eos-blockchain-data Index](../../README.md#eos-blockchain-data-index) /
+[Pyfirehose Index](../../README.md#pyfirehose-index) /
 [Pyfirehose](../index.md#pyfirehose) /
 [Block Processors](./index.md#block-processors) /
 Processors
 
-> Auto-generated documentation for [pyfirehose.block_processors.processors](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/block_processors/processors.py) module.
+> Auto-generated documentation for [pyfirehose.block_processors.processors](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py) module.
 
 - [Processors](#processors)
   - [default_block_processor](#default_block_processor)
@@ -13,7 +13,7 @@ Processors
 
 ## default_block_processor
 
-[Show source in processors.py:60](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/block_processors/processors.py#L60)
+[Show source in processors.py:60](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L60)
 
 Yield all the block data as a JSON-formatted dictionary.
 
@@ -38,7 +38,7 @@ def default_block_processor(raw_block: Message) -> dict:
 
 ## filtered_block_processor
 
-[Show source in processors.py:78](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/block_processors/processors.py#L78)
+[Show source in processors.py:78](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L78)
 
 Yield a all transactions from a gRPC filtered block, returning a subset of relevant properties.
 

@@ -1,8 +1,8 @@
-# Eos-blockchain-data Index
+# Pyfirehose Index
 
 > Auto-generated documentation index.
 
-A full list of [Eos-blockchain-data](https://github.com/Krow10/eos-blockchain-data) project modules.
+A full list of [Pyfirehose](https://github.com/Krow10/pyfirehose) project modules.
 
 - [Pyfirehose](pyfirehose/index.md#pyfirehose)
     - [Module](pyfirehose/module.md#module)

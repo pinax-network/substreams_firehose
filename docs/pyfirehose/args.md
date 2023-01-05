@@ -1,10 +1,10 @@
 # Args
 
-[Eos-blockchain-data Index](../README.md#eos-blockchain-data-index) /
+[Pyfirehose Index](../README.md#pyfirehose-index) /
 [Pyfirehose](./index.md#pyfirehose) /
 Args
 
-> Auto-generated documentation for [pyfirehose.args](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/args.py) module.
+> Auto-generated documentation for [pyfirehose.args](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/args.py) module.
 
 - [Args](#args)
   - [check_period](#check_period)
@@ -12,7 +12,7 @@ Args
 
 ## check_period
 
-[Show source in args.py:12](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/args.py#L12)
+[Show source in args.py:12](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/args.py#L12)
 
 Convert the specified period argument, from a integer or a date, to a block number.
 
@@ -39,7 +39,7 @@ def check_period(arg_period: str) -> int:
 
 ## parse_arguments
 
-[Show source in args.py:35](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/args.py#L35)
+[Show source in args.py:35](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/args.py#L35)
 
 Setup the command line interface and return the parsed arguments.
 
