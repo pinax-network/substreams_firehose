@@ -133,7 +133,11 @@ def main() -> int:
         function_item = FunctionItem(f'{input_parameter.name}:{type_to_string(input_parameter.type)}', get_parameter_input)
         function_item.args = [function_item]
         try:
-            function_item.return_value = StubConfig.REQUEST_PARAMETERS[input_parameter.name]
+            if is_substreams and input_parameter.name == 'modules':
+                function_item.return_value = StubConfig.SUBSTREAMS_PACKAGE_FILE
+            else:
+                function_item.return_value = StubConfig.REQUEST_PARAMETERS[input_parameter.name]
+
             get_parameter_input(function_item, default_value=function_item.return_value)
         except KeyError:
             get_parameter_input(function_item, default_value='None')
