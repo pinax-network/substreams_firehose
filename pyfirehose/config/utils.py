@@ -12,6 +12,7 @@ from typing import Any, ClassVar, Optional
 
 # https://hjson.github.io/hjson-py/ -- allow comments in JSON files for configuration purposes
 import hjson
+from google.protobuf.json_format import MessageToJson
 from grpc import Compression
 
 # Prevent circular import between utils and config modules
@@ -25,6 +26,8 @@ class StubConfig:
     REQUEST_OBJECT: ClassVar[Any]
     REQUEST_PARAMETERS: ClassVar[dict]
     STUB_OBJECT: ClassVar[Any]
+    SUBSTREAMS_OUTPUT_TYPES: ClassVar[list]
+    SUBSTREAMS_PACKAGE_OBJECT: ClassVar[Any]
 
 @dataclass
 class Config:
@@ -106,6 +109,13 @@ def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
 
     return True
 
+def load_substreams_package(url: str) -> dict:
+    with open(url, 'rb') as package_file:
+        pkg = StubConfig.SUBSTREAMS_PACKAGE_OBJECT()
+        pkg.ParseFromString(package_file.read())
+
+    return hjson.loads(MessageToJson(pkg.modules))
+
 def load_stub_config(stub: str | dict) -> None:
     """
     Load the stub config from a file (str) or directly from a key-value dictionary.
@@ -134,14 +144,23 @@ def load_stub_config(stub: str | dict) -> None:
 
         for module in imported:
             try:
+                StubConfig.REQUEST_OBJECT = getattr(module, stub_config['request'])
+            except AttributeError:
+                pass
+
+            try:
                 StubConfig.STUB_OBJECT = getattr(module, f'{stub_config["name"]}Stub')
             except AttributeError:
                 pass
 
             try:
-                StubConfig.REQUEST_OBJECT = getattr(module, stub_config['request'])
+                StubConfig.SUBSTREAMS_PACKAGE_OBJECT = getattr(module, 'Package')
             except AttributeError:
                 pass
+
+        if not StubConfig.REQUEST_OBJECT:
+            logging.critical('Could not load request object from config: unable to locate "%s"', stub_config['request'])
+            raise ImportError
 
         if not StubConfig.STUB_OBJECT:
             logging.critical('Could not load stub object from config: unable to locate "%sStub" in "%s" module',
@@ -149,11 +168,20 @@ def load_stub_config(stub: str | dict) -> None:
                 f'pyfirehose.proto.generated.{stub_config["python_import_dir"]}')
             raise ImportError
 
-        if not StubConfig.REQUEST_OBJECT:
-            logging.critical('Could not load request object from config: unable to locate "%s"', stub_config['request'])
-            raise ImportError
+        # If is using substreams
+        if 'modules' in stub_config['parameters'] and '.spkg' in stub_config['parameters']['modules']:
+            if not StubConfig.SUBSTREAMS_PACKAGE_OBJECT:
+                logging.critical('Could not determine package for generating modules parameters')
+                raise ImportError
+
+            stub_config['parameters']['modules'] = load_substreams_package(stub_config['parameters']['modules'])
+            StubConfig.SUBSTREAMS_OUTPUT_TYPES = list(
+                m['output']['type'].split(':', 1)[1].rsplit('.', 1)[0] for m in stub_config['parameters']['modules']['modules']
+                if m['name'] in stub_config['parameters']['output_modules']
+            )
 
         StubConfig.REQUEST_PARAMETERS = stub_config['parameters']
+
     except ImportError as error:
         logging.exception('Error importing modules from specified directory (%s): %s',
             stub_config['python_import_dir'],

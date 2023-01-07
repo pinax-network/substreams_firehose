@@ -12,6 +12,7 @@ from typing import Optional
 from google.protobuf.json_format import MessageToJson
 from google.protobuf.message import Message
 
+from pyfirehose.config.utils import StubConfig
 from pyfirehose.utils import import_all_from_module
 
 def _unpack_block(raw_block: Message, block_type_name: Optional[str] = 'Block') -> Message:
@@ -141,3 +142,10 @@ def filtered_block_processor(raw_block: Message) -> dict:
 
             logging.debug('Data: %s', data)
             yield data
+
+def default_substreams_processor(data: Message) -> dict:
+    for output_type in StubConfig.SUBSTREAMS_OUTPUT_TYPES:
+        logging.debug('Importing substreams output type "%s"', output_type)
+        import_all_from_module(f'pyfirehose.proto.generated.{output_type}')
+
+    yield json.loads(MessageToJson(data))
