@@ -1,9 +1,9 @@
 # Pyfirehose
 
-[Eos-blockchain-data Index](../README.md#eos-blockchain-data-index) /
+[Pyfirehose Index](../README.md#pyfirehose-index) /
 Pyfirehose
 
-> Auto-generated documentation for [pyfirehose](https://github.com/Krow10/eos-blockchain-data/blob/main/pyfirehose/__init__.py) module.
+> Auto-generated documentation for [pyfirehose](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/__init__.py) module.
 
 - [Pyfirehose](#pyfirehose)
   - [Modules](#modules)

@@ -19,8 +19,8 @@ from hjson import HjsonDecodeError
 
 from pyfirehose.args import check_period, parse_arguments
 from pyfirehose.block_extractors.common import process_blocks
-from pyfirehose.config import Config, StubConfig
-from pyfirehose.config import load_config, load_stub_config
+from pyfirehose.config.utils import Config, StubConfig
+from pyfirehose.config.utils import load_config, load_stub_config
 from pyfirehose.utils import get_auth_token
 
 CONSOLE_HANDLER = logging.StreamHandler()
