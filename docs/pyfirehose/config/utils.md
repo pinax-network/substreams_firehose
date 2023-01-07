@@ -1,20 +1,21 @@
-# Config
+# Utils
 
-[Pyfirehose Index](../README.md#pyfirehose-index) /
-[Pyfirehose](./index.md#pyfirehose) /
-Config
+[Pyfirehose Index](../../README.md#pyfirehose-index) /
+[Pyfirehose](../index.md#pyfirehose) /
+[Config](./index.md#config) /
+Utils
 
-> Auto-generated documentation for [pyfirehose.config](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config.py) module.
+> Auto-generated documentation for [pyfirehose.config.utils](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py) module.
 
-- [Config](#config)
-  - [Config](#config-1)
+- [Utils](#utils)
+  - [Config](#config)
   - [StubConfig](#stubconfig)
   - [load_config](#load_config)
   - [load_stub_config](#load_stub_config)
 
 ## Config
 
-[Show source in config.py:30](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config.py#L30)
+[Show source in utils.py:30](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py#L30)
 
 Holds the main config.
 
@@ -29,7 +30,7 @@ class Config:
 
 ## StubConfig
 
-[Show source in config.py:21](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config.py#L21)
+[Show source in utils.py:21](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py#L21)
 
 Holds the stub config.
 
@@ -44,7 +45,7 @@ class StubConfig:
 
 ## load_config
 
-[Show source in config.py:44](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config.py#L44)
+[Show source in utils.py:44](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py#L44)
 
 Load the main config from the specified file. If a gRPC entry id is specified, it overwrites the default specified
 in the config.
@@ -76,7 +77,7 @@ def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
 
 ## load_stub_config
 
-[Show source in config.py:109](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config.py#L109)
+[Show source in utils.py:109](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py#L109)
 
 Load the stub config from a file (str) or directly from a key-value dictionary.
 

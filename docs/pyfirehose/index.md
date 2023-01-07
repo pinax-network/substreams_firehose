@@ -14,7 +14,7 @@ Pyfirehose
 - [Args](./args.md)
 - [Block Extractors](block_extractors/index.md)
 - [Block Processors](block_processors/index.md)
-- [Config](./config.md)
+- [Config](config/index.md)
 - [Exceptions](./exceptions.md)
 - [Tests](tests/index.md)
 - [Utils](./utils.md)

@@ -13,7 +13,7 @@ Processors
 
 ## default_block_processor
 
-[Show source in processors.py:60](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L60)
+[Show source in processors.py:61](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L61)
 
 Yield all the block data as a JSON-formatted dictionary.
 
@@ -38,7 +38,7 @@ def default_block_processor(raw_block: Message) -> dict:
 
 ## filtered_block_processor
 
-[Show source in processors.py:78](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L78)
+[Show source in processors.py:79](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L79)
 
 Yield a all transactions from a gRPC filtered block, returning a subset of relevant properties.
 
