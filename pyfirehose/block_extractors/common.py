@@ -10,9 +10,10 @@ from contextlib import asynccontextmanager
 from typing import Callable, Optional, Sequence
 
 import grpc
+from google.protobuf.json_format import ParseDict
 from google.protobuf.message import Message
 
-from pyfirehose.config import Config, StubConfig
+from pyfirehose.config.utils import Config, StubConfig
 from pyfirehose.exceptions import BlockStreamException
 from pyfirehose.utils import get_auth_token
 from pyfirehose.utils import get_current_task_name
@@ -100,10 +101,12 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel,
         end,
     )
 
+    req = ParseDict(request_parameters, StubConfig.REQUEST_OBJECT())
+
     try:
         # Duplicate code for moving invariant out of loop, preventing condition check on every block streamed
         if block_processor:
-            async for response in stub.Blocks(StubConfig.REQUEST_OBJECT(**request_parameters)):
+            async for response in stub.Blocks(req):
                 logging.debug('[%s] Getting block number #%i (%i blocks remaining)...',
                     get_current_task_name(),
                     current_block_number,
@@ -115,7 +118,7 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel,
                 for blob in block_processor(response.block):
                     data.append(blob)
         else:
-            async for response in stub.Blocks(StubConfig.REQUEST_OBJECT(**request_parameters)):
+            async for response in stub.Blocks(req):
                 logging.debug('[%s] Getting block number #%i (%i blocks remaining)...',
                     get_current_task_name(),
                     current_block_number,
@@ -123,7 +126,19 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel,
                 )
 
                 current_block_number += 1
-                data.append(response.block)
+
+                try:
+                    if response.HasField('block'):
+                        data.append(response.block)
+                except ValueError:
+                    pass
+
+                try:
+                    if response.HasField('data'):
+                        data.append(response.data)
+                except ValueError:
+                    logging.debug('[%s] Non-data response : %s', get_current_task_name(), response)
+
     except grpc.aio.AioRpcError as error:
         logging.error('[%s] Failed to process block number #%i: %s',
             get_current_task_name(),
