@@ -1,7 +1,7 @@
-curses-menu==0.6.10
 grpcio==1.51.1
 grpcio-reflection==1.51.1
 hjson==3.1.0
+npyscreen==4.10.5
 protobuf==4.21.12
 python-dotenv==0.21.0
 requests_cache==0.9.7
