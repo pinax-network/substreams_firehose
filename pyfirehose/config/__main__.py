@@ -24,10 +24,15 @@ from pyfirehose.config.utils import Config, StubConfig
 from pyfirehose.config.utils import load_config, load_stub_config
 from pyfirehose.utils import get_auth_token
 
+import curses
+from pygments import highlight
+from pygments.lexers.data import JsonLexer
+from pygments.formatters import TerminalFormatter
+
 class EndpointsSelectOne(SelectOne):
     def display_value(self, vl: dict):
         try:
-            return vl['url']
+            return f'{vl["chain"]} ({vl["url"]})'
         except KeyError:
             return str(vl)
 
@@ -126,8 +131,11 @@ class CodeHighlightedTextfield(Textfield):
         self.syntax_highlighting = True
 
     def update_highlighting(self, start, end):
-        # TODO : Parse syntax highlighting from Pygments and translate to curses colors
-        self._highlightingdata = [self.parent.theme_manager.findPair(self, 'IMPORTANT') for _ in range((end-start)*2)]
+        substr = self._get_string_to_print()
+        if not substr in self.parent.stored_highlights:
+            return
+
+        self._highlightingdata = self.parent.stored_highlights[substr]
 
 class CodeHighlightedPager(Pager):
     _contained_widgets = CodeHighlightedTextfield
@@ -137,6 +145,66 @@ class CodeHighlightedTitlePager(TitlePager):
 
 class MainForm(FormWithMenus):
     OK_BUTTON_TEXT = 'Quit'
+
+    def mkcolor(self, offset=49):
+        """
+        Adapted from Cansi library (https://github.com/tslight/cansi)
+        """
+        color = {}
+
+        curses.use_default_colors()  # https://stackoverflow.com/a/44015131
+        for i in range(1, 8):
+            curses.init_pair(i + offset, i, -1)  # color fg on black bg
+            curses.init_pair(i + offset + 7, curses.COLOR_WHITE, i)  # white fg on color bg
+            curses.init_pair(i + offset + 14, curses.COLOR_BLACK, i)  # black fg on color bg
+            color[str(i + 30)] = curses.color_pair(i + offset)
+            color[str(i + 40)] = curses.color_pair(i + offset + 7)
+            color["0;" + str(i + 30)] = curses.color_pair(i + offset)
+            color["0;" + str(i + 40)] = curses.color_pair(i + offset + 7)
+            color[str(i + 30) + ";0"] = curses.color_pair(i + offset)
+            color[str(i + 40) + ";0"] = curses.color_pair(i + offset + 7)
+            color[str(i + 90)] = curses.color_pair(i + offset) | curses.A_BOLD
+            color["1;" + str(i + 30)] = curses.color_pair(i + offset) | curses.A_BOLD
+            color["1;" + str(i + 40)] = curses.color_pair(i + offset + 7) | curses.A_BOLD
+            color[str(i + 30) + ";1"] = curses.color_pair(i + offset) | curses.A_BOLD
+            color[str(i + 40) + ";1"] = curses.color_pair(i + offset + 7) | curses.A_BOLD
+
+            color["39;49;00"] = self.theme_manager.findPair(self, 'DEFAULT')
+
+        return color
+
+
+    def colorize(self, string):
+        """
+        Adapted from Cansi library (https://github.com/tslight/cansi)
+        """
+        ansi_split = string.split("\x1b[")
+        color_pair = curses.color_pair(0)
+
+        color = self.mkcolor()
+        attr = {
+            "1": curses.A_BOLD,
+            "4": curses.A_UNDERLINE,
+            "5": curses.A_BLINK,
+            "7": curses.A_REVERSE,
+        }
+        colors = []
+
+        for substring in ansi_split[1:]:
+            if substring.startswith("0K"):
+                return  # 0K = clrtoeol so we are done with this line
+
+            ansi_code = substring.split("m")[0]
+            substring = substring[len(ansi_code) + 1 :]
+            if ansi_code in ["1", "4", "5", "7", "8"]:
+                color_pair = color_pair | attr[ansi_code]
+            elif ansi_code not in ["0", "0;"]:
+                color_pair = color[ansi_code]
+
+            if substring:
+                colors.append((color_pair, len(substring)))
+
+        return colors
 
     def afterEditing(self):
         self.parentApp.setNextForm(self.next_form)
@@ -157,10 +225,21 @@ class MainForm(FormWithMenus):
             arguments=[self.parentApp.STUB_CONFIG_ENPOINTS_FORM]
         )
 
+        self.stored_highlights = {}
+
+        main_config_text = hjson.dumpsJSON(self.parentApp.main_config, indent=4)
+        main_config_text_split = main_config_text.split('\n')
+        main_config_highlighted_text_split = highlight(main_config_text, JsonLexer(), TerminalFormatter()).split('\n')
+
+        for i in range(len(main_config_highlighted_text_split) - 1):
+            self.stored_highlights[main_config_text_split[i]] = [
+                c for (color, length) in self.colorize(main_config_highlighted_text_split[i]) for c in [color] * length
+            ]
+
         self.main_config_viewer = self.add(
             CodeHighlightedTitlePager,
             name='Main config (view only)',
-            values=hjson.dumps(self.parentApp.main_config, indent=4).split('\n'),
+            values=main_config_text_split,
         )
 
     def switch_form(self, form: str) -> None:
@@ -168,11 +247,12 @@ class MainForm(FormWithMenus):
         self.parentApp.switchForm(form)
 
 class StubConfigEndpointsForm(ActionFormV2):
-    def create(self):
+    def create(self):	
         self.ml_endpoints = self.add(
             EndpointsTitleSelectOne,
             name='Select an endpoint',
             values=self.parentApp.main_config['grpc'],
+            value=[0],
             scroll_exit=True
         )
 
@@ -248,7 +328,13 @@ class StubConfigServicesForm(ActionFormV2):
         self.parentApp.reflection_db = ProtoReflectionDescriptorDatabase(channel)
 
         services = self.parentApp.reflection_db.get_services()
-        self.ml_services = self.add(TitleSelectOne, name='Select a service', values=services, scroll_exit=True)
+        self.ml_services = self.add(
+            TitleSelectOne,
+            name='Select a service',
+            values=services,
+            value=[0],
+            scroll_exit=True
+        )
 
     def on_ok(self):
         self.parentApp.selected_service = self.ml_services.values[self.ml_services.value.pop()]
@@ -272,6 +358,7 @@ class StubConfigMethodsForm(ActionFormV2):
             TitleSelectOne,
             name='Select a method',
             values=[m.name for m in self.methods],
+            value=[0],
             scroll_exit=True
         )
 
