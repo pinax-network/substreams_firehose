@@ -13,9 +13,9 @@ from grpc_reflection.v1alpha.proto_reflection_descriptor_database import ProtoRe
 from google.protobuf.descriptor import FieldDescriptor
 from google.protobuf.descriptor_pool import DescriptorPool
 from npyscreen import ActionFormV2, FormWithMenus, NPSAppManaged
-from npyscreen import MultiLine, Pager, SelectOne, Textfield, TitleFilenameCombo, TitlePager, TitleSelectOne
+from npyscreen import MiniButtonPress, MultiLine, Pager, SelectOne, Slider, Textfield, TitleFilenameCombo, TitlePager, TitleSelectOne
 from npyscreen import OptionBoolean, OptionFreeText, OptionList, OptionListDisplay, OptionSingleChoice, OptionMultiFreeList
-from npyscreen import notify_confirm
+from npyscreen import notify_confirm, notify_yes_no
 from npyscreen.wgwidget import NotEnoughSpaceForWidget
 
 # Prevent circular import with 'check_period'
@@ -125,6 +125,66 @@ def on_ok_input_validation_hook(self,):
     """
     return self.OPTION_TO_CHANGE.set_from_widget_value(self.OPTION_WIDGET.value)
 
+def mkcolor(default_color, offset=49):
+    """
+    Adapted from Cansi library (https://github.com/tslight/cansi)
+    """
+    color = {}
+
+    curses.use_default_colors()  # https://stackoverflow.com/a/44015131
+    for i in range(1, 8):
+        curses.init_pair(i + offset, i, -1)  # color fg on black bg
+        curses.init_pair(i + offset + 7, curses.COLOR_WHITE, i)  # white fg on color bg
+        curses.init_pair(i + offset + 14, curses.COLOR_BLACK, i)  # black fg on color bg
+        color[str(i + 30)] = curses.color_pair(i + offset)
+        color[str(i + 40)] = curses.color_pair(i + offset + 7)
+        color["0;" + str(i + 30)] = curses.color_pair(i + offset)
+        color["0;" + str(i + 40)] = curses.color_pair(i + offset + 7)
+        color[str(i + 30) + ";0"] = curses.color_pair(i + offset)
+        color[str(i + 40) + ";0"] = curses.color_pair(i + offset + 7)
+        color[str(i + 90)] = curses.color_pair(i + offset) | curses.A_BOLD
+        color["1;" + str(i + 30)] = curses.color_pair(i + offset) | curses.A_BOLD
+        color["1;" + str(i + 40)] = curses.color_pair(i + offset + 7) | curses.A_BOLD
+        color[str(i + 30) + ";1"] = curses.color_pair(i + offset) | curses.A_BOLD
+        color[str(i + 40) + ";1"] = curses.color_pair(i + offset + 7) | curses.A_BOLD
+
+        color["39;49;00"] = default_color
+
+    return color
+
+
+def colorize(default_color, string):
+    """
+    Adapted from Cansi library (https://github.com/tslight/cansi)
+    """
+    ansi_split = string.split("\x1b[")
+    color_pair = curses.color_pair(0)
+
+    color = mkcolor(default_color)
+    attr = {
+        "1": curses.A_BOLD,
+        "4": curses.A_UNDERLINE,
+        "5": curses.A_BLINK,
+        "7": curses.A_REVERSE,
+    }
+    colors = []
+
+    for substring in ansi_split[1:]:
+        if substring.startswith("0K"):
+            return  # 0K = clrtoeol so we are done with this line
+
+        ansi_code = substring.split("m")[0]
+        substring = substring[len(ansi_code) + 1 :]
+        if ansi_code in ["1", "4", "5", "7", "8"]:
+            color_pair = color_pair | attr[ansi_code]
+        elif ansi_code not in ["0", "0;"]:
+            color_pair = color[ansi_code]
+
+        if substring:
+            colors.append((color_pair, len(substring)))
+
+    return colors
+
 class CodeHighlightedTextfield(Textfield):
     def __init__(self, *args, **kwargs):
         super(CodeHighlightedTextfield, self).__init__(*args, **kwargs)
@@ -146,66 +206,6 @@ class CodeHighlightedTitlePager(TitlePager):
 class MainForm(FormWithMenus):
     OK_BUTTON_TEXT = 'Quit'
 
-    def mkcolor(self, offset=49):
-        """
-        Adapted from Cansi library (https://github.com/tslight/cansi)
-        """
-        color = {}
-
-        curses.use_default_colors()  # https://stackoverflow.com/a/44015131
-        for i in range(1, 8):
-            curses.init_pair(i + offset, i, -1)  # color fg on black bg
-            curses.init_pair(i + offset + 7, curses.COLOR_WHITE, i)  # white fg on color bg
-            curses.init_pair(i + offset + 14, curses.COLOR_BLACK, i)  # black fg on color bg
-            color[str(i + 30)] = curses.color_pair(i + offset)
-            color[str(i + 40)] = curses.color_pair(i + offset + 7)
-            color["0;" + str(i + 30)] = curses.color_pair(i + offset)
-            color["0;" + str(i + 40)] = curses.color_pair(i + offset + 7)
-            color[str(i + 30) + ";0"] = curses.color_pair(i + offset)
-            color[str(i + 40) + ";0"] = curses.color_pair(i + offset + 7)
-            color[str(i + 90)] = curses.color_pair(i + offset) | curses.A_BOLD
-            color["1;" + str(i + 30)] = curses.color_pair(i + offset) | curses.A_BOLD
-            color["1;" + str(i + 40)] = curses.color_pair(i + offset + 7) | curses.A_BOLD
-            color[str(i + 30) + ";1"] = curses.color_pair(i + offset) | curses.A_BOLD
-            color[str(i + 40) + ";1"] = curses.color_pair(i + offset + 7) | curses.A_BOLD
-
-            color["39;49;00"] = self.theme_manager.findPair(self, 'DEFAULT')
-
-        return color
-
-
-    def colorize(self, string):
-        """
-        Adapted from Cansi library (https://github.com/tslight/cansi)
-        """
-        ansi_split = string.split("\x1b[")
-        color_pair = curses.color_pair(0)
-
-        color = self.mkcolor()
-        attr = {
-            "1": curses.A_BOLD,
-            "4": curses.A_UNDERLINE,
-            "5": curses.A_BLINK,
-            "7": curses.A_REVERSE,
-        }
-        colors = []
-
-        for substring in ansi_split[1:]:
-            if substring.startswith("0K"):
-                return  # 0K = clrtoeol so we are done with this line
-
-            ansi_code = substring.split("m")[0]
-            substring = substring[len(ansi_code) + 1 :]
-            if ansi_code in ["1", "4", "5", "7", "8"]:
-                color_pair = color_pair | attr[ansi_code]
-            elif ansi_code not in ["0", "0;"]:
-                color_pair = color[ansi_code]
-
-            if substring:
-                colors.append((color_pair, len(substring)))
-
-        return colors
-
     def afterEditing(self):
         self.parentApp.setNextForm(self.next_form)
 
@@ -225,18 +225,21 @@ class MainForm(FormWithMenus):
             arguments=[self.parentApp.STUB_CONFIG_ENPOINTS_FORM]
         )
 
-        self.stored_highlights = {}
 
         main_config_text = hjson.dumpsJSON(self.parentApp.main_config, indent=4)
         main_config_text_split = main_config_text.split('\n')
         main_config_highlighted_text_split = highlight(main_config_text, JsonLexer(), TerminalFormatter()).split('\n')
 
+        self.stored_highlights = {}
         for i in range(len(main_config_highlighted_text_split) - 1):
             self.stored_highlights[main_config_text_split[i]] = [
-                c for (color, length) in self.colorize(main_config_highlighted_text_split[i]) for c in [color] * length
+                c for (color, length) in colorize(
+                    self.theme_manager.findPair(self, 'DEFAULT'),
+                    main_config_highlighted_text_split[i]
+                ) for c in [color] * length
             ]
 
-        self.main_config_viewer = self.add(
+        self.add(
             CodeHighlightedTitlePager,
             name='Main config (view only)',
             values=main_config_text_split,
@@ -485,30 +488,116 @@ class StubConfigInputsForm(ActionFormV2):
         self.w_inputs = self.add(InputsListDisplay, name='Edit method inputs', values=options, scroll_exit=True)
 
     def on_ok(self):
-        stub_config = self.parentApp.stub_config
-        if not stub_config:
-            stub_config['parameters'] = {}
-            stub_config['python_import_dir'], stub_config['name'] = self.parentApp.selected_service.rsplit('.', 1)
-            stub_config['request'] = self.parentApp.selected_method.input_type.name
+        if not self.parentApp.stub_config:
+            self.parentApp.stub_config['parameters'] = {}
+            self.parentApp.stub_config['python_import_dir'], self.parentApp.stub_config['name'] = self.parentApp.selected_service.rsplit('.', 1)
+            self.parentApp.stub_config['request'] = self.parentApp.selected_method.input_type.name
 
         for input_option in self.w_inputs.values:
             if input_option.value:
-                stub_config['parameters'][input_option.name] = input_option.value
+                self.parentApp.stub_config['parameters'][input_option.name] = input_option.value
 
-        logging.info('[%s] Stub config : %s', self.name, stub_config)
+        logging.info('[%s] Stub config : %s', self.name, self.parentApp.stub_config)
 
+        self.parentApp.addForm(
+            self.parentApp.STUB_CONFIG_CONFIRM_EDIT_FORM,
+            StubConfigConfirmEditForm, name='Stub config editing - Confirm'
+        )
+        self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_CONFIRM_EDIT_FORM)
+
+    def on_cancel(self):
+        self.parentApp.setNextFormPrevious()
+
+# TODO : Add output config screen
+
+class ActionFormDiscard(ActionFormV2):
+    class Discard_Button(MiniButtonPress):
+        def whenPressed(self):
+            self.parent._on_discard()
+
+    DISCARDBUTTON_TYPE = Discard_Button
+    DISCARD_BUTTON_BR_OFFSET = (
+        ActionFormV2.CANCEL_BUTTON_BR_OFFSET[0],
+        ActionFormV2.OK_BUTTON_BR_OFFSET[1]
+        + len(ActionFormV2.OK_BUTTON_TEXT)
+        + ActionFormV2.CANCEL_BUTTON_BR_OFFSET[1]
+        + len(ActionFormV2.CANCEL_BUTTON_TEXT)
+    )
+    DISCARD_BUTTON_TEXT = 'Discard'
+
+    def _on_discard(self):
+        self.editing = self.on_discard()
+
+    def create_control_buttons(self):
+        self._add_button('ok_button',
+            self.__class__.OKBUTTON_TYPE,
+            self.__class__.OK_BUTTON_TEXT,
+            0 - self.__class__.OK_BUTTON_BR_OFFSET[0],
+            0 - self.__class__.OK_BUTTON_BR_OFFSET[1] - len(self.__class__.OK_BUTTON_TEXT),
+            None
+        )
+
+        self._add_button('cancel_button',
+            self.__class__.CANCELBUTTON_TYPE,
+            self.__class__.CANCEL_BUTTON_TEXT,
+            0 - self.__class__.CANCEL_BUTTON_BR_OFFSET[0],
+            0 - self.__class__.CANCEL_BUTTON_BR_OFFSET[1] - len(self.__class__.CANCEL_BUTTON_TEXT),
+            None
+        )
+
+        self._add_button('discard_button',
+            self.__class__.DISCARDBUTTON_TYPE,
+            self.__class__.DISCARD_BUTTON_TEXT,
+            0 - self.__class__.DISCARD_BUTTON_BR_OFFSET[0],
+            0 - self.__class__.DISCARD_BUTTON_BR_OFFSET[1] - len(self.__class__.DISCARD_BUTTON_TEXT),
+            None
+        )
+
+    def on_discard(self):
+        return False
+
+class StubConfigConfirmEditForm(ActionFormDiscard):
+    def create(self):
+        stub_config_text = hjson.dumpsJSON(self.parentApp.stub_config, indent=4)
+        stub_config_text_split = stub_config_text.split('\n')
+        stub_config_highlighted_text_split = highlight(stub_config_text, JsonLexer(), TerminalFormatter()).split('\n')
+
+        self.stored_highlights = {}
+        for i in range(len(stub_config_highlighted_text_split) - 1):
+            self.stored_highlights[stub_config_text_split[i]] = [
+                c for (color, length) in colorize(
+                    self.theme_manager.findPair(self, 'DEFAULT'),
+                    stub_config_highlighted_text_split[i]
+                ) for c in [color] * length
+            ]
+
+        self.add(
+            CodeHighlightedTitlePager,
+            name='Stub config recap (view only)',
+            values=stub_config_text_split,
+        )
+
+    def on_ok(self):
         with open(self.parentApp.stub_save_file, 'w+', encoding='utf8') as config_file:
-            hjson.dumpJSON(stub_config, config_file, indent=4)
+            hjson.dumpJSON(self.parentApp.stub_config, config_file, indent=4)
 
         self.parentApp.setNextForm('MAIN')
 
     def on_cancel(self):
         self.parentApp.setNextFormPrevious()
 
-# TODO : Add output config screen
-# TODO : Add config recap validation screen
+    def on_discard(self):
+        discard_confirm = notify_yes_no(
+            'Do you really want to discard this stub ? (No changes will be saved)',
+            title=f'Discard "{self.parentApp.stub_save_file}" ?'
+        )
+        if discard_confirm:
+            self.parentApp.switchForm('MAIN')
+        else:
+            pass
 
 class ConfigApp(NPSAppManaged):
+    STUB_CONFIG_CONFIRM_EDIT_FORM = 'STUB_CONFIG_CONFIRM_EDIT_FORM'
     STUB_CONFIG_ENPOINTS_FORM = 'STUB_CONFIG_ENDPOINTS_FORM'
     STUB_CONFIG_INPUTS_FORM = 'STUB_CONFIG_INPUTS_FORM'
     STUB_CONFIG_METHODS_FORM = 'STUB_CONFIG_METHODS_FORM'
