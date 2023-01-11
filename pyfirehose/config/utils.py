@@ -27,7 +27,6 @@ class StubConfig:
     REQUEST_PARAMETERS: ClassVar[dict]
     STUB_OBJECT: ClassVar[Any]
     SUBSTREAMS_OUTPUT_TYPES: ClassVar[list]
-    SUBSTREAMS_PACKAGE_FILE: ClassVar[str]
     SUBSTREAMS_PACKAGE_OBJECT: ClassVar[Any]
 
 @dataclass
@@ -175,8 +174,7 @@ def load_stub_config(stub: str | dict) -> None:
                 logging.critical('Could not determine package for generating modules parameters')
                 raise ImportError
 
-            StubConfig.SUBSTREAMS_PACKAGE_FILE = stub_config['parameters']['modules']
-            stub_config['parameters']['modules'] = load_substreams_package(StubConfig.SUBSTREAMS_PACKAGE_FILE)
+            stub_config['parameters']['modules'] = load_substreams_package(stub_config['parameters']['modules'])
             StubConfig.SUBSTREAMS_OUTPUT_TYPES = list(
                 m['output']['type'].split(':', 1)[1].rsplit('.', 1)[0] for m in stub_config['parameters']['modules']['modules']
                 if m['name'] in stub_config['parameters']['output_modules']
