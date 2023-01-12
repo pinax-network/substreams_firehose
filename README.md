@@ -2,32 +2,24 @@
 
 > Extract historical blockchain data and outputs results in JSONL format (powered by [**Firehose**](https://eos.firehose.eosnation.io/) and [**Substreams**](https://substreams.streamingfast.io))
 
-[![Pylint](https://github.com/Krow10/eos-blockchain-data/actions/workflows/pylint.yml/badge.svg)](https://github.com/Krow10/eos-blockchain-data/actions/workflows/pylint.yml)
+[![Pylint](https://github.com/Krow10/pyfirehose/actions/workflows/pylint.yml/badge.svg)](https://github.com/Krow10/pyfirehose/actions/workflows/pylint.yml)
 
-[![Extract Firehose](https://github.com/Krow10/eos-blockchain-data/actions/workflows/firehose_daily_extraction.yml/badge.svg)](https://github.com/Krow10/eos-blockchain-data/actions/workflows/firehose_daily_extraction.yml)
-[![Update Index](https://github.com/Krow10/eos-blockchain-data/actions/workflows/update_index_notebook.yml/badge.svg)](https://github.com/Krow10/eos-blockchain-data/actions/workflows/update_index_notebook.yml)
-[![Deploy Website](https://github.com/Krow10/eos-blockchain-data/actions/workflows/static.yml/badge.svg)](https://github.com/Krow10/eos-blockchain-data/actions/workflows/static.yml)
-
-## Github Actions workflow
-
-This repo uses Github actions to automatically fetch transactions related to EOS block producer's (BP) addresses payments, parse them and generate a [Sankey chart](https://en.wikipedia.org/wiki/Sankey_diagram) for visualizing the flow of funds. Below is a flow diagram showing what the actual pipeline looks like:
-
-![Github actions workflow pipeline](github_actions_workflow.png)
-
-You can see the rendered chart [here](https://krow10.github.io/eos-blockchain-data/static/) at the bottom of the page.
+[![Extract Firehose](https://github.com/Krow10/pyfirehose/actions/workflows/firehose_daily_extraction.yml/badge.svg)](https://github.com/Krow10/pyfirehose/actions/workflows/firehose_daily_extraction.yml)
+[![Update Index](https://github.com/Krow10/pyfirehose/actions/workflows/update_index_notebook.yml/badge.svg)](https://github.com/Krow10/pyfirehose/actions/workflows/update_index_notebook.yml)
+[![Deploy Website](https://github.com/Krow10/pyfirehose/actions/workflows/static.yml/badge.svg)](https://github.com/Krow10/pyfirehose/actions/workflows/static.yml)
 
 ## Quickstart
 
 ```console
-foo@bar:~$ git clone git@github.com:Krow10/eos-blockchain-data.git
-foo@bar:~$ cd eos-blockchain-data
-foo@bar:~/eos-blockchain-data$ vim pyfirehose/sample.config.hjson # Edit sample config file with editor of your choice to add your API keys
-foo@bar:~/eos-blockchain-data$ mv pyfirehose/sample.config.hjson pyfirehose/config.hjson # Rename to config.hjson
-foo@bar:~/eos-blockchain-data$ python3 -m venv .venv # Create virtual environnement
-foo@bar:~/eos-blockchain-data$ source .venv/bin/activate # Activate virtual environnement
-(.venv) foo@bar:~/eos-blockchain-data$ pip install -r requirements.txt # Install dependencies
-(.venv) foo@bar:~/eos-blockchain-data$ python -m pyfirehose -h
-usage: __main__.py [-h] [-c CONFIG] [-s STUB] [-o OUT_FILE] [-l [LOG]] [-q] [-g GRPC_ENTRY] [-e {optimized,single,multi}] [-p CUSTOM_PROCESSOR]              
+foo@bar:~$ git clone git@github.com:Krow10/pyfirehose.git
+foo@bar:~$ cd pyfirehose
+foo@bar:~/pyfirehose$ vim pyfirehose/sample.config.hjson # Edit sample config file with editor of your choice to add your API keys
+foo@bar:~/pyfirehose$ mv pyfirehose/sample.config.hjson pyfirehose/config.hjson # Rename to config.hjson
+foo@bar:~/pyfirehose$ python3 -m venv .venv # Create virtual environnement
+foo@bar:~/pyfirehose$ source .venv/bin/activate # Activate virtual environnement
+(.venv) foo@bar:~/pyfirehose$ pip install -r requirements.txt # Install dependencies
+(.venv) foo@bar:~/pyfirehose$ python -m pyfirehose -h
+usage: __main__.py [-h] [-c CONFIG] [-s STUB] [-o OUT_FILE] [-l [LOG]] [-q] [-g GRPC_ENTRY] [-e {optimized,single,multi}] [-p CUSTOM_PROCESSOR]
                    [--no-json-output] [--overwrite-log] [--request-parameters ...]
                    start end
 
@@ -64,10 +56,10 @@ The period's *start* and *end* accepts either a block number or a [ISO-like form
 
 A [`.pylintrc`](.pylintrc) file is provided if you want to run [Pylint](https://pypi.org/project/pylint/):
 ```console
-(.venv) user@dev-eosnation:~/Documents/eos-blockchain-data$ pylint pyfirehose --rcfile=.pylintrc
+(.venv) user@dev-eosnation:~/Documents/pyfirehose$ pylint pyfirehose --rcfile=.pylintrc
 ```
 
-Auto-generated documentation can be browsed [here](https://krow10.github.io/eos-blockchain-data/docs).
+Auto-generated documentation can be browsed [here](https://krow10.github.io/pyfirehose/docs).
 
 ## Editing configuration files
 
@@ -120,9 +112,9 @@ If the gRPC endpoint uses different protobuf definitions than the ones already p
 
 To communicate with the gRPC endpoint, Python objects are generated using `.proto` template files that describes the kind of data the client and server are going to manipulate. Those Python objects are already provided in the [`proto/generated/`](pyfirehose/proto/generated/) folder, however if you want to generate them yourself, you can run the following commands:
 ```console
-(.venv) foo@bar:~/eos-blockchain-data$ pip install grpcio-tools
-(.venv) foo@bar:~/eos-blockchain-data$ cd pyfirehose/proto
-(.venv) foo@bar:~/eos-blockchain-data/pyfirehose/proto$ python -m grpc_tools.protoc -I. --python_out=generated/ --grpc_python_out=generated/ $(find . -iname *.proto)
+(.venv) foo@bar:~/pyfirehose$ pip install grpcio-tools
+(.venv) foo@bar:~/pyfirehose$ cd pyfirehose/proto
+(.venv) foo@bar:~/pyfirehose/pyfirehose/proto$ python -m grpc_tools.protoc -I. --python_out=generated/ --grpc_python_out=generated/ $(find . -iname *.proto)
 ```
 
 or use the provided script [`build_proto.sh`](pyfirehose/proto/build_proto.sh).
@@ -156,6 +148,21 @@ Below is a list of the gRPC endpoints which have a default ready-to-use [stub co
 | streamingfast | Solana Mainnet-beta | sf.solana.type.v1   | [mainnet.sol.streamingfast.io:443](http://mainnet.sol.streamingfast.io:443)     |
 | streamingfast | Arweave Mainnet     | sf.arweave.type.v1  | [mainnet.arweave.streamingfast.io:443](http://mainnet.arweave.streamingfast.io:443) |
 | streamingfast | Aptos Testnet       | aptos.extractor.v1  | [testnet.aptos.streamingfast.io:443](http://testnet.aptos.streamingfast.io:443)   |
+
+### Using the config UI tool to edit config files
+
+An early version of a GUI tool for editing configuration files is available to make it easier to manage, add, edit and delete gRPC endpoints and their stub configurations.
+
+Simply run in the console :
+```console
+(.venv) foo@bar:~/pyfirehose$ python -m pyfirehose.config
+```
+
+In the first screen you will be able to see you main config file with all the listed endpoints. Use `Ctrl-X` to bring up a menu allowing edition of stub configuration files (*main config edit still WIP*). Go through the screens customizing which endpoint, service and method you want to use and specify at the end the request input parameters.
+
+**Note: for substreams enabled endpoints, specify the path to a `.spkg` file for the `modules` parameter.**
+
+See the [demo](#config-ui-tool-demo-for-substreams) at the bottom of this page for an example configuration using the [`eosio.token` Antelope substream](https://github.com/EOS-Nation/substreams-antelope/tree/develop/substreams/eosio.token) on `eos.firehose.eosnation.io:9001`. 
 
 ## Writing custom block processors
 
@@ -208,7 +215,21 @@ For full documentation about the syntax and variables available in the filter ex
 
 *Note: the Firehose v1 is getting deprecated and will soon be replaced by the [Firehose v2](https://github.com/streamingfast/proto/blob/develop/sf/firehose/v2/firehose.proto) version.*
 
-## Example
+## Examples
+
+### Config UI tool demo for substreams
+
+[![asciicast](demo.svg)](https://asciinema.org/a/vJiV1yUQ6vOFZmKFTplh2PxiN?theme=monokai)
+
+*Note: a small rendering glitch from [`termtosvg`](https://nbedos.github.io/termtosvg) causes the borders to be replaced with alphabetic characters. Actual borders are rendered with [box drawing](https://en.wikipedia.org/wiki/Box-drawing_character#Box_Drawing) characters.*
+
+### Github Actions workflow
+
+This repo uses Github actions to automatically fetch transactions related to EOS block producer's (BP) addresses payments, parse them and generate a [Sankey chart](https://en.wikipedia.org/wiki/Sankey_diagram) for visualizing the flow of funds. Below is a flow diagram showing what the actual pipeline looks like:
+
+![Github actions workflow pipeline](github_actions_workflow.png)
+
+You can see the rendered chart [here](https://krow10.github.io/pyfirehose/static/) at the bottom of the page.
 
 ### Input
 
@@ -261,7 +282,7 @@ For full documentation about the syntax and variables available in the filter ex
 #### Command-line
 
 ```console
-(.venv) foo@bar:~/eos-blockchain-data$ python pyfirehose 272368521 272369521 --quiet --log logs/eosio_pay.log --out jsonl/out.jsonl
+(.venv) foo@bar:~/pyfirehose$ python pyfirehose 272368521 272369521 --quiet --log logs/eosio_pay.log --out jsonl/out.jsonl
 ```
 
 ### Output (jsonl/out.jsonl)
