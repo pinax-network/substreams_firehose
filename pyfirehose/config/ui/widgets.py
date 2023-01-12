@@ -54,7 +54,7 @@ class CodeHighlightedTitlePager(TitlePager):
 
 class EndpointsSelectOne(SelectOne):
     """
-    Custom single selection widget to display main config's endpoint data.
+    Custom single selection widget to display the main config's endpoint data.
 
     See [npyscreen's documentation](https://npyscreen.readthedocs.io/widgets-multiline.html#widgets-picking-options)
     for reference.

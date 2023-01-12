@@ -118,7 +118,7 @@ class MainForm(FormWithMenus):
 
 class StubConfigEndpointsForm(ActionFormV2):
     """
-    Choose an endpoint to edit or create a new the stub config for.
+    Choose an endpoint to edit or create a new stub config for.
 
     Attributes:
         ml_endpoints: an `EndpointsTitleSelectOne` widget to select an endpoint.
@@ -533,11 +533,11 @@ def mkcolor(default_color: int, offset: Optional[int] = 49) -> dict[str, int]:
     for ANSI escape codes reference.
 
     Args:
-        default_color: color pair used for the default background and foreground ANSI escape codes ("39;49;00").
+        default_color: color pair used for the default background and foreground ANSI escape codes (`39;49;00`).
         offset: offset for the `curses.init_pair` function to avoid overwriting predefined colors of `npyscreen`'s theme.
 
     Returns:
-        A dictionary mapping of ANSI escape sequences to `curses`'s control characters.
+        A dictionary mapping of ANSI escape sequences to `curses`' control characters.
     """
     color = {}
 
@@ -567,14 +567,14 @@ def colorize(default_color: int, string: str) -> list[tuple[int, int]]:
     """
     Convert a string containg ANSI escape codes to `curses` control characters for color display.
 
-    Adapted from Cansi library (https://github.com/tslight/cansi). Some of the original kept in the code.
+    Adapted from Cansi library (https://github.com/tslight/cansi). Some of the original comments kept in the code.
 
     Args:
         default_color: passed to the `mkcolors` function (see documentation for reference).
         string: a string containing ANSI escape codes for color.
 
     Returns:
-        A list of pairs of `curses`'s control character and their applicable length.
+        A list of pairs of `curses`' control character and their applicable length.
 
     Example:
         `[(2097152, 10)]` will color 10 characters bold (`curses.A_BOLD = 2097152`).
