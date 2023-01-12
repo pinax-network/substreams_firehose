@@ -23,6 +23,7 @@ class ConfigApp(NPSAppManaged):
     def __init__(self):
         super().__init__()
 
+        self.display_main_popup = None
         self.main_config_file = 'pyfirehose/config.hjson'
         with open(self.main_config_file, 'r', encoding='utf8') as config_file:
             try:

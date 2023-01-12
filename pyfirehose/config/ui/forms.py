@@ -14,7 +14,7 @@ from grpc_reflection.v1alpha.proto_reflection_descriptor_database import ProtoRe
 from npyscreen import FormWithMenus, ActionFormV2
 from npyscreen import MiniButtonPress, TitleFilenameCombo, TitleSelectOne
 from npyscreen import OptionFreeText, OptionList, OptionSingleChoice, OptionMultiFreeList
-from npyscreen import notify_yes_no
+from npyscreen import notify_confirm, notify_yes_no
 from npyscreen.wgwidget import NotEnoughSpaceForWidget
 from pygments import highlight
 from pygments.lexers.data import JsonLexer
@@ -36,6 +36,10 @@ class MainForm(FormWithMenus):
     def beforeEditing(self):
         self.next_form = None
 
+        if self.parentApp.display_main_popup:
+            notify_confirm(self.parentApp.display_main_popup, title='Information')
+            self.parentApp.display_main_popup = None
+
     def create(self):
         self.main_menu = self.new_menu(name='Main menu')
         self.main_menu.addItem(
@@ -48,7 +52,6 @@ class MainForm(FormWithMenus):
             onSelect=self.switch_form,
             arguments=[self.parentApp.STUB_CONFIG_ENPOINTS_FORM]
         )
-
 
         main_config_text = hjson.dumpsJSON(self.parentApp.main_config, indent=4)
         main_config_text_split = main_config_text.split('\n')
@@ -65,7 +68,7 @@ class MainForm(FormWithMenus):
 
         self.add(
             CodeHighlightedTitlePager,
-            name='Main config (view only)',
+            name=f'Main config (view only) - {self.parentApp.main_config_file}',
             values=main_config_text_split
         )
 
@@ -78,7 +81,7 @@ class StubConfigEndpointsForm(ActionFormV2):
         self.ml_endpoints = self.add(
             EndpointsTitleSelectOne,
             name='Select an endpoint',
-            values=self.parentApp.main_config['grpc'],
+            values=sorted(self.parentApp.main_config['grpc'], key=lambda e: e['chain']),
             value=[0],
             scroll_exit=True
         )
@@ -389,15 +392,27 @@ class StubConfigConfirmEditForm(ActionFormDiscard):
 
         self.add(
             CodeHighlightedTitlePager,
-            name=f'Stub config recap (view only) - output file : {self.parentApp.stub_save_file}',
+            name=f'Stub config recap (view only) - {self.parentApp.stub_save_file}',
             values=stub_config_text_split,
         )
 
     def on_ok(self):
+        if os.path.isfile(self.parentApp.stub_save_file):
+            overwrite_confirm = notify_yes_no(
+                'Overwrite the previous stub config file ?',
+                title=f'Overwrite "{self.parentApp.stub_save_file}" ?'
+            )
+
+            if not overwrite_confirm:
+                return True
+
         with open(self.parentApp.stub_save_file, 'w+', encoding='utf8') as config_file:
             hjson.dumpJSON(self.parentApp.stub_config, config_file, indent=4)
 
+        self.parentApp.display_main_popup = f'Stub file successfully saved at :\n{self.parentApp.stub_save_file}'
         self.parentApp.setNextForm('MAIN')
+
+        return False
 
     def on_cancel(self):
         self.parentApp.setNextFormPrevious()
@@ -407,6 +422,7 @@ class StubConfigConfirmEditForm(ActionFormDiscard):
             'Do you really want to discard this stub ? (No changes will be saved)',
             title=f'Discard "{self.parentApp.stub_save_file}" ?'
         )
+
         if discard_confirm:
             self.parentApp.switchForm('MAIN')
         else:
