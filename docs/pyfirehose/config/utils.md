@@ -12,10 +12,11 @@ Utils
   - [StubConfig](#stubconfig)
   - [load_config](#load_config)
   - [load_stub_config](#load_stub_config)
+  - [load_substreams_modules_from_package](#load_substreams_modules_from_package)
 
 ## Config
 
-[Show source in utils.py:30](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py#L30)
+[Show source in utils.py:33](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py#L33)
 
 Holds the main config.
 
@@ -30,7 +31,7 @@ class Config:
 
 ## StubConfig
 
-[Show source in utils.py:21](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py#L21)
+[Show source in utils.py:22](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py#L22)
 
 Holds the stub config.
 
@@ -45,7 +46,7 @@ class StubConfig:
 
 ## load_config
 
-[Show source in utils.py:44](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py#L44)
+[Show source in utils.py:47](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py#L47)
 
 Load the main config from the specified file. If a gRPC entry id is specified, it overwrites the default specified
 in the config.
@@ -77,7 +78,7 @@ def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
 
 ## load_stub_config
 
-[Show source in utils.py:109](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py#L109)
+[Show source in utils.py:128](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py#L128)
 
 Load the stub config from a file (str) or directly from a key-value dictionary.
 
@@ -95,6 +96,29 @@ Load the stub config from a file (str) or directly from a key-value dictionary.
 
 ```python
 def load_stub_config(stub: str | dict) -> None:
+    ...
+```
+
+
+
+## load_substreams_modules_from_package
+
+[Show source in utils.py:112](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py#L112)
+
+Parses substreams modules from an `.spkg` file.
+
+#### Arguments
+
+- `url` - Local path to `.spkg` file.
+
+#### Returns
+
+A dictionary of modules available in the package file.
+
+#### Signature
+
+```python
+def load_substreams_modules_from_package(url: str) -> dict:
     ...
 ```
 

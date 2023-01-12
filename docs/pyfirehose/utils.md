@@ -40,7 +40,7 @@ def date_to_block_num(date: datetime, jwt: Optional[str] = None) -> int:
 
 ## get_auth_token
 
-[Show source in utils.py:77](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L77)
+[Show source in utils.py:78](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L78)
 
 Fetch a JWT authorization token from the authentication endpoints defined in the main config file.
 
@@ -65,7 +65,7 @@ def get_auth_token(use_cache: bool = True) -> str:
 
 ## get_current_task_name
 
-[Show source in utils.py:113](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L113)
+[Show source in utils.py:114](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L114)
 
 Helper function for generating a unique task id from an asyncio task.
 
@@ -80,7 +80,7 @@ def get_current_task_name() -> str:
 
 ## import_all_from_module
 
-[Show source in utils.py:122](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L122)
+[Show source in utils.py:123](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L123)
 
 Dynamically import all python files located in the specified module's folder.
 

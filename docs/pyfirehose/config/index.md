@@ -12,4 +12,5 @@ Config
 ## Modules
 
 - [Module](./module.md)
+- [Ui](ui/index.md)
 - [Utils](./utils.md)
