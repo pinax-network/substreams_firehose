@@ -12,6 +12,15 @@ from npyscreen.npysThemes import DefaultTheme
 from pyfirehose.config.ui.forms import MainForm, StubConfigEndpointsForm
 
 class ConfigApp(NPSAppManaged):
+    """
+    Main app containing the forms for the config GUI.
+
+    It acts as a medium of communication for getting value between forms, storing data as instance attributes
+    (via the `self.parentApp` variable available in child forms).
+
+    See [npyscreen's documentation](https://npyscreen.readthedocs.io/application-objects.html#in-detail)
+    for reference.
+    """
     STUB_CONFIG_CONFIRM_EDIT_FORM = 'STUB_CONFIG_CONFIRM_EDIT_FORM'
     STUB_CONFIG_ENPOINTS_FORM = 'STUB_CONFIG_ENDPOINTS_FORM'
     STUB_CONFIG_INPUTS_FORM = 'STUB_CONFIG_INPUTS_FORM'
@@ -24,7 +33,7 @@ class ConfigApp(NPSAppManaged):
         super().__init__()
 
         self.display_main_popup = None
-        self.main_config_file = 'pyfirehose/config.hjson'
+        self.main_config_file = 'pyfirehose/config.hjson' # TODO: Allow loading from other location if not found
         with open(self.main_config_file, 'r', encoding='utf8') as config_file:
             try:
                 self.main_config = hjson.load(config_file)

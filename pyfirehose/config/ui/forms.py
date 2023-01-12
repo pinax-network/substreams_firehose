@@ -1,9 +1,27 @@
 """
 SPDX-License-Identifier: MIT
+
+--- Cansi library (https://github.com/tslight/cansi) ---
+Copyright (c) 2018, Toby Slight
+All rights reserved.
+
+Permission to use, copy, modify, and/or distribute this software for any purpose
+with or without fee is hereby granted, provided that the above copyright notice
+and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+THIS SOFTWARE.
+--- Cansi library (https://github.com/tslight/cansi) ---
 """
 
 import logging
 import os.path
+from typing import Optional
 
 import curses
 import grpc
@@ -18,9 +36,11 @@ from npyscreen import notify_confirm, notify_yes_no
 from npyscreen.wgwidget import NotEnoughSpaceForWidget
 from pygments import highlight
 from pygments.lexers.data import JsonLexer
-from pygments.formatters import TerminalFormatter #pylint:disable=no-name-in-module
+from pygments.formatters import TerminalFormatter #pylint: disable=no-name-in-module
 
-from pyfirehose.args import check_period
+# This import is used to prevent circular dependency for the `utils` and `config.utils` modules.
+from pyfirehose.args import check_period #pylint: disable=unused-import
+
 from pyfirehose.utils import get_auth_token
 from pyfirehose.config.utils import Config, StubConfig
 from pyfirehose.config.utils import load_config, load_stub_config
@@ -28,13 +48,27 @@ from pyfirehose.config.ui.widgets import CodeHighlightedTitlePager, EndpointsTit
 from pyfirehose.config.ui.widgets import InputBoolean, InputFloat, InputInteger, InputsListDisplay
 
 class MainForm(FormWithMenus):
+    """
+    Main form presenting the main config file with a menu for accessing the edit functions.
+
+    Attributes:
+        main_menu: holds the menu entries.
+        next_form: describe the next form to be loaded after exiting the main form (`None` exits the application).
+        stored_highlights: dictionary containing the highlighted text content for the `CodeHighlightedTitlePager` widget.
+    """
     OK_BUTTON_TEXT = 'Quit'
 
-    def afterEditing(self):
+    def afterEditing(self): #pylint: disable=invalid-name
+        """
+        Called by `npyscreen` when the form is cycled out of the screen.
+        """
         self.parentApp.setNextForm(self.next_form)
 
-    def beforeEditing(self):
-        self.next_form = None
+    def beforeEditing(self): #pylint: disable=invalid-name
+        """
+        Called by `npyscreen` before the form gets drawn on the screen.
+        """
+        self.next_form = None #pylint: disable=attribute-defined-outside-init
 
         if self.parentApp.display_main_popup:
             notify_confirm(self.parentApp.display_main_popup, title='Information')
@@ -73,11 +107,23 @@ class MainForm(FormWithMenus):
         )
 
     def switch_form(self, form: str) -> None:
-        self.next_form = form
+        """
+        Helper function to set the next appropriate form when using the menu.
+
+        Args:
+            form: the form name.
+        """
+        self.next_form = form #pylint: disable=attribute-defined-outside-init
         self.parentApp.switchForm(form)
 
 class StubConfigEndpointsForm(ActionFormV2):
-    def create(self):	
+    """
+    Choose an endpoint to edit or create a new the stub config for.
+
+    Attributes:
+        ml_endpoints: an `EndpointsTitleSelectOne` widget to select an endpoint.
+    """
+    def create(self):
         self.ml_endpoints = self.add(
             EndpointsTitleSelectOne,
             name='Select an endpoint',
@@ -100,6 +146,13 @@ class StubConfigEndpointsForm(ActionFormV2):
         self.parentApp.setNextFormPrevious()
 
 class StubConfigSaveFileForm(ActionFormV2):
+    """
+    Choose the save file location for the stub config.
+
+    Attributes:
+        stub_loaded: indicates if the stub has been loaded from the specified file.
+        tfc_stub_save_file: a `TitleFilenameCombo` widget to select the stub save file.
+    """
     def create(self):
         try:
             endpoint_id = self.parentApp.selected_endpoint['id']
@@ -147,6 +200,14 @@ class StubConfigSaveFileForm(ActionFormV2):
         self.parentApp.setNextFormPrevious()
 
 class StubConfigServicesForm(ActionFormV2):
+    """
+    Choose a service from the services available on the specified endpoint.
+
+    The endpoint **has** to provide a reflection service in order to determine the available services.
+
+    Attributes:
+        ml_services: a `TitleSelectOne` widget to select which service the stub will use.
+    """
     def create(self):
         jwt = get_auth_token()
         creds = grpc.composite_channel_credentials(
@@ -180,6 +241,13 @@ class StubConfigServicesForm(ActionFormV2):
         self.parentApp.setNextFormPrevious()
 
 class StubConfigMethodsForm(ActionFormV2):
+    """
+    Choose a gRPC method from the specified service.
+
+    Attributes:
+        methods: available methods provided by the reflection service.
+        ml_services: a `TitleSelectOne` widget to select which method the stub will use.
+    """
     def create(self):
         desc_pool = DescriptorPool(self.parentApp.reflection_db)
         self.methods = desc_pool.FindServiceByName(self.parentApp.selected_service).methods
@@ -209,6 +277,14 @@ class StubConfigMethodsForm(ActionFormV2):
         self.parentApp.setNextFormPrevious()
 
 class StubConfigInputsForm(ActionFormV2):
+    """
+    Edit the request parameters sent to the gRPC endpoint.
+
+    Input options will be created according to their expected types (bool -> `InputBoolean`, etc.).
+
+    Attributes:
+        w_inputs: an `InputsListDisplay` widget to present the list of input options.
+    """
     def create(self):
         options = OptionList().options
 
@@ -309,7 +385,8 @@ class StubConfigInputsForm(ActionFormV2):
     def on_ok(self):
         if not self.parentApp.stub_config:
             self.parentApp.stub_config['parameters'] = {}
-            self.parentApp.stub_config['python_import_dir'], self.parentApp.stub_config['name'] = self.parentApp.selected_service.rsplit('.', 1)
+            self.parentApp.stub_config['python_import_dir'], self.parentApp.stub_config['name'] = \
+                self.parentApp.selected_service.rsplit('.', 1)
             self.parentApp.stub_config['request'] = self.parentApp.selected_method.input_type.name
 
         for input_option in self.w_inputs.values:
@@ -330,9 +407,17 @@ class StubConfigInputsForm(ActionFormV2):
 # TODO : Add output config screen
 
 class ActionFormDiscard(ActionFormV2):
-    class Discard_Button(MiniButtonPress):
+    """
+    Parent class for an `ActionFormV2` with an additional *Discard* button.
+
+    Overload the `on_discard` method to customize its behavior.
+    """
+    class Discard_Button(MiniButtonPress): #pylint: disable=invalid-name
+        """
+        Additional *Discard* button (name style chosen to match the `npyscreen` library).
+        """
         def whenPressed(self):
-            self.parent._on_discard()
+            self.parent._on_discard() #pylint: disable=protected-access
 
     DISCARDBUTTON_TYPE = Discard_Button
     DISCARD_BUTTON_BR_OFFSET = (
@@ -373,9 +458,18 @@ class ActionFormDiscard(ActionFormV2):
         )
 
     def on_discard(self):
+        """
+        *Discard* button hook to overload for customizing the behavior of the button.
+        """
         return False
 
 class StubConfigConfirmEditForm(ActionFormDiscard):
+    """
+    Confirmation screen displaying the final stub config as it will appear in the saved file.
+
+    Attributes:
+        stored_highlights: dictionary containing the highlighted text content for the `CodeHighlightedTitlePager` widget.
+    """
     def create(self):
         stub_config_text = hjson.dumpsJSON(self.parentApp.stub_config, indent=4)
         stub_config_text_split = stub_config_text.split('\n')
@@ -429,9 +523,21 @@ class StubConfigConfirmEditForm(ActionFormDiscard):
             pass
 
 
-def mkcolor(default_color, offset=49):
+def mkcolor(default_color: int, offset: Optional[int] = 49) -> dict[str, int]:
     """
-    Adapted from Cansi library (https://github.com/tslight/cansi)
+    Initialize `curses` colors and mapping of ANSI escape codes.
+
+    Adapted from Cansi library (https://github.com/tslight/cansi). Original comments kept in code.
+
+    See [Wikipedia](https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters)
+    for ANSI escape codes reference.
+
+    Args:
+        default_color: color pair used for the default background and foreground ANSI escape codes ("39;49;00").
+        offset: offset for the `curses.init_pair` function to avoid overwriting predefined colors of `npyscreen`'s theme.
+
+    Returns:
+        A dictionary mapping of ANSI escape sequences to `curses`'s control characters.
     """
     color = {}
 
@@ -457,9 +563,21 @@ def mkcolor(default_color, offset=49):
     return color
 
 
-def colorize(default_color, string):
+def colorize(default_color: int, string: str) -> list[tuple[int, int]]:
     """
-    Adapted from Cansi library (https://github.com/tslight/cansi)
+    Convert a string containg ANSI escape codes to `curses` control characters for color display.
+
+    Adapted from Cansi library (https://github.com/tslight/cansi). Some of the original kept in the code.
+
+    Args:
+        default_color: passed to the `mkcolors` function (see documentation for reference).
+        string: a string containing ANSI escape codes for color.
+
+    Returns:
+        A list of pairs of `curses`'s control character and their applicable length.
+
+    Example:
+        `[(2097152, 10)]` will color 10 characters bold (`curses.A_BOLD = 2097152`).
     """
     ansi_split = string.split("\x1b[")
     color_pair = curses.color_pair(0)
@@ -475,7 +593,7 @@ def colorize(default_color, string):
 
     for substring in ansi_split[1:]:
         if substring.startswith("0K"):
-            return  # 0K = clrtoeol so we are done with this line
+            return colors # 0K = clrtoeol so we are done with this line
 
         ansi_code = substring.split("m")[0]
         substring = substring[len(ansi_code) + 1 :]

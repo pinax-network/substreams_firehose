@@ -109,7 +109,16 @@ def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
 
     return True
 
-def load_substreams_package(url: str) -> dict:
+def load_substreams_modules_from_package(url: str) -> dict:
+    """
+    Parses substreams modules from an `.spkg` file.
+
+    Args:
+        url: Local path to `.spkg` file.
+
+    Returns:
+        A dictionary of modules available in the package file.
+    """
     with open(url, 'rb') as package_file:
         pkg = StubConfig.SUBSTREAMS_PACKAGE_OBJECT()
         pkg.ParseFromString(package_file.read())
@@ -174,7 +183,7 @@ def load_stub_config(stub: str | dict) -> None:
                 logging.critical('Could not determine package for generating modules parameters')
                 raise ImportError
 
-            stub_config['parameters']['modules'] = load_substreams_package(stub_config['parameters']['modules'])
+            stub_config['parameters']['modules'] = load_substreams_modules_from_package(stub_config['parameters']['modules'])
             StubConfig.SUBSTREAMS_OUTPUT_TYPES = list(
                 m['output']['type'].split(':', 1)[1].rsplit('.', 1)[0] for m in stub_config['parameters']['modules']['modules']
                 if m['name'] in stub_config['parameters']['output_modules']

@@ -71,7 +71,8 @@ def date_to_block_num(date: datetime, jwt: Optional[str] = None) -> int:
 
         return block_num
 
-    logging.warning('Could not fetch block number data: [%s] %s', response.status_code, response.json()) # TODO: Raise exception
+    # TODO: Raise exception
+    logging.warning('Could not fetch block number data: [%s] %s', response.status_code, response.json())
     return 0
 
 def get_auth_token(use_cache: bool = True) -> str:

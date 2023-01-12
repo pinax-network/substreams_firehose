@@ -144,6 +144,15 @@ def filtered_block_processor(raw_block: Message) -> dict:
             yield data
 
 def default_substreams_processor(data: Message) -> dict:
+    """
+    Yield the output of a substreams as JSON data, importing any types needed for parsing.
+
+    Args:
+        data: output message from a substreams gRPC.
+
+    Yields:
+        A dictionary representing the output data as JSON.
+    """
     for output_type in StubConfig.SUBSTREAMS_OUTPUT_TYPES:
         logging.debug('Importing substreams output type "%s"', output_type)
         import_all_from_module(f'pyfirehose.proto.generated.{output_type}')
