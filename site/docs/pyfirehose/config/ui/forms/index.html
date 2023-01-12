@@ -2589,7 +2589,7 @@ Forms</p>
 </code></pre></div>
 <h2 id="stubconfigendpointsform">StubConfigEndpointsForm</h2>
 <p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms.py#L119">Show source in forms.py:119</a></p>
-<p>Choose an endpoint to edit or create a new the stub config for.</p>
+<p>Choose an endpoint to edit or create a new stub config for.</p>
 <h4 id="attributes_2">Attributes</h4>
 <ul>
 <li><code>ml_endpoints</code> - an <code>EndpointsTitleSelectOne</code> widget to select an endpoint.</li>
@@ -2739,14 +2739,14 @@ Forms</p>
 <h2 id="colorize">colorize</h2>
 <p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms.py#L566">Show source in forms.py:566</a></p>
 <p>Convert a string containg ANSI escape codes to <code>curses</code> control characters for color display.</p>
-<p>Adapted from Cansi library (https://github.com/tslight/cansi). Some of the original kept in the code.</p>
+<p>Adapted from Cansi library (https://github.com/tslight/cansi). Some of the original comments kept in the code.</p>
 <h4 id="arguments_1">Arguments</h4>
 <ul>
 <li><code>default_color</code> - passed to the <code>mkcolors</code> function (see documentation for reference).</li>
 <li><code>string</code> - a string containing ANSI escape codes for color.</li>
 </ul>
 <h4 id="returns">Returns</h4>
-<p>A list of pairs of <code>curses</code>'s control character and their applicable length.</p>
+<p>A list of pairs of <code>curses</code>' control character and their applicable length.</p>
 <h4 id="examples">Examples</h4>
 <p><code>[(2097152, 10)]</code> will color 10 characters bold (<code>curses.A_BOLD = 2097152</code>).</p>
 <h4 id="signature_34">Signature</h4>
@@ -2761,11 +2761,11 @@ Forms</p>
 for ANSI escape codes reference.</p>
 <h4 id="arguments_2">Arguments</h4>
 <ul>
-<li><code>default_color</code> - color pair used for the default background and foreground ANSI escape codes ("39;49;00").</li>
+<li><code>default_color</code> - color pair used for the default background and foreground ANSI escape codes (<code>39;49;00</code>).</li>
 <li><code>offset</code> - offset for the <code>curses.init_pair</code> function to avoid overwriting predefined colors of <code>npyscreen</code>'s theme.</li>
 </ul>
 <h4 id="returns_1">Returns</h4>
-<p>A dictionary mapping of ANSI escape sequences to <code>curses</code>'s control characters.</p>
+<p>A dictionary mapping of ANSI escape sequences to <code>curses</code>' control characters.</p>
 <h4 id="signature_35">Signature</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="k">def</span> <span class="nf">mkcolor</span><span class="p">(</span><span class="n">default_color</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">49</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>    <span class="o">...</span>

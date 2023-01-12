@@ -104,7 +104,7 @@ class CodeHighlightedTitlePager(TitlePager):
 
 [Show source in widgets.py:55](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets.py#L55)
 
-Custom single selection widget to display main config's endpoint data.
+Custom single selection widget to display the main config's endpoint data.
 
 See [npyscreen's documentation](https://npyscreen.readthedocs.io/widgets-multiline.html#widgets-picking-options)
 for reference.

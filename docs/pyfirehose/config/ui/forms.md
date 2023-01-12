@@ -244,7 +244,7 @@ def on_ok(self):
 
 [Show source in forms.py:119](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms.py#L119)
 
-Choose an endpoint to edit or create a new the stub config for.
+Choose an endpoint to edit or create a new stub config for.
 
 #### Attributes
 
@@ -512,7 +512,7 @@ def on_ok(self):
 
 Convert a string containg ANSI escape codes to `curses` control characters for color display.
 
-Adapted from Cansi library (https://github.com/tslight/cansi). Some of the original kept in the code.
+Adapted from Cansi library (https://github.com/tslight/cansi). Some of the original comments kept in the code.
 
 #### Arguments
 
@@ -521,7 +521,7 @@ Adapted from Cansi library (https://github.com/tslight/cansi). Some of the origi
 
 #### Returns
 
-A list of pairs of `curses`'s control character and their applicable length.
+A list of pairs of `curses`' control character and their applicable length.
 
 #### Examples
 
@@ -549,12 +549,12 @@ for ANSI escape codes reference.
 
 #### Arguments
 
-- `default_color` - color pair used for the default background and foreground ANSI escape codes ("39;49;00").
+- `default_color` - color pair used for the default background and foreground ANSI escape codes (`39;49;00`).
 - `offset` - offset for the `curses.init_pair` function to avoid overwriting predefined colors of `npyscreen`'s theme.
 
 #### Returns
 
-A dictionary mapping of ANSI escape sequences to `curses`'s control characters.
+A dictionary mapping of ANSI escape sequences to `curses`' control characters.
 
 #### Signature
 
