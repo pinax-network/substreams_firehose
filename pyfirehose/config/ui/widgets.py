@@ -10,6 +10,7 @@ from types import MethodType
 from npyscreen import Pager, SelectOne, Textfield, TitlePager, TitleSelectOne
 from npyscreen import OptionBoolean, OptionFreeText, OptionListDisplay
 from npyscreen import notify_confirm
+from npyscreen.apOptions import Option
 
 class CodeHighlightedTextfield(Textfield):
     """
@@ -87,70 +88,12 @@ class InputsListDisplay(OptionListDisplay):
         super().__init__(*args, **kwargs)
         self._contained_widgets.ANNOTATE_WIDTH = 50
 
-class InputBoolean(OptionBoolean):
+class InputValidator(Option):
     """
-    Custom option boolean input to convert string values to bool.
+    Generic class for validating an option input with the return value of the `set` method.
+
+    Overload the `set(self, value)` method and return `True` to keep editing, `False` to quit.
     """
-    def when_set(self):
-        if not isinstance(self.value, bool):
-            self.value = str(self.value).lower() == 'true' #pylint: disable=attribute-defined-outside-init
-
-class InputFloat(OptionFreeText):
-    """
-    Custom option input to only allow floating point input.
-    """
-    def set(self, value):
-        if value:
-            try:
-                float(value)
-            except ValueError:
-                logging.error('[%s] Trying to set a value that is not a FLOAT : %s', self.name, value)
-                notify_confirm('Value entered is not a valid FLOAT', title=f'{self.name} validation error')
-
-                return True
-
-        self.value = value
-        self.when_set()
-
-        return False
-
-    def set_from_widget_value(self, vl):
-        """
-        Method override allowing to quit or continue the option editing depending on the return value.
-
-        See `on_ok_input_validation_hook`.
-        """
-        return self.set(vl)
-
-    def _set_up_widget_values(self, option_form, main_option_widget):
-        """
-        Method override to replace the option form `on_ok` event handler with our own hook.
-
-        See `on_ok_input_validation_hook`.
-        """
-        main_option_widget.value = self.value
-        option_form.on_ok = MethodType(on_ok_input_validation_hook, option_form)
-
-class InputInteger(OptionFreeText):
-    """
-    Custom option input to only allow integer input.
-    """
-    def set(self, value):
-        if value:
-            try:
-                int(value)
-            except ValueError:
-                logging.error('[%s] Trying to set a value that is not an INTEGER : %s', self.name, value)
-                notify_confirm('Value entered is not a valid INTEGER', title=f'{self.name} validation error')
-
-                # Returning `True` here allows to keep the editing form alive and prevent invalid input to be accepted
-                return True
-
-        self.value = value
-        self.when_set()
-
-        return False
-
     def set_from_widget_value(self, vl):
         """
         Method override allowing to quit or continue the option editing depending on the return value.
@@ -176,3 +119,50 @@ def on_ok_input_validation_hook(self,):
     Used to prevent entering invalid input for options.
     """
     return self.OPTION_TO_CHANGE.set_from_widget_value(self.OPTION_WIDGET.value)
+
+class InputBoolean(OptionBoolean):
+    """
+    Custom option boolean input to convert string values to bool.
+    """
+    def when_set(self):
+        if not isinstance(self.value, bool):
+            self.value = str(self.value).lower() == 'true' #pylint: disable=attribute-defined-outside-init
+
+class InputFloat(InputValidator, OptionFreeText):
+    """
+    Custom option input to only allow floating point input.
+    """
+    def set(self, value):
+        if value:
+            try:
+                float(value)
+            except ValueError:
+                logging.error('[%s] Trying to set a value that is not a FLOAT : %s', self.name, value)
+                notify_confirm('Value entered is not a valid FLOAT', title=f'{self.name} validation error')
+
+                # Returning `True` here allows to keep the editing form alive and prevent invalid input to be accepted
+                return True
+
+        self.value = value
+        self.when_set()
+
+        return False
+
+class InputInteger(InputValidator, OptionFreeText):
+    """
+    Custom option input to only allow integer input.
+    """
+    def set(self, value):
+        if value:
+            try:
+                int(value)
+            except ValueError:
+                logging.error('[%s] Trying to set a value that is not an INTEGER : %s', self.name, value)
+                notify_confirm('Value entered is not a valid INTEGER', title=f'{self.name} validation error')
+
+                return True
+
+        self.value = value
+        self.when_set()
+
+        return False
