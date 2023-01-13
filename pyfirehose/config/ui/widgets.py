@@ -194,7 +194,7 @@ class InputRepeated(InputValidator, OptionMultiFreeList):
 
     def set(self, values): #pylint: disable=arguments-renamed
         validated_values = [self.validate_input(v) for v in values]
-        if values and not all(validated_values):
+        if any(values) and not all(validated_values):
             logging.error('[%s] Wrong value type : expected %s got %s (values=%s)',
                 self.name,
                 self.value_type,

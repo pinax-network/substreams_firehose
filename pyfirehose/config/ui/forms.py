@@ -47,7 +47,8 @@ from pyfirehose.utils import get_auth_token
 from pyfirehose.config.parser import Config, StubConfig
 from pyfirehose.config.parser import load_config, load_stub_config
 from pyfirehose.config.ui.widgets import CodeHighlightedTitlePager, EndpointsTitleSelectOne
-from pyfirehose.config.ui.widgets import InputBoolean, InputEnum, InputFloat, InputInteger, InputsListDisplay, InputRepeated
+from pyfirehose.config.ui.widgets import InputBoolean, InputEnum, InputFloat, InputInteger, InputsListDisplay, \
+                                         InputRepeated
 from pyfirehose.config.ui.widgets import bool_validator, enum_validator, float_validator, integer_validator, \
                                          message_validator, string_validator
 
@@ -289,7 +290,27 @@ class StubConfigInputsForm(ActionFormV2):
     Attributes:
         w_inputs: an `InputsListDisplay` widget to present the list of input options.
     """
+    def clear_input(self, show_popup=True):
+        input_widget = self.get_widget('inputs')
+        cleared_option = input_widget.values[input_widget.cursor_line]
+
+        clear_confirm = True
+        if show_popup:
+            clear_confirm = notify_yes_no(
+                'Are you sure you want to clear the value of this input ?',
+                title=f'Clear "{cleared_option.get_name_user()}" ?'
+            )
+
+        if clear_confirm:
+            input_widget.values[input_widget.cursor_line].set_from_widget_value('')
+            input_widget.display()
+
     def create(self):
+        self.add_handlers({
+            'c': self.clear_input,
+            'C': lambda _: self.clear_input(show_popup=False)
+        })
+
         options = OptionList().options
 
         for input_parameter in [
@@ -418,13 +439,18 @@ class StubConfigInputsForm(ActionFormV2):
                     else:
                         option_type = OptionFreeText
 
-                logging.info('[%s] Added new %s : %s', self.name, option_type, option_args)
                 options.append(option_type(**option_args))
 
             except NotEnoughSpaceForWidget as error:
                 logging.error('[%s] Could not allocate space for %s : %s', self.name, input_parameter.name, error)
 
-        self.w_inputs = self.add(InputsListDisplay, name='Edit method inputs', values=options, scroll_exit=True)
+        self.w_inputs = self.add(
+            InputsListDisplay,
+            w_id='inputs',
+            name='Edit method inputs',
+            values=options,
+            scroll_exit=True
+        )
 
     def on_ok(self):
         if not self.parentApp.stub_config:
@@ -434,7 +460,17 @@ class StubConfigInputsForm(ActionFormV2):
             self.parentApp.stub_config['request'] = self.parentApp.selected_method.input_type.name
 
         for input_option in self.w_inputs.values:
-            if input_option.value:
+            is_empty_input = False
+            try:
+                iter(input_option.value)
+            except TypeError:
+                is_empty_input = not input_option.value
+            else:
+                is_empty_input = not any(input_option.value)
+
+            if input_option.name in self.parentApp.stub_config['parameters'] and is_empty_input:
+                del self.parentApp.stub_config['parameters'][input_option.name]
+            elif not is_empty_input:
                 self.parentApp.stub_config['parameters'][input_option.name] = input_option.value
 
         logging.info('[%s] Stub config : %s', self.name, self.parentApp.stub_config)
@@ -565,7 +601,6 @@ class StubConfigConfirmEditForm(ActionFormDiscard):
             self.parentApp.switchForm('MAIN')
         else:
             pass
-
 
 def mkcolor(default_color: int, offset: Optional[int] = 49) -> dict[str, int]:
     """
