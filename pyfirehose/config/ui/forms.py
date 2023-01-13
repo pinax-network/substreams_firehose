@@ -128,16 +128,26 @@ class StubConfigEndpointsForm(ActionFormV2):
     Attributes:
         ml_endpoints: an `EndpointsTitleSelectOne` widget to select an endpoint.
     """
+    def beforeEditing(self): #pylint: disable=invalid-name
+        """
+        Called by `npyscreen` before the form gets drawn on the screen.
+        """
+        if not hasattr(self, 'previous_value'):
+            # Automatically select the first value to prevent empty selection
+            self.previous_value = [0] #pylint: disable=attribute-defined-outside-init
+
+        self.ml_endpoints.value = self.previous_value
+
     def create(self):
         self.ml_endpoints = self.add(
             EndpointsTitleSelectOne,
             name='Select an endpoint',
             values=sorted(self.parentApp.main_config['grpc'], key=lambda e: e['chain']),
-            value=[0],
             scroll_exit=True
         )
 
     def on_ok(self):
+        self.previous_value = list(self.ml_endpoints.value) #pylint: disable=attribute-defined-outside-init
         self.parentApp.selected_endpoint = self.ml_endpoints.values[self.ml_endpoints.value.pop()]
         logging.info('[%s] Selected endpoint : %s', self.name, self.parentApp.selected_endpoint)
 
@@ -148,6 +158,7 @@ class StubConfigEndpointsForm(ActionFormV2):
         self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_SAVE_FILE_FORM)
 
     def on_cancel(self):
+        del self.previous_value
         self.parentApp.setNextFormPrevious()
 
 class StubConfigSaveFileForm(ActionFormV2):
@@ -166,11 +177,15 @@ class StubConfigSaveFileForm(ActionFormV2):
         except KeyError:
             logging.error('[%s] Could not get id from endpoint : %s', self.name, self.parentApp.selected_endpoint)
 
+        default_stub_save_path = 'pyfirehose/config/new.hjson'
         self.stub_loaded = load_config(self.parentApp.main_config_file, endpoint_id)
         try:
-            saved_stub = next((e['stub'] for e in self.parentApp.main_config['grpc'] if e['id'] == endpoint_id), None)
+            saved_stub = next(
+                (e['stub'] for e in self.parentApp.main_config['grpc'] if e['id'] == endpoint_id),
+                default_stub_save_path
+            )
         except KeyError:
-            saved_stub = None
+            saved_stub = default_stub_save_path
 
         self.tfc_stub_save_file = self.add(TitleFilenameCombo, name='Save to file', value=saved_stub)
 
@@ -213,6 +228,16 @@ class StubConfigServicesForm(ActionFormV2):
     Attributes:
         ml_services: a `TitleSelectOne` widget to select which service the stub will use.
     """
+    def beforeEditing(self): #pylint: disable=invalid-name
+        """
+        Called by `npyscreen` before the form gets drawn on the screen.
+        """
+        if not hasattr(self, 'previous_value'):
+            # Automatically select the first value to prevent empty selection
+            self.previous_value = [0] #pylint: disable=attribute-defined-outside-init
+
+        self.ml_services.value = self.previous_value
+
     def create(self):
         jwt = get_auth_token()
         creds = grpc.composite_channel_credentials(
@@ -228,11 +253,11 @@ class StubConfigServicesForm(ActionFormV2):
             TitleSelectOne,
             name='Select a service',
             values=services,
-            value=[0],
             scroll_exit=True
         )
 
     def on_ok(self):
+        self.previous_value = list(self.ml_services.value) #pylint: disable=attribute-defined-outside-init
         self.parentApp.selected_service = self.ml_services.values[self.ml_services.value.pop()]
         logging.info('[%s] Selected service : %s', self.name, self.parentApp.selected_service)
 
@@ -243,6 +268,7 @@ class StubConfigServicesForm(ActionFormV2):
         self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_METHODS_FORM)
 
     def on_cancel(self):
+        del self.previous_value
         self.parentApp.setNextFormPrevious()
 
 class StubConfigMethodsForm(ActionFormV2):
@@ -251,23 +277,33 @@ class StubConfigMethodsForm(ActionFormV2):
 
     Attributes:
         methods: available methods provided by the reflection service.
-        ml_services: a `TitleSelectOne` widget to select which method the stub will use.
+        ml_methods: a `TitleSelectOne` widget to select which method the stub will use.
     """
+    def beforeEditing(self): #pylint: disable=invalid-name
+        """
+        Called by `npyscreen` before the form gets drawn on the screen.
+        """
+        if not hasattr(self, 'previous_value'):
+            # Automatically select the first value to prevent empty selection
+            self.previous_value = [0] #pylint: disable=attribute-defined-outside-init
+
+        self.ml_methods.value = self.previous_value
+
     def create(self):
         desc_pool = DescriptorPool(self.parentApp.reflection_db)
         self.methods = desc_pool.FindServiceByName(self.parentApp.selected_service).methods
 
-        self.ml_services = self.add(
+        self.ml_methods = self.add(
             TitleSelectOne,
             name='Select a method',
             values=[m.name for m in self.methods],
-            value=[0],
             scroll_exit=True
         )
 
     def on_ok(self):
+        self.previous_value = list(self.ml_methods.value) #pylint: disable=attribute-defined-outside-init
         self.parentApp.selected_method = next(
-            (m for m in self.methods if m.name == self.ml_services.values[self.ml_services.value.pop()]),
+            (m for m in self.methods if m.name == self.ml_methods.values[self.ml_methods.value[0]]),
             None
         )
         logging.info('[%s] Selected method : %s', self.name, self.parentApp.selected_method.name)
@@ -279,6 +315,7 @@ class StubConfigMethodsForm(ActionFormV2):
         self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_INPUTS_FORM)
 
     def on_cancel(self):
+        del self.previous_value
         self.parentApp.setNextFormPrevious()
 
 class StubConfigInputsForm(ActionFormV2):
