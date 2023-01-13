@@ -1,7 +1,7 @@
 """
 SPDX-License-Identifier: MIT
 
-This module provides utility functions and enums for other modules.
+Utility functions for other modules.
 """
 
 import asyncio
@@ -17,7 +17,7 @@ from typing import Optional
 
 from requests_cache import CachedSession
 
-from pyfirehose.config.utils import Config
+from pyfirehose.config.parser import Config
 
 def date_to_block_num(date: datetime, jwt: Optional[str] = None) -> int:
     """

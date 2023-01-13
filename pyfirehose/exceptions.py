@@ -1,7 +1,7 @@
 """
 SPDX-License-Identifier: MIT
 
-This modules holds the custom exception defined for the application.
+Holds the custom exceptions defined for use by the application.
 """
 
 class BlockStreamException(Exception):

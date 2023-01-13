@@ -1,5 +1,7 @@
 """
 SPDX-License-Identifier: MIT
+
+Entry point for the config GUI application.
 """
 
 import logging

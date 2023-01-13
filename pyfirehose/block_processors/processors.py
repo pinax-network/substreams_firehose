@@ -1,7 +1,7 @@
 """
 SPDX-License-Identifier: MIT
 
-This module provides block processors used to extract information from the blocks extracted from a gRPC stream.
+Provides block processors to parse information from the extracted blocks of a gRPC stream.
 """
 
 import json
@@ -12,7 +12,7 @@ from typing import Optional
 from google.protobuf.json_format import MessageToJson
 from google.protobuf.message import Message
 
-from pyfirehose.config.utils import StubConfig
+from pyfirehose.config.parser import StubConfig
 from pyfirehose.utils import import_all_from_module
 
 def _unpack_block(raw_block: Message, block_type_name: Optional[str] = 'Block') -> Message:

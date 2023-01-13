@@ -1,5 +1,7 @@
 """
 SPDX-License-Identifier: MIT
+
+Widgets used by forms to display and edit configuration files.
 """
 
 import logging

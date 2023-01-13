@@ -1,6 +1,8 @@
 """
 SPDX-License-Identifier: MIT
 
+Forms used by the main config GUI app to display and edit configuration files.
+
 --- Cansi library (https://github.com/tslight/cansi) ---
 Copyright (c) 2018, Toby Slight
 All rights reserved.
@@ -42,8 +44,8 @@ from pygments.formatters import TerminalFormatter #pylint: disable=no-name-in-mo
 from pyfirehose.args import check_period #pylint: disable=unused-import
 
 from pyfirehose.utils import get_auth_token
-from pyfirehose.config.utils import Config, StubConfig
-from pyfirehose.config.utils import load_config, load_stub_config
+from pyfirehose.config.parser import Config, StubConfig
+from pyfirehose.config.parser import load_config, load_stub_config
 from pyfirehose.config.ui.widgets import CodeHighlightedTitlePager, EndpointsTitleSelectOne
 from pyfirehose.config.ui.widgets import InputBoolean, InputFloat, InputInteger, InputsListDisplay
 
@@ -408,7 +410,7 @@ class StubConfigInputsForm(ActionFormV2):
 
 class ActionFormDiscard(ActionFormV2):
     """
-    Parent class for an `ActionFormV2` with an additional *Discard* button.
+    Generic class for an action form with an additional *Discard* button.
 
     Overload the `on_discard` method to customize its behavior.
     """

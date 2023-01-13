@@ -1,7 +1,7 @@
 """
 SPDX-License-Identifier: MIT
 
-This module holds common functions used by the block extractors.
+Holds common functions used by the block extractors.
 """
 
 import logging
@@ -13,7 +13,7 @@ import grpc
 from google.protobuf.json_format import ParseDict
 from google.protobuf.message import Message
 
-from pyfirehose.config.utils import Config, StubConfig
+from pyfirehose.config.parser import Config, StubConfig
 from pyfirehose.exceptions import BlockStreamException
 from pyfirehose.utils import get_auth_token
 from pyfirehose.utils import get_current_task_name

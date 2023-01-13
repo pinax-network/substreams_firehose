@@ -1,7 +1,7 @@
 """
 SPDX-License-Identifier: MIT
 
-This module parses the main config and stub config files for use by the application.
+Parses the main config and stub config files for use by the application.
 Refer to the README.md and comments within the config files for more details about each parameters.
 """
 

@@ -1,7 +1,7 @@
 """
 SPDX-License-Identifier: MIT
 
-This module is used for argument parsing and checking for the main script.
+Argument parsing and checking for the main script.
 """
 
 import argparse

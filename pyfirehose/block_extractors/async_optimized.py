@@ -19,7 +19,7 @@ from google.protobuf.message import Message
 
 from pyfirehose.block_extractors.common import get_secure_channel
 from pyfirehose.block_extractors.common import stream_blocks
-from pyfirehose.config.utils import Config
+from pyfirehose.config.parser import Config
 from pyfirehose.exceptions import BlockStreamException
 
 async def asyncio_main(period_start: int, period_end: int, initial_tasks: int = 25, **kwargs) -> list[Message]:
