@@ -33,7 +33,7 @@ from google.protobuf.descriptor_pool import DescriptorPool
 from grpc_reflection.v1alpha.proto_reflection_descriptor_database import ProtoReflectionDescriptorDatabase
 from npyscreen import FormWithMenus, ActionFormV2
 from npyscreen import MiniButtonPress, TitleFilenameCombo, TitleSelectOne
-from npyscreen import OptionFreeText, OptionList, OptionSingleChoice, OptionMultiFreeList
+from npyscreen import OptionFreeText, OptionList
 from npyscreen import notify_confirm, notify_yes_no
 from npyscreen.wgwidget import NotEnoughSpaceForWidget
 from pygments import highlight
@@ -47,7 +47,9 @@ from pyfirehose.utils import get_auth_token
 from pyfirehose.config.parser import Config, StubConfig
 from pyfirehose.config.parser import load_config, load_stub_config
 from pyfirehose.config.ui.widgets import CodeHighlightedTitlePager, EndpointsTitleSelectOne
-from pyfirehose.config.ui.widgets import InputBoolean, InputFloat, InputInteger, InputsListDisplay
+from pyfirehose.config.ui.widgets import InputBoolean, InputEnum, InputFloat, InputInteger, InputsListDisplay, InputRepeated
+from pyfirehose.config.ui.widgets import bool_validator, enum_validator, float_validator, integer_validator, \
+                                         message_validator, string_validator
 
 class MainForm(FormWithMenus):
     """
@@ -267,7 +269,7 @@ class StubConfigMethodsForm(ActionFormV2):
             (m for m in self.methods if m.name == self.ml_services.values[self.ml_services.value.pop()]),
             None
         )
-        logging.info('[%s] Selected method : %s', self.name, self.parentApp.selected_method)
+        logging.info('[%s] Selected method : %s', self.name, self.parentApp.selected_method.name)
 
         self.parentApp.addForm(
             self.parentApp.STUB_CONFIG_INPUTS_FORM,
@@ -298,86 +300,126 @@ class StubConfigInputsForm(ActionFormV2):
             except KeyError:
                 stub_config_value = None
 
+            option_type = None
+            option_args = {}
             try:
-                if input_parameter.type == FieldDescriptor.TYPE_BOOL:
-                    options.append(
-                        InputBoolean(
-                            name=input_parameter.name,
-                            value=stub_config_value,
-                            documentation=[
-                                f'A parameter of type BOOL is expected for "{input_parameter.name}."',
-                                'Press [X] or [SPACE] to toggle between checked/unchecked.'
-                            ]
-                        )
-                    )
-                elif input_parameter.type in [
-                    FieldDescriptor.TYPE_DOUBLE,
-                    FieldDescriptor.TYPE_FLOAT,
-                ]:
-                    options.append(
-                        InputFloat(
-                            name=input_parameter.name,
-                            value=stub_config_value,
-                            documentation=[
-                                f'A parameter of type FLOAT is expected for "{input_parameter.name}."',
-                            ]
-                        )
-                    )
-                elif input_parameter.type in [
-                    FieldDescriptor.TYPE_INT32,
-                    FieldDescriptor.TYPE_INT64,
-                    FieldDescriptor.TYPE_FIXED32,
-                    FieldDescriptor.TYPE_FIXED64,
-                    FieldDescriptor.TYPE_SFIXED32,
-                    FieldDescriptor.TYPE_SFIXED64,
-                    FieldDescriptor.TYPE_SINT32,
-                    FieldDescriptor.TYPE_SINT64,
-                    FieldDescriptor.TYPE_UINT32,
-                    FieldDescriptor.TYPE_UINT64,
-                ]:
-                    options.append(
-                        InputInteger(
-                            name=input_parameter.name,
-                            value=stub_config_value,
-                            documentation=[
-                                f'A parameter of type INTEGER is expected for "{input_parameter.name}."',
-                            ]
-                        )
-                    )
-                elif input_parameter.type == FieldDescriptor.TYPE_ENUM:
-                    enum_choices = [e.name for e in input_parameter.enum_type.values]
-                    options.append(
-                        OptionSingleChoice(
-                            name=input_parameter.name,
-                            value=stub_config_value,
-                            documentation=[
-                                f'A parameter of type ENUM is expected for "{input_parameter.name}."',
-                                f'Valid values are {enum_choices}.'
-                            ],
-                            choices=enum_choices
-                        )
-                    )
-                else:
-                    # Remaining types : TYPE_BYTES, TYPE_GROUP, TYPE_MESSAGE, TYPE_STRING
-                    options.append(
-                        OptionFreeText(
-                            name=input_parameter.name,
-                            value=stub_config_value,
-                            documentation=[
-                                f'A parameter of type STRING is expected for "{input_parameter.name}."',
-                            ]
-                        )
+                if input_parameter.cpp_type == FieldDescriptor.CPPTYPE_BOOL:
+                    option_args.update(
+                        name=input_parameter.name,
+                        value=stub_config_value,
+                        documentation=[
+                            f'A parameter of type BOOL is expected for "{input_parameter.name}."',
+                            'Press [X] or [SPACE] to toggle between checked/unchecked.'
+                        ]
                     )
 
-                if input_parameter.label == FieldDescriptor.LABEL_REPEATED:
-                    input_option = options.pop()
-                    options.append(
-                        OptionMultiFreeList( # TODO: Make custom option for validating repeated fields (depends on input type)
-                            name=input_option.name,
-                            value=input_option.value,
-                            documentation=input_option.documentation
+                    if input_parameter.label == FieldDescriptor.LABEL_REPEATED:
+                        option_type = InputRepeated
+                        option_args.update(
+                            validator=bool_validator,
+                            value_type=input_parameter.cpp_type,
                         )
+                    else:
+                        option_type = InputBoolean
+                elif input_parameter.cpp_type in [
+                    FieldDescriptor.CPPTYPE_DOUBLE,
+                    FieldDescriptor.CPPTYPE_FLOAT,
+                ]:
+                    option_args.update(
+                        name=input_parameter.name,
+                        value=stub_config_value,
+                        documentation=[
+                            f'A parameter of type FLOAT is expected for "{input_parameter.name}."',
+                        ]
                     )
+
+                    if input_parameter.label == FieldDescriptor.LABEL_REPEATED:
+                        option_type = InputRepeated
+                        option_args.update(
+                            validator=float_validator,
+                            value_type=input_parameter.cpp_type,
+                        )
+                    else:
+                        option_type = InputFloat
+                elif input_parameter.cpp_type in [
+                    FieldDescriptor.CPPTYPE_INT32,
+                    FieldDescriptor.CPPTYPE_INT64,
+                    FieldDescriptor.CPPTYPE_UINT32,
+                    FieldDescriptor.CPPTYPE_UINT64,
+                ]:
+                    option_args.update(
+                        name=input_parameter.name,
+                        value=stub_config_value,
+                        documentation=[
+                            f'A parameter of type INTEGER is expected for "{input_parameter.name}."',
+                        ]
+                    )
+
+                    if input_parameter.label == FieldDescriptor.LABEL_REPEATED:
+                        option_type = InputRepeated
+                        option_args.update(
+                            validator=integer_validator,
+                            value_type=input_parameter.cpp_type,
+                        )
+                    else:
+                        option_type = InputInteger
+                elif input_parameter.cpp_type == FieldDescriptor.CPPTYPE_ENUM:
+                    enum_choices = [e.name for e in input_parameter.enum_type.values]
+                    option_args.update(
+                        name=input_parameter.name,
+                        value=stub_config_value,
+                        documentation=[
+                            f'A parameter of type ENUM is expected for "{input_parameter.name}."',
+                            f'Valid values are {enum_choices}.'
+                        ],
+                        choices=enum_choices
+                    )
+
+                    if input_parameter.label == FieldDescriptor.LABEL_REPEATED:
+                        option_type = InputRepeated
+                        option_args.update(
+                            validator=enum_validator,
+                            value_type=input_parameter.cpp_type,
+                        )
+                    else:
+                        option_type = InputEnum
+                elif input_parameter.cpp_type == FieldDescriptor.CPPTYPE_MESSAGE:
+                    option_args.update(
+                        name=input_parameter.name,
+                        value=stub_config_value,
+                        documentation=[
+                            f'A parameter of type MESSAGE is expected for "{input_parameter.name}."',
+                        ]
+                    )
+
+                    if input_parameter.label == FieldDescriptor.LABEL_REPEATED:
+                        option_type = InputRepeated
+                        option_args.update(
+                            validator=message_validator,
+                            value_type=input_parameter.cpp_type,
+                        )
+                    else:
+                        option_type = OptionFreeText
+                else:
+                    option_args.update(
+                        name=input_parameter.name,
+                        value=stub_config_value,
+                        documentation=[
+                            f'A parameter of type STRING is expected for "{input_parameter.name}."',
+                        ]
+                    )
+
+                    if input_parameter.label == FieldDescriptor.LABEL_REPEATED:
+                        option_type = InputRepeated
+                        option_args.update(
+                            validator=message_validator,
+                            value_type=input_parameter.cpp_type,
+                        )
+                    else:
+                        option_type = OptionFreeText
+
+                logging.info('[%s] Added new %s : %s', self.name, option_type, option_args)
+                options.append(option_type(**option_args))
 
             except NotEnoughSpaceForWidget as error:
                 logging.error('[%s] Could not allocate space for %s : %s', self.name, input_parameter.name, error)
