@@ -11,7 +11,7 @@ from npyscreen import NPSAppManaged
 from npyscreen import setTheme
 from npyscreen.npysThemes import DefaultTheme
 
-from pyfirehose.config.ui.forms import MainForm, StubConfigEndpointsForm
+from pyfirehose.config.ui.forms.forms import MainForm, StubConfigEndpointsForm
 
 class ConfigApp(NPSAppManaged):
     """

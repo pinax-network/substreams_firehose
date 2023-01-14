@@ -35,7 +35,6 @@ from npyscreen import FormWithMenus, ActionFormV2
 from npyscreen import MiniButtonPress, TitleFilenameCombo, TitleSelectOne
 from npyscreen import OptionFreeText, OptionList
 from npyscreen import notify_confirm, notify_yes_no
-from npyscreen.wgwidget import NotEnoughSpaceForWidget
 from pygments import highlight
 from pygments.lexers.data import JsonLexer
 from pygments.formatters import TerminalFormatter #pylint: disable=no-name-in-module
@@ -43,14 +42,12 @@ from pygments.formatters import TerminalFormatter #pylint: disable=no-name-in-mo
 # This import is used to prevent circular dependency for the `utils` and `config.utils` modules.
 from pyfirehose.args import check_period #pylint: disable=unused-import
 
+import pyfirehose.config.ui.widgets.inputs as input_options
 from pyfirehose.utils import get_auth_token
 from pyfirehose.config.parser import Config, StubConfig
 from pyfirehose.config.parser import load_config, load_stub_config
-from pyfirehose.config.ui.widgets import CodeHighlightedTitlePager, EndpointsTitleSelectOne
-from pyfirehose.config.ui.widgets import InputBoolean, InputEnum, InputFloat, InputInteger, InputsListDisplay, \
-                                         InputRepeated
-from pyfirehose.config.ui.widgets import bool_validator, enum_validator, float_validator, integer_validator, \
-                                         message_validator, string_validator
+from pyfirehose.config.ui.widgets.custom import CodeHighlightedTitlePager, EndpointsTitleSelectOne
+from pyfirehose.config.ui.widgets.inputs import InputsListDisplay, InputRepeated
 
 class MainForm(FormWithMenus):
     """
@@ -348,138 +345,74 @@ class StubConfigInputsForm(ActionFormV2):
             'C': lambda _: self.clear_input(show_popup=False)
         })
 
-        options = OptionList().options
+        # Map the corresponding cpp types to their input type implementation
+        cpptype_simplify_mapping = {
+            FieldDescriptor.CPPTYPE_INT32: 'Integer',
+            FieldDescriptor.CPPTYPE_INT64: 'Integer',
+            FieldDescriptor.CPPTYPE_UINT32: 'Integer',
+            FieldDescriptor.CPPTYPE_UINT64: 'Integer',
+            FieldDescriptor.CPPTYPE_DOUBLE: 'Float',
+            FieldDescriptor.CPPTYPE_FLOAT: 'Float',
+            FieldDescriptor.CPPTYPE_BOOL: 'Bool',
+            FieldDescriptor.CPPTYPE_ENUM: 'Enum',
+            FieldDescriptor.CPPTYPE_STRING: 'String',
+            FieldDescriptor.CPPTYPE_MESSAGE: 'Message'
+        }
+        # Reference :
+        # https://googleapis.dev/python/protobuf/latest/google/protobuf/descriptor.html#google.protobuf.descriptor.FieldDescriptor.CPPTYPE_BOOL
 
+        options = OptionList().options
         for input_parameter in [
             f for f in self.parentApp.selected_method.input_type.fields if not f.name in ('start_block_num', 'stop_block_num')
         ]:
+            # Load config value from loaded stub if it exists
             try:
                 stub_config_value = self.parentApp.stub_config['parameters'][input_parameter.name]
             except KeyError:
                 stub_config_value = None
 
-            option_type = None
-            option_args = {}
-            try:
-                if input_parameter.cpp_type == FieldDescriptor.CPPTYPE_BOOL:
-                    option_args.update(
-                        name=input_parameter.name,
-                        value=stub_config_value,
-                        documentation=[
-                            f'A parameter of type BOOL is expected for "{input_parameter.name}."',
-                            'Press [X] or [SPACE] to toggle between checked/unchecked.'
-                        ]
-                    )
+            # Get the input type from the mapping (e.g. 'CPPTYPE_BOOL' -> 'Bool')
+            input_type = cpptype_simplify_mapping[input_parameter.cpp_type]
 
-                    if input_parameter.label == FieldDescriptor.LABEL_REPEATED:
-                        option_type = InputRepeated
-                        option_args.update(
-                            validator=bool_validator,
-                            value_type=input_parameter.cpp_type,
-                        )
-                    else:
-                        option_type = InputBoolean
-                elif input_parameter.cpp_type in [
-                    FieldDescriptor.CPPTYPE_DOUBLE,
-                    FieldDescriptor.CPPTYPE_FLOAT,
-                ]:
-                    option_args.update(
-                        name=input_parameter.name,
-                        value=stub_config_value,
-                        documentation=[
-                            f'A parameter of type FLOAT is expected for "{input_parameter.name}."',
-                        ]
-                    )
+            # Set the option type to the appropriate `InputXXX` class (e.g. 'InputBool')
+            option_type = getattr(input_options, f'Input{input_type}')
+            option_args = {
+                'documentation': [
+                    f'A parameter of type {input_type.upper()}'
+                    f'is expected for "{input_parameter.name}."'
+                ],
+                'name': input_parameter.name,
+                'value': stub_config_value
+            }
 
-                    if input_parameter.label == FieldDescriptor.LABEL_REPEATED:
-                        option_type = InputRepeated
-                        option_args.update(
-                            validator=float_validator,
-                            value_type=input_parameter.cpp_type,
-                        )
-                    else:
-                        option_type = InputFloat
-                elif input_parameter.cpp_type in [
-                    FieldDescriptor.CPPTYPE_INT32,
-                    FieldDescriptor.CPPTYPE_INT64,
-                    FieldDescriptor.CPPTYPE_UINT32,
-                    FieldDescriptor.CPPTYPE_UINT64,
-                ]:
-                    option_args.update(
-                        name=input_parameter.name,
-                        value=stub_config_value,
-                        documentation=[
-                            f'A parameter of type INTEGER is expected for "{input_parameter.name}."',
-                        ]
-                    )
+            # If its a repeated field, change to `InputRepeated` and pass the original type to the constructor
+            if input_parameter.label == FieldDescriptor.LABEL_REPEATED:
+                option_type = InputRepeated
+                option_args.update(
+                    # Allow the `InputRepeated` to pick the right validator (e.g. `bool_validator`)
+                    value_type=input_type.lower(),
+                )
 
-                    if input_parameter.label == FieldDescriptor.LABEL_REPEATED:
-                        option_type = InputRepeated
-                        option_args.update(
-                            validator=integer_validator,
-                            value_type=input_parameter.cpp_type,
-                        )
-                    else:
-                        option_type = InputInteger
-                elif input_parameter.cpp_type == FieldDescriptor.CPPTYPE_ENUM:
-                    enum_choices = [e.name for e in input_parameter.enum_type.values]
-                    option_args.update(
-                        name=input_parameter.name,
-                        value=stub_config_value,
-                        documentation=[
-                            f'A parameter of type ENUM is expected for "{input_parameter.name}."',
-                            f'Valid values are {enum_choices}.'
-                        ],
-                        choices=enum_choices
-                    )
+            # Add or modify arguments based on the input type (`documentation`, etc.)
+            if input_parameter.cpp_type == FieldDescriptor.CPPTYPE_BOOL:
+                option_args.update(
+                    documentation=option_args['documentation'] + [
+                        'Press [X] or [SPACE] to toggle between checked/unchecked.'
+                    ]
+                )
+            elif input_parameter.cpp_type == FieldDescriptor.CPPTYPE_ENUM:
+                enum_choices = [e.name for e in input_parameter.enum_type.values]
+                option_args.update(
+                    documentation=option_args['documentation'] + [
+                        f'Valid values are {enum_choices}.'
+                    ],
+                    choices=enum_choices
+                )
+            elif input_parameter.cpp_type == FieldDescriptor.CPPTYPE_MESSAGE:
+                pass # TODO: Add description for 'modules' parameter of substreams
 
-                    if input_parameter.label == FieldDescriptor.LABEL_REPEATED:
-                        option_type = InputRepeated
-                        option_args.update(
-                            validator=enum_validator,
-                            value_type=input_parameter.cpp_type,
-                        )
-                    else:
-                        option_type = InputEnum
-                elif input_parameter.cpp_type == FieldDescriptor.CPPTYPE_MESSAGE:
-                    option_args.update(
-                        name=input_parameter.name,
-                        value=stub_config_value,
-                        documentation=[
-                            f'A parameter of type MESSAGE is expected for "{input_parameter.name}."',
-                        ]
-                    )
-
-                    if input_parameter.label == FieldDescriptor.LABEL_REPEATED:
-                        option_type = InputRepeated
-                        option_args.update(
-                            validator=message_validator,
-                            value_type=input_parameter.cpp_type,
-                        )
-                    else:
-                        option_type = OptionFreeText
-                else:
-                    option_args.update(
-                        name=input_parameter.name,
-                        value=stub_config_value,
-                        documentation=[
-                            f'A parameter of type STRING is expected for "{input_parameter.name}."',
-                        ]
-                    )
-
-                    if input_parameter.label == FieldDescriptor.LABEL_REPEATED:
-                        option_type = InputRepeated
-                        option_args.update(
-                            validator=message_validator,
-                            value_type=input_parameter.cpp_type,
-                        )
-                    else:
-                        option_type = OptionFreeText
-
-                options.append(option_type(**option_args))
-
-            except NotEnoughSpaceForWidget as error:
-                logging.error('[%s] Could not allocate space for %s : %s', self.name, input_parameter.name, error)
+            # Add the new input instance to the list of options
+            options.append(option_type(**option_args))
 
         self.w_inputs = self.add(
             InputsListDisplay,
