@@ -1,106 +1,32 @@
 """
 SPDX-License-Identifier: MIT
-
-Forms used by the main config GUI app to display and edit configuration files.
-
---- Cansi library (https://github.com/tslight/cansi) ---
-Copyright (c) 2018, Toby Slight
-All rights reserved.
-
-Permission to use, copy, modify, and/or distribute this software for any purpose
-with or without fee is hereby granted, provided that the above copyright notice
-and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
-FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
-OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
-TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
-THIS SOFTWARE.
---- Cansi library (https://github.com/tslight/cansi) ---
 """
 
 import logging
 import os.path
+from typing import Optional
 
 import grpc
 import hjson
 from google.protobuf.descriptor import FieldDescriptor
 from google.protobuf.descriptor_pool import DescriptorPool
 from grpc_reflection.v1alpha.proto_reflection_descriptor_database import ProtoReflectionDescriptorDatabase
-from npyscreen import FormWithMenus, ActionFormV2
-from npyscreen import MiniButtonPress, TitleFilenameCombo, TitleSelectOne
+from npyscreen import ActionFormV2
+from npyscreen import TitleFilenameCombo, TitleSelectOne
 from npyscreen import OptionList
-from npyscreen import notify_confirm, notify_yes_no
+from npyscreen import notify_yes_no
 from pygments.lexers.data import JsonLexer
 
-# This import is used to prevent circular dependency for the `utils` and `config.utils` modules.
+# This import is used to prevent circular dependency for the `utils` and `config.parser` modules.
 from pyfirehose.args import check_period #pylint: disable=unused-import
 
 import pyfirehose.config.ui.widgets.inputs as input_options
 from pyfirehose.utils import get_auth_token
 from pyfirehose.config.parser import Config, StubConfig
 from pyfirehose.config.parser import load_config, load_stub_config
+from pyfirehose.config.ui.forms.generic import ActionFormDiscard
 from pyfirehose.config.ui.widgets.custom import CodeHighlightedTitlePager, EndpointsTitleSelectOne
 from pyfirehose.config.ui.widgets.inputs import InputsListDisplay, InputRepeated
-
-class MainForm(FormWithMenus):
-    """
-    Main form presenting the main config file with a menu for accessing the edit functions.
-
-    Attributes:
-        main_menu: holds the menu entries.
-        next_form: describe the next form to be loaded after exiting the main form (`None` exits the application).
-        stored_highlights: dictionary containing the highlighted text content for the `CodeHighlightedTitlePager` widget.
-    """
-    OK_BUTTON_TEXT = 'Quit'
-
-    def afterEditing(self): #pylint: disable=invalid-name
-        """
-        Called by `npyscreen` when the form is cycled out of the screen.
-        """
-        self.parentApp.setNextForm(self.next_form)
-
-    def beforeEditing(self): #pylint: disable=invalid-name
-        """
-        Called by `npyscreen` before the form gets drawn on the screen.
-        """
-        self.next_form = None #pylint: disable=attribute-defined-outside-init
-
-        if self.parentApp.display_main_popup:
-            notify_confirm(self.parentApp.display_main_popup, title='Information')
-            self.parentApp.display_main_popup = None
-
-    def create(self):
-        self.main_menu = self.new_menu(name='Main menu')
-        self.main_menu.addItem(
-            text='Edit main config',
-            onSelect=self.switch_form,
-            arguments=[self.parentApp.MAIN_CONFIG_EDIT_FORM]
-        )
-        self.main_menu.addItem(
-            text='Edit stub config',
-            onSelect=self.switch_form,
-            arguments=[self.parentApp.STUB_CONFIG_ENPOINTS_FORM]
-        )
-
-        self.add(
-            CodeHighlightedTitlePager,
-            name=f'Main config (view only) - {self.parentApp.main_config_file}',
-            values=hjson.dumpsJSON(self.parentApp.main_config, indent=4).split('\n'),
-            lexer=JsonLexer()
-        )
-
-    def switch_form(self, form: str) -> None:
-        """
-        Helper function to set the next appropriate form when using the menu.
-
-        Args:
-            form: the form name.
-        """
-        self.next_form = form #pylint: disable=attribute-defined-outside-init
-        self.parentApp.switchForm(form)
 
 class StubConfigEndpointsForm(ActionFormV2):
     """
@@ -308,7 +234,15 @@ class StubConfigInputsForm(ActionFormV2):
     Attributes:
         w_inputs: an `InputsListDisplay` widget to present the list of input options.
     """
-    def clear_input(self, show_popup=True):
+    def clear_input(self, show_popup: Optional[bool] = True) -> None:
+        """
+        Callback function for clearing input shortcuts.
+
+        Pressing 'c' will ask for confirmation before clearing, 'C' will not.
+
+        Args:
+            show_popup: if True, asks the user for confirmation before clearing the input.
+        """
         input_widget = self.get_widget('inputs')
         cleared_option = input_widget.values[input_widget.cursor_line]
 
@@ -439,63 +373,6 @@ class StubConfigInputsForm(ActionFormV2):
         self.parentApp.setNextFormPrevious()
 
 # TODO : Add output config screen
-
-class ActionFormDiscard(ActionFormV2):
-    """
-    Generic class for an action form with an additional *Discard* button.
-
-    Overload the `on_discard` method to customize its behavior.
-    """
-    class Discard_Button(MiniButtonPress): #pylint: disable=invalid-name
-        """
-        Additional *Discard* button (name style chosen to match the `npyscreen` library).
-        """
-        def whenPressed(self):
-            self.parent._on_discard() #pylint: disable=protected-access
-
-    DISCARDBUTTON_TYPE = Discard_Button
-    DISCARD_BUTTON_BR_OFFSET = (
-        ActionFormV2.CANCEL_BUTTON_BR_OFFSET[0],
-        ActionFormV2.OK_BUTTON_BR_OFFSET[1]
-        + len(ActionFormV2.OK_BUTTON_TEXT)
-        + ActionFormV2.CANCEL_BUTTON_BR_OFFSET[1]
-        + len(ActionFormV2.CANCEL_BUTTON_TEXT)
-    )
-    DISCARD_BUTTON_TEXT = 'Discard'
-
-    def _on_discard(self):
-        self.editing = self.on_discard()
-
-    def create_control_buttons(self):
-        self._add_button('ok_button',
-            self.__class__.OKBUTTON_TYPE,
-            self.__class__.OK_BUTTON_TEXT,
-            0 - self.__class__.OK_BUTTON_BR_OFFSET[0],
-            0 - self.__class__.OK_BUTTON_BR_OFFSET[1] - len(self.__class__.OK_BUTTON_TEXT),
-            None
-        )
-
-        self._add_button('cancel_button',
-            self.__class__.CANCELBUTTON_TYPE,
-            self.__class__.CANCEL_BUTTON_TEXT,
-            0 - self.__class__.CANCEL_BUTTON_BR_OFFSET[0],
-            0 - self.__class__.CANCEL_BUTTON_BR_OFFSET[1] - len(self.__class__.CANCEL_BUTTON_TEXT),
-            None
-        )
-
-        self._add_button('discard_button',
-            self.__class__.DISCARDBUTTON_TYPE,
-            self.__class__.DISCARD_BUTTON_TEXT,
-            0 - self.__class__.DISCARD_BUTTON_BR_OFFSET[0],
-            0 - self.__class__.DISCARD_BUTTON_BR_OFFSET[1] - len(self.__class__.DISCARD_BUTTON_TEXT),
-            None
-        )
-
-    def on_discard(self):
-        """
-        *Discard* button hook to overload for customizing the behavior of the button.
-        """
-        return False
 
 class StubConfigConfirmEditForm(ActionFormDiscard):
     """
