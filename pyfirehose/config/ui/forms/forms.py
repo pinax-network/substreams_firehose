@@ -23,9 +23,7 @@ THIS SOFTWARE.
 
 import logging
 import os.path
-from typing import Optional
 
-import curses
 import grpc
 import hjson
 from google.protobuf.descriptor import FieldDescriptor
@@ -33,11 +31,9 @@ from google.protobuf.descriptor_pool import DescriptorPool
 from grpc_reflection.v1alpha.proto_reflection_descriptor_database import ProtoReflectionDescriptorDatabase
 from npyscreen import FormWithMenus, ActionFormV2
 from npyscreen import MiniButtonPress, TitleFilenameCombo, TitleSelectOne
-from npyscreen import OptionFreeText, OptionList
+from npyscreen import OptionList
 from npyscreen import notify_confirm, notify_yes_no
-from pygments import highlight
 from pygments.lexers.data import JsonLexer
-from pygments.formatters import TerminalFormatter #pylint: disable=no-name-in-module
 
 # This import is used to prevent circular dependency for the `utils` and `config.utils` modules.
 from pyfirehose.args import check_period #pylint: disable=unused-import
@@ -89,23 +85,11 @@ class MainForm(FormWithMenus):
             arguments=[self.parentApp.STUB_CONFIG_ENPOINTS_FORM]
         )
 
-        main_config_text = hjson.dumpsJSON(self.parentApp.main_config, indent=4)
-        main_config_text_split = main_config_text.split('\n')
-        main_config_highlighted_text_split = highlight(main_config_text, JsonLexer(), TerminalFormatter()).split('\n')
-
-        self.stored_highlights = {}
-        for i in range(len(main_config_highlighted_text_split) - 1):
-            self.stored_highlights[main_config_text_split[i]] = [
-                c for (color, length) in colorize(
-                    self.theme_manager.findPair(self, 'DEFAULT'),
-                    main_config_highlighted_text_split[i]
-                ) for c in [color] * length
-            ]
-
         self.add(
             CodeHighlightedTitlePager,
             name=f'Main config (view only) - {self.parentApp.main_config_file}',
-            values=main_config_text_split
+            values=hjson.dumpsJSON(self.parentApp.main_config, indent=4).split('\n'),
+            lexer=JsonLexer()
         )
 
     def switch_form(self, form: str) -> None:
@@ -516,28 +500,13 @@ class ActionFormDiscard(ActionFormV2):
 class StubConfigConfirmEditForm(ActionFormDiscard):
     """
     Confirmation screen displaying the final stub config as it will appear in the saved file.
-
-    Attributes:
-        stored_highlights: dictionary containing the highlighted text content for the `CodeHighlightedTitlePager` widget.
     """
     def create(self):
-        stub_config_text = hjson.dumpsJSON(self.parentApp.stub_config, indent=4)
-        stub_config_text_split = stub_config_text.split('\n')
-        stub_config_highlighted_text_split = highlight(stub_config_text, JsonLexer(), TerminalFormatter()).split('\n')
-
-        self.stored_highlights = {}
-        for i in range(len(stub_config_highlighted_text_split) - 1):
-            self.stored_highlights[stub_config_text_split[i]] = [
-                c for (color, length) in colorize(
-                    self.theme_manager.findPair(self, 'DEFAULT'),
-                    stub_config_highlighted_text_split[i]
-                ) for c in [color] * length
-            ]
-
         self.add(
             CodeHighlightedTitlePager,
             name=f'Stub config recap (view only) - {self.parentApp.stub_save_file}',
-            values=stub_config_text_split,
+            values=hjson.dumpsJSON(self.parentApp.stub_config, indent=4).split('\n'),
+            lexer=JsonLexer()
         )
 
     def on_ok(self):
@@ -571,87 +540,3 @@ class StubConfigConfirmEditForm(ActionFormDiscard):
             self.parentApp.switchForm('MAIN')
         else:
             pass
-
-def mkcolor(default_color: int, offset: Optional[int] = 49) -> dict[str, int]:
-    """
-    Initialize `curses` colors and mapping of ANSI escape codes.
-
-    Adapted from Cansi library (https://github.com/tslight/cansi). Original comments kept in code.
-
-    See [Wikipedia](https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters)
-    for ANSI escape codes reference.
-
-    Args:
-        default_color: color pair used for the default background and foreground ANSI escape codes (`39;49;00`).
-        offset: offset for the `curses.init_pair` function to avoid overwriting predefined colors of `npyscreen`'s theme.
-
-    Returns:
-        A dictionary mapping of ANSI escape sequences to `curses`' control characters.
-    """
-    color = {}
-
-    curses.use_default_colors()  # https://stackoverflow.com/a/44015131
-    for i in range(1, 8):
-        curses.init_pair(i + offset, i, -1)  # color fg on black bg
-        curses.init_pair(i + offset + 7, curses.COLOR_WHITE, i)  # white fg on color bg
-        curses.init_pair(i + offset + 14, curses.COLOR_BLACK, i)  # black fg on color bg
-        color[str(i + 30)] = curses.color_pair(i + offset)
-        color[str(i + 40)] = curses.color_pair(i + offset + 7)
-        color["0;" + str(i + 30)] = curses.color_pair(i + offset)
-        color["0;" + str(i + 40)] = curses.color_pair(i + offset + 7)
-        color[str(i + 30) + ";0"] = curses.color_pair(i + offset)
-        color[str(i + 40) + ";0"] = curses.color_pair(i + offset + 7)
-        color[str(i + 90)] = curses.color_pair(i + offset) | curses.A_BOLD
-        color["1;" + str(i + 30)] = curses.color_pair(i + offset) | curses.A_BOLD
-        color["1;" + str(i + 40)] = curses.color_pair(i + offset + 7) | curses.A_BOLD
-        color[str(i + 30) + ";1"] = curses.color_pair(i + offset) | curses.A_BOLD
-        color[str(i + 40) + ";1"] = curses.color_pair(i + offset + 7) | curses.A_BOLD
-
-        color["39;49;00"] = default_color
-
-    return color
-
-
-def colorize(default_color: int, string: str) -> list[tuple[int, int]]:
-    """
-    Convert a string containg ANSI escape codes to `curses` control characters for color display.
-
-    Adapted from Cansi library (https://github.com/tslight/cansi). Some of the original comments kept in the code.
-
-    Args:
-        default_color: passed to the `mkcolors` function (see documentation for reference).
-        string: a string containing ANSI escape codes for color.
-
-    Returns:
-        A list of pairs of `curses`' control character and their applicable length.
-
-    Example:
-        `[(2097152, 10)]` will color 10 characters bold (`curses.A_BOLD = 2097152`).
-    """
-    ansi_split = string.split("\x1b[")
-    color_pair = curses.color_pair(0)
-
-    color = mkcolor(default_color)
-    attr = {
-        "1": curses.A_BOLD,
-        "4": curses.A_UNDERLINE,
-        "5": curses.A_BLINK,
-        "7": curses.A_REVERSE,
-    }
-    colors = []
-
-    for substring in ansi_split[1:]:
-        if substring.startswith("0K"):
-            return colors # 0K = clrtoeol so we are done with this line
-
-        ansi_code = substring.split("m")[0]
-        substring = substring[len(ansi_code) + 1 :]
-        if ansi_code in ["1", "4", "5", "7", "8"]:
-            color_pair = color_pair | attr[ansi_code]
-        elif ansi_code not in ["0", "0;"]:
-            color_pair = color[ansi_code]
-
-        if substring:
-            colors.append((color_pair, len(substring)))
-
-    return colors
