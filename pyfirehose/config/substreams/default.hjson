@@ -1,11 +1,18 @@
 {
-	"python_import_dir": "sf.substreams.v1",
-	"name": "Stream",
-	"request": "Request",
-	"parameters": {
-		"output_modules": [
-			"map_transfers"
-		],
-		"modules" : "pyfirehose/proto/proto.spkg"
+	"base": "sf.substreams.v1",
+	"service": "Stream",
+	"method": "Blocks",
+	"request": {
+		"object": "Request",
+		"params": {
+			"output_modules": [
+				"map_transfers"
+			],
+			"modules" : "pyfirehose/proto/proto.spkg"
+		}
+	},
+	"response": {
+		"object": "Response",
+		"params": {}
 	}
 }

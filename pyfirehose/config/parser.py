@@ -8,7 +8,7 @@ Refer to the README.md and comments within the config files for more details abo
 import logging
 from argparse import ArgumentTypeError
 from dataclasses import dataclass
-from typing import Any, ClassVar, Optional
+from typing import Any, ClassVar, Optional, Type
 
 # https://hjson.github.io/hjson-py/ -- allow comments in JSON files for configuration purposes
 import hjson
@@ -25,7 +25,7 @@ class StubConfig:
     """
     REQUEST_OBJECT: ClassVar[Any]
     REQUEST_PARAMETERS: ClassVar[dict]
-    STUB_OBJECT: ClassVar[Any]
+    SERVICE_OBJECT: ClassVar[Any]
     SUBSTREAMS_OUTPUT_TYPES: ClassVar[list]
     SUBSTREAMS_PACKAGE_OBJECT: ClassVar[Any]
 
@@ -43,6 +43,7 @@ class Config:
     GRPC_ENDPOINT: ClassVar[str]
     MAX_BLOCK_SIZE: ClassVar[int]
     MAX_FAILED_BLOCK_RETRIES: ClassVar[int]
+    PROTO_MESSAGES_CLASSES: ClassVar[dict[str, Type]]
 
 def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
     """
@@ -100,6 +101,8 @@ def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
     except KeyError as error:
         Config.COMPRESSION = Compression.NoCompression
 
+    Config.PROTO_MESSAGES_CLASSES = utils.generate_proto_messages_classes()
+
     logging.debug('Loaded main config: %s [SUCCESS]', vars(Config))
 
     if default_stub:
@@ -148,52 +151,68 @@ def load_stub_config(stub: str | dict) -> None:
                 raise
 
     try:
-        import_dir_module = f'pyfirehose.proto.generated.{stub_config["python_import_dir"]}'
-        imported = utils.import_all_from_module(import_dir_module)
+        try:
+            StubConfig.REQUEST_OBJECT = Config.PROTO_MESSAGES_CLASSES[
+                f'{stub_config["base"]}.{stub_config["request"]["object"]}'
+            ]
+        except KeyError:
+            logging.exception('Error loading stub config REQUEST_OBJECT: message class "%s" not found',
+                f'{stub_config["base"]}.{stub_config["request"]["object"]}'
+            )
+            raise
 
-        for module in imported:
-            try:
-                StubConfig.REQUEST_OBJECT = getattr(module, stub_config['request'])
-            except AttributeError:
-                pass
-
-            try:
-                StubConfig.STUB_OBJECT = getattr(module, f'{stub_config["name"]}Stub')
-            except AttributeError:
-                pass
-
-            try:
-                StubConfig.SUBSTREAMS_PACKAGE_OBJECT = getattr(module, 'Package')
-            except AttributeError:
-                pass
+        try:
+            StubConfig.SERVICE_OBJECT = Config.PROTO_MESSAGES_CLASSES[
+                f'{stub_config["base"]}.{stub_config["service"]}'
+            ]
+        except KeyError:
+            logging.exception('Error loading stub config SERVICE_OBJECT: message class "%s" not found',
+                f'{stub_config["base"]}.{stub_config["service"]}'
+            )
+            raise
 
         if not StubConfig.REQUEST_OBJECT:
-            logging.critical('Could not load request object from config: unable to locate "%s"', stub_config['request'])
+            logging.critical('Could not load request object from config: unable to locate "%s"',
+                stub_config['request']['object']
+            )
             raise ImportError
 
-        if not StubConfig.STUB_OBJECT:
-            logging.critical('Could not load stub object from config: unable to locate "%sStub" in "%s" module',
-                stub_config['name'],
-                f'pyfirehose.proto.generated.{stub_config["python_import_dir"]}')
+        if not StubConfig.SERVICE_OBJECT:
+            logging.critical('Could not load SERVICE_OBJECT from config: unable to locate "%s" in "%s" module',
+                stub_config['service'],
+                stub_config['base']
+            )
             raise ImportError
 
         # If is using substreams
-        if 'modules' in stub_config['parameters'] and '.spkg' in stub_config['parameters']['modules']:
+        if 'modules' in stub_config['request']['params'] and '.spkg' in stub_config['request']['params']['modules']:
+            try:
+                StubConfig.SUBSTREAMS_PACKAGE_OBJECT = Config.PROTO_MESSAGES_CLASSES[
+                    f'{stub_config["base"]}.Package'
+                ]
+            except KeyError:
+                logging.exception('Error loading stub config SUBSTREAMS_PACKAGE_OBJECT: message class "%s" not found',
+                    f'{stub_config["base"]}.Package'
+                )
+                raise
+
             if not StubConfig.SUBSTREAMS_PACKAGE_OBJECT:
                 logging.critical('Could not determine package for generating modules parameters')
                 raise ImportError
 
-            stub_config['parameters']['modules'] = load_substreams_modules_from_package(stub_config['parameters']['modules'])
+            stub_config['request']['params']['modules'] = load_substreams_modules_from_package(
+                stub_config['request']['params']['modules']
+            )
             StubConfig.SUBSTREAMS_OUTPUT_TYPES = list(
-                m['output']['type'].split(':', 1)[1].rsplit('.', 1)[0] for m in stub_config['parameters']['modules']['modules']
-                if m['name'] in stub_config['parameters']['output_modules']
+                m['output']['type'].split(':', 1)[1].rsplit('.', 1)[0] for m in stub_config['request']['params']['modules']['modules']
+                if m['name'] in stub_config['request']['params']['output_modules']
             )
 
-        StubConfig.REQUEST_PARAMETERS = stub_config['parameters']
+        StubConfig.REQUEST_PARAMETERS = stub_config['request']['params']
 
     except ImportError as error:
         logging.exception('Error importing modules from specified directory (%s): %s',
-            stub_config['python_import_dir'],
+            stub_config['base'],
             error
         )
         raise

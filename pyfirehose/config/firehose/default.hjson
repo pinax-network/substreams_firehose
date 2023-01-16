@@ -1,7 +1,13 @@
 {
-	"python_import_dir": "sf.firehose.v2",
-	"name": "Stream",
-	"request": "Request",
-	"parameters": {
+	"base": "sf.firehose.v2",
+	"service": "Stream",
+	"method": "Blocks",
+	"request": {
+		"object": "Request",
+		"params": {}
+	},
+	"response": {
+		"object": "Response",
+		"params": {}
 	}
 }

@@ -1,7 +1,13 @@
 {
-	"python_import_dir": "dfuse.bstream.v1",
-	"name": "BlockStreamV2",
-	"request": "BlocksRequestV2",
-	"parameters": {
+	"base": "dfuse.bstream.v1",
+	"service": "BlockStreamV2",
+	"method": "Blocks",
+	"request": {
+		"object": "BlocksRequestV2",
+		"params": {}
+	},
+	"response": {
+		"object": "BlockResponseV2",
+		"params": {}
 	}
 }

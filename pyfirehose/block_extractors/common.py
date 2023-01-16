@@ -85,7 +85,7 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel,
     """
     data = []
     current_block_number = start
-    stub = StubConfig.STUB_OBJECT(secure_channel)
+    stub = StubConfig.SERVICE_OBJECT(secure_channel)
 
     # Move request parameters to dict to allow CLI keyword arguments to override the stub config
     request_parameters = {
