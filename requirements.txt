@@ -3,6 +3,7 @@ grpcio-reflection==1.51.1
 hjson==3.1.0
 npyscreen==4.10.5
 protobuf==4.21.12
+protoletariat==2.0.0
 pygments==2.14.0
 python-dotenv==0.21.0
 requests_cache==0.9.7

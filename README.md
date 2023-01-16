@@ -110,16 +110,14 @@ If the gRPC endpoint uses different protobuf definitions than the ones already p
 
 ### Protobuf
 
-To communicate with the gRPC endpoint, Python objects are generated using `.proto` template files that describes the kind of data the client and server are going to manipulate. Those Python objects are already provided in the [`proto/generated/`](pyfirehose/proto/generated/) folder, however if you want to generate them yourself, you can run the following commands:
+To communicate with the gRPC endpoint, Python objects are generated using `.proto` template files that describes the kind of data the client and server are going to manipulate. Those Python objects are already provided in the [`proto/generated/`](pyfirehose/proto/generated/) folder, however if you want to generate them yourself for adding new `.proto` definitions, use the provided script [`build_proto.sh`](pyfirehose/proto/build_proto.sh):
+
 ```console
-(.venv) foo@bar:~/pyfirehose$ pip install grpcio-tools
-(.venv) foo@bar:~/pyfirehose$ cd pyfirehose/proto
-(.venv) foo@bar:~/pyfirehose/pyfirehose/proto$ python -m grpc_tools.protoc -I. --python_out=generated/ --grpc_python_out=generated/ $(find . -iname *.proto)
+foo@bar:~/pyfirehose$ cd proto/ # Must cd in directory
+foo@bar:~/pyfirehose/proto$ ./build_proto.sh
 ```
 
-or use the provided script [`build_proto.sh`](pyfirehose/proto/build_proto.sh).
-
-*Note: if you encounter some `ModuleNotFound` errors, you might have to edit the generated files for fixing local imports by prefixing them with `proto.generated.`.*
+*Note: you **must** add your own `.proto` files definitions inside the [`pyfirehose/proto`](pyfirehose/proto) directory with the folder hierarchy matching the `import` statements of the `.proto` files in order to successfully generate the Python stubs.*
 
 ### gRPC endpoints support
 
