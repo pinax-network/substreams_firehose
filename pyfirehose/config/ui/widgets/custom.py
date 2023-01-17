@@ -24,7 +24,9 @@ THIS SOFTWARE.
 from typing import Optional
 
 import curses
-from npyscreen import Pager, SelectOne, Textfield, TitlePager, TitleSelectOne
+from google.protobuf.descriptor import Descriptor
+from npyscreen import MultiLineAction, Pager, SelectOne, Textfield, TitlePager, TitleSelectOne
+from npyscreen import MLTreeMultiSelectAnnotated, TreeData, TreeLineSelectableAnnotated
 from pygments import highlight
 from pygments.formatters import TerminalFormatter #pylint: disable=no-name-in-module
 
@@ -131,6 +133,46 @@ class EnumTitleSelectOneOrNone(TitleSelectOne):
     for reference.
     """
     _entry_type = EnumSelectOneOrNone
+
+class OutputSelectionTreeData(TreeData):
+    def __init__(self, *args, annotate: Optional[str] = '?', annotate_color: Optional[str] = 'CONTROL', **kwargs):
+        super().__init__(*args, **kwargs)
+        self.annotate = f' {annotate} '
+        self.annotate_color = annotate_color
+
+class OutputSelectionTreeLineSelectableAnnotated(TreeLineSelectableAnnotated):
+    def getAnnotationAndColor(self):
+        return (self._tree_real_value.annotate, self._tree_real_value.annotate_color)
+
+class OutputSelectionMLTreeMultiSelectAnnotated(MLTreeMultiSelectAnnotated):
+    _contained_widgets = OutputSelectionTreeLineSelectableAnnotated
+
+class OutputTypesSelectOne(SelectOne, MultiLineAction):
+    """
+    Custom single selection widget to display `Block` output type for DFuse/Firehose-enabled endpoints.
+
+    See [npyscreen's documentation](https://npyscreen.readthedocs.io/widgets-multiline.html#widgets-picking-options)
+    for reference.
+    """
+    def display_value(self, vl: Descriptor):
+        try:
+            return vl.full_name
+        except AttributeError:
+            return str(vl)
+
+    def actionHighlighted(self, act_on_this, key_press):
+        self.value = [self.cursor_line]
+        self.parent.ml_output_select.values = self.parent.create_output_selection()
+        self.parent.display()
+
+class OutputTypesTitleSelectOne(TitleSelectOne):
+    """
+    Title version of the `OutputTypesSelectOne` widget.
+
+    See [npyscreen's documentation](https://npyscreen.readthedocs.io/widgets-title.html#widgets-titled-widgets)
+    for reference.
+    """
+    _entry_type = OutputTypesSelectOne
 
 def colorize(default_color: int, string: str) -> list[tuple[int, int]]:
     """

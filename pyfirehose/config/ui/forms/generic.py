@@ -2,7 +2,7 @@
 SPDX-License-Identifier: MIT
 """
 
-from npyscreen import ActionFormV2, MiniButtonPress
+from npyscreen import ActionFormV2, MiniButtonPress, SplitForm
 
 class ActionFormDiscard(ActionFormV2):
     """
@@ -60,3 +60,10 @@ class ActionFormDiscard(ActionFormV2):
         *Discard* button hook to overload for customizing the behavior of the button.
         """
         return False
+
+class SplitActionForm(ActionFormV2, SplitForm):
+    def get_half_way(self, draw_line_at=None):
+        if not hasattr(self, 'draw_line_at'):
+            self.draw_line_at = draw_line_at if draw_line_at else self.curses_pad.getmaxyx()[0] // 2
+
+        return self.draw_line_at

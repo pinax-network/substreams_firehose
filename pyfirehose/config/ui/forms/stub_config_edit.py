@@ -8,7 +8,7 @@ from typing import Optional
 
 import grpc
 import hjson
-from google.protobuf.descriptor import FieldDescriptor
+from google.protobuf.descriptor import Descriptor, FieldDescriptor
 from google.protobuf.descriptor_pool import DescriptorPool
 from grpc_reflection.v1alpha.proto_reflection_descriptor_database import ProtoReflectionDescriptorDatabase
 from npyscreen import ActionFormV2
@@ -24,8 +24,10 @@ import pyfirehose.config.ui.widgets.inputs as input_options
 from pyfirehose.utils import get_auth_token
 from pyfirehose.config.parser import Config, StubConfig
 from pyfirehose.config.parser import load_config, load_stub_config
-from pyfirehose.config.ui.forms.generic import ActionFormDiscard
-from pyfirehose.config.ui.widgets.custom import CodeHighlightedTitlePager, EndpointsTitleSelectOne
+from pyfirehose.config.ui.forms.generic import ActionFormDiscard, SplitActionForm
+from pyfirehose.config.ui.widgets.custom import CodeHighlightedTitlePager, EndpointsTitleSelectOne, \
+                                                OutputSelectionMLTreeMultiSelectAnnotated, OutputTypesTitleSelectOne, \
+                                                OutputSelectionTreeData
 from pyfirehose.config.ui.widgets.inputs import InputsListDisplay, InputRepeated
 
 class StubConfigEndpointsForm(ActionFormV2):
@@ -285,7 +287,7 @@ class StubConfigInputsForm(ActionFormV2):
         ]:
             # Load config value from loaded stub if it exists
             try:
-                stub_config_value = self.parentApp.stub_config['parameters'][input_parameter.name]
+                stub_config_value = self.parentApp.stub_config['request']['params'][input_parameter.name]
             except KeyError:
                 stub_config_value = None
 
@@ -342,10 +344,17 @@ class StubConfigInputsForm(ActionFormV2):
 
     def on_ok(self):
         if not self.parentApp.stub_config:
-            self.parentApp.stub_config['parameters'] = {}
-            self.parentApp.stub_config['python_import_dir'], self.parentApp.stub_config['name'] = \
+            self.parentApp.stub_config['base'], self.parentApp.stub_config['service'] = \
                 self.parentApp.selected_service.rsplit('.', 1)
-            self.parentApp.stub_config['request'] = self.parentApp.selected_method.input_type.name
+            self.parentApp.stub_config['method'] = self.parentApp.selected_method.name
+
+            self.parentApp.stub_config['request'] = {}
+            self.parentApp.stub_config['request']['object'] = self.parentApp.selected_method.input_type.name
+            self.parentApp.stub_config['request']['params'] = {}
+
+            self.parentApp.stub_config['response'] = {}
+            self.parentApp.stub_config['response']['object'] = self.parentApp.selected_method.output_type.name
+            self.parentApp.stub_config['response']['params'] = {}
 
         for input_option in self.w_inputs.values:
             is_empty_input = False
@@ -356,13 +365,85 @@ class StubConfigInputsForm(ActionFormV2):
             else:
                 is_empty_input = not any(input_option.value)
 
-            if input_option.name in self.parentApp.stub_config['parameters'] and is_empty_input:
-                del self.parentApp.stub_config['parameters'][input_option.name]
+            if input_option.name in self.parentApp.stub_config['request']['params'] and is_empty_input:
+                del self.parentApp.stub_config['request']['params'][input_option.name]
             elif not is_empty_input:
-                self.parentApp.stub_config['parameters'][input_option.name] = input_option.value
+                self.parentApp.stub_config['request']['params'][input_option.name] = input_option.value
 
         logging.info('[%s] Stub config : %s', self.name, self.parentApp.stub_config)
 
+        self.parentApp.addForm(
+            self.parentApp.STUB_CONFIG_OUTPUTS_FORM,
+            StubConfigOutputsForm, name='Stub config editing - Outputs'
+        )
+        self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_OUTPUTS_FORM)
+
+    def on_cancel(self):
+        self.parentApp.setNextFormPrevious()
+
+class StubConfigOutputsForm(SplitActionForm):
+    """
+    ...
+    """
+    def beforeEditing(self): #pylint: disable=invalid-name
+        """
+        Called by `npyscreen` before the form gets drawn on the screen.
+        """
+        if not hasattr(self, 'previous_value'):
+            # Automatically select the first value to prevent empty selection
+            self.previous_value = [0] #pylint: disable=attribute-defined-outside-init
+
+        self.ml_output_types.value = self.previous_value
+
+    def create(self):
+        self.outputs_descriptor = [
+            m_class.DESCRIPTOR for m_name, m_class in Config.PROTO_MESSAGES_CLASSES.items() if m_name.rsplit('.', 1)[1].lower() == 'block'
+        ]
+
+        self.ml_output_types = self.add(
+            OutputTypesTitleSelectOne,
+            name='Select an output type :',
+            values=self.outputs_descriptor,
+            value=[0],
+            scroll_exit=True,
+            # First call to `get_half_way` will set the split line
+            max_height=self.get_half_way(self.curses_pad.getmaxyx()[0] // 3) - 2
+        )
+
+        self.ml_output_select = self.add(
+            OutputSelectionMLTreeMultiSelectAnnotated,
+            name='Select which data to save from the output :',
+            values=self.create_output_selection(),
+            scroll_exit=True,
+            rely=self.get_half_way() + 1
+        )
+
+    def create_output_selection(self):
+        def _make_tree_node(
+                node: OutputSelectionTreeData,
+                descriptor: Descriptor,
+                previous_desc: Optional[Descriptor] = None
+            ):
+            for field in descriptor.fields:
+                child = node.new_child(content=field.name)
+                child.expanded = False
+
+                if field.message_type and field.message_type != previous_desc:
+                    _make_tree_node(child, field.message_type, descriptor)
+
+        output_tree = OutputSelectionTreeData()
+        root_element = output_tree.new_child(
+            content='(select this to select all)',
+            annotate='Select which data to save from the output',
+            annotate_color='STANDOUT'
+        )
+
+        _make_tree_node(root_element, self.outputs_descriptor[self.ml_output_types.value[0]])
+
+        return output_tree
+
+    def on_ok(self):
+        self.previous_value = list(self.ml_output_types.value) #pylint: disable=attribute-defined-outside-init
         self.parentApp.addForm(
             self.parentApp.STUB_CONFIG_CONFIRM_EDIT_FORM,
             StubConfigConfirmEditForm, name='Stub config editing - Confirm'
@@ -370,9 +451,8 @@ class StubConfigInputsForm(ActionFormV2):
         self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_CONFIRM_EDIT_FORM)
 
     def on_cancel(self):
+        del self.previous_value
         self.parentApp.setNextFormPrevious()
-
-# TODO : Add output config screen
 
 class StubConfigConfirmEditForm(ActionFormDiscard):
     """

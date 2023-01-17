@@ -2,8 +2,7 @@
 
 ## Config tool
 
-- Correct type editing and checking
-  + .spkg, list of output modules for substreams
+- .spkg, list of output modules for substreams
 - Better stub config handling
   + Possibility to create new stub from template
 

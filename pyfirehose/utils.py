@@ -106,6 +106,10 @@ def generate_proto_messages_classes(path: str = 'pyfirehose/proto/generated/prot
     pool = DescriptorPool()
 
     for proto_file_desc in descriptor_set.file:
+        # TODO: See if comments can be extracted without too much overhead AND if useful
+        # logging.info('[PROTO_MSG] leading_comments = %s', [loc.leading_comments for loc in proto_file_desc.source_code_info.location])
+        # logging.info('[PROTO_MSG] trailing_comments = %s', [loc.trailing_comments for loc in proto_file_desc.source_code_info.location])
+        
         # Add to pool in order to load the `FileDescriptorProto` into a `FileDescriptor`
         pool.Add(proto_file_desc)
         for service_name in pool.FindFileByName(proto_file_desc.name).services_by_name:
