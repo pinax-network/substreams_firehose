@@ -62,7 +62,7 @@ def parse_arguments() -> argparse.Namespace:
                             help='id of a grpc entry in the "grpc" array found in the main config file')
     arg_parser.add_argument('-e', '--extractor', choices=['optimized', 'single', 'multi'], default='optimized',
                             help='type of extractor used for streaming blocks from the gRPC endpoint')
-    arg_parser.add_argument('-p', '--custom-processor', type=str, default='default_block_processor',
+    arg_parser.add_argument('-p', '--custom-processor', type=str, default='default_processor',
                             help='name of a custom block processing function located in the "block_processors.processors" module')
     arg_parser.add_argument('--no-json-output', action='store_true',
                             help='don\'t try to convert block processor output to JSON')

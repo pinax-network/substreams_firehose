@@ -67,14 +67,16 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
 
     try:
         stub_loaded = load_config(args.config, args.grpc_entry)
-    except (HjsonDecodeError, ArgumentTypeError, ImportError, KeyError):
-        return 1
+    except (HjsonDecodeError, ArgumentTypeError, ImportError, KeyError) as error:
+        logging.critical('Error loading config file: %s', error)
+        raise
 
     if args.stub:
         try:
             load_stub_config(args.stub)
-        except (HjsonDecodeError, ImportError, KeyError):
-            return 1
+        except (HjsonDecodeError, ImportError, KeyError) as error:
+            logging.critical('Error loading stub config file: %s', error)
+            raise
     elif not stub_loaded:
         logging.critical('Stub config should be supplied either in the main config file or through the CLI option.')
         return 1

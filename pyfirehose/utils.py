@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 from types import ModuleType
 from typing import Optional
 
-from google.protobuf.descriptor_pool import DescriptorPool
+from google.protobuf.descriptor_pool import Default
 from google.protobuf.descriptor_pb2 import FileDescriptorSet #pylint: disable=no-name-in-module
 from google.protobuf.message_factory import GetMessages
 from requests_cache import CachedSession
@@ -89,31 +89,28 @@ def generate_proto_messages_classes(path: str = 'pyfirehose/proto/generated/prot
         A dictionary with pairs of message full name and the Python class object associated with it.
 
     Example:
-        {
-            'dfuse.bstream.v1.BlockStream': <class 'pyfirehose.proto.generated.dfuse.bstream.v1.bstream_pb2_grpc.BlockStreamStub'>,
-            'dfuse.bstream.v1.BlockStreamV2': <class 'pyfirehose.proto.generated.dfuse.bstream.v1.bstream_pb2_grpc.BlockStreamV2Stub'>,
-            'dfuse.bstream.v1.BlockRequest': <class 'BlockRequest'>,
-            'dfuse.bstream.v1.IrreversibleBlocksRequestV2': <class 'IrreversibleBlocksRequestV2'>,
-            'dfuse.bstream.v1.BlocksRequestV2': <class 'BlocksRequestV2'>,
-            'dfuse.bstream.v1.BlockResponseV2': <class 'BlockResponseV2'>,
-            ...
-        }
+    ```json
+    {
+        'dfuse.bstream.v1.BlockStream': <class 'pyfirehose.proto.generated.dfuse.bstream.v1.bstream_pb2_grpc.BlockStreamStub'>,
+        'dfuse.bstream.v1.BlockStreamV2': <class 'pyfirehose.proto.generated.dfuse.bstream.v1.bstream_pb2_grpc.BlockStreamV2Stub'>,
+        'dfuse.bstream.v1.BlockRequest': <class 'BlockRequest'>,
+        'dfuse.bstream.v1.IrreversibleBlocksRequestV2': <class 'IrreversibleBlocksRequestV2'>,
+        'dfuse.bstream.v1.BlocksRequestV2': <class 'BlocksRequestV2'>,
+        'dfuse.bstream.v1.BlockResponseV2': <class 'BlockResponseV2'>,
+        ...
+    }
+    ```
     """
     with open(path, 'rb') as proto_desc:
         descriptor_set = FileDescriptorSet.FromString(proto_desc.read())
 
     results = {}
-    pool = DescriptorPool()
 
+    # Load service stubs objects from generated modules
     for proto_file_desc in descriptor_set.file:
-        # TODO: See if comments can be extracted without too much overhead AND if useful
-        # logging.info('[PROTO_MSG] leading_comments = %s', [loc.leading_comments for loc in proto_file_desc.source_code_info.location])
-        # logging.info('[PROTO_MSG] trailing_comments = %s', [loc.trailing_comments for loc in proto_file_desc.source_code_info.location])
-        
-        # Add to pool in order to load the `FileDescriptorProto` into a `FileDescriptor`
-        pool.Add(proto_file_desc)
-        for service_name in pool.FindFileByName(proto_file_desc.name).services_by_name:
+        for service_name in [s.name for s in proto_file_desc.service]:
             service_key = f'{proto_file_desc.package}.{service_name}'
+
             for module in import_all_from_module(f'pyfirehose.proto.generated.{proto_file_desc.package}'):
                 try:
                     results.update({service_key: getattr(module, f'{service_name}Stub')})
@@ -122,7 +119,20 @@ def generate_proto_messages_classes(path: str = 'pyfirehose/proto/generated/prot
 
             if not service_key in results:
                 logging.error('Could not find service stub class for "%s" in package "%s"', service_name, proto_file_desc.package)
-                raise ImportError
+                raise ImportError(f'Could not find service stub class for "{service_name}" in package "{proto_file_desc.package}"')
+
+    pool = Default()
+
+    # This needs to be separated from the previous loop in order to avoid "duplicate file name" errors
+    for proto_file_desc in descriptor_set.file:
+        # TODO: See if comments can be extracted without too much overhead AND if useful
+        # logging.info('[PROTO_MSG] leading_comments = %s', [loc.leading_comments for loc in proto_file_desc.source_code_info.location])
+        # logging.info('[PROTO_MSG] trailing_comments = %s', [loc.trailing_comments for loc in proto_file_desc.source_code_info.location])
+        try:
+            # Add to default pool in order to load all the messages definitions for later processing
+            pool.Add(proto_file_desc)
+        except TypeError:
+            pass
 
     results.update(GetMessages(list(descriptor_set.file)))
     return results

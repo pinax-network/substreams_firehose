@@ -1,17 +1,40 @@
 {
-	"base": "dfuse.bstream.v1"
-	"service": "BlockStreamV2",
-	"method": "Blocks",
-	"request": {
-		"object": "BlocksRequestV2",
-		"params": {
-			"fork_steps": ["STEP_IRREVERSIBLE"],
-			"include_filter_expr": "receiver in ['eosio.bpay', 'eosio.vpay'] && action == 'transfer'",
-			"exclude_filter_expr": "data['to'] in ['eosio.bpay', 'eosio.vpay']"
-		}
-	},
-	"response": {
-		"object": "BlockResponseV2",
-		"params": {}
-	}
+    "base": "dfuse.bstream.v1",
+    "service": "BlockStreamV2",
+    "method": "Blocks",
+    "request": {
+        "object": "BlocksRequestV2",
+        "params": {
+            "fork_steps": [
+                "STEP_IRREVERSIBLE"
+            ],
+            "include_filter_expr": "receiver in ['eosio.bpay', 'eosio.vpay'] && action == 'transfer'",
+            "exclude_filter_expr": "data['to'] in ['eosio.bpay', 'eosio.vpay']"
+        }
+    },
+    "response": {
+        "object": "BlockResponseV2",
+        "params": {
+            "id": "True",
+            "number": "True",
+            "version": "True",
+            "filtered_transaction_traces": {
+                "block_num": "True",
+                "action_traces": {
+                    "receiver": "True",
+                    "action": {
+                        "account": "True",
+                        "name": "True",
+                        "json_data": "True"
+                    },
+                    "transaction_id": "True",
+                    "block_num": "True",
+                    "block_time": {
+                        "seconds": "True"
+                    },
+                    "filtering_matched": "True"
+                }
+            }
+        }
+    }
 }

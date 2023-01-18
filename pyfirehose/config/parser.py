@@ -23,10 +23,11 @@ class StubConfig:
     """
     Holds the stub config.
     """
+    RESPONSE_PARAMETERS: ClassVar[list]
     REQUEST_OBJECT: ClassVar[Any]
     REQUEST_PARAMETERS: ClassVar[dict]
+    SERVICE_METHOD_FUNCTION: ClassVar[Any]
     SERVICE_OBJECT: ClassVar[Any]
-    SUBSTREAMS_OUTPUT_TYPES: ClassVar[list]
     SUBSTREAMS_PACKAGE_OBJECT: ClassVar[Any]
 
 @dataclass
@@ -152,37 +153,23 @@ def load_stub_config(stub: str | dict) -> None:
 
     try:
         try:
-            StubConfig.REQUEST_OBJECT = Config.PROTO_MESSAGES_CLASSES[
-                f'{stub_config["base"]}.{stub_config["request"]["object"]}'
-            ]
-        except KeyError:
-            logging.exception('Error loading stub config REQUEST_OBJECT: message class "%s" not found',
-                f'{stub_config["base"]}.{stub_config["request"]["object"]}'
+            StubConfig.REQUEST_OBJECT = Config.PROTO_MESSAGES_CLASSES[f'{stub_config["base"]}.{stub_config["request"]["object"]}']
+        except KeyError as error:
+            logging.exception('Could not load request object from config: unable to locate "%s" in "%s" module',
+                stub_config['request']['object'],
+                stub_config['base']
             )
-            raise
+            raise ImportError from error
 
+        StubConfig.SERVICE_METHOD_FUNCTION = stub_config['method']
         try:
-            StubConfig.SERVICE_OBJECT = Config.PROTO_MESSAGES_CLASSES[
-                f'{stub_config["base"]}.{stub_config["service"]}'
-            ]
-        except KeyError:
-            logging.exception('Error loading stub config SERVICE_OBJECT: message class "%s" not found',
-                f'{stub_config["base"]}.{stub_config["service"]}'
-            )
-            raise
-
-        if not StubConfig.REQUEST_OBJECT:
-            logging.critical('Could not load request object from config: unable to locate "%s"',
-                stub_config['request']['object']
-            )
-            raise ImportError
-
-        if not StubConfig.SERVICE_OBJECT:
-            logging.critical('Could not load SERVICE_OBJECT from config: unable to locate "%s" in "%s" module',
+            StubConfig.SERVICE_OBJECT = Config.PROTO_MESSAGES_CLASSES[f'{stub_config["base"]}.{stub_config["service"]}']
+        except KeyError as error:
+            logging.exception('Could not load service object from config: unable to locate "%s" in "%s" module',
                 stub_config['service'],
                 stub_config['base']
             )
-            raise ImportError
+            raise ImportError from error
 
         # If is using substreams
         if 'modules' in stub_config['request']['params'] and '.spkg' in stub_config['request']['params']['modules']:
@@ -190,25 +177,18 @@ def load_stub_config(stub: str | dict) -> None:
                 StubConfig.SUBSTREAMS_PACKAGE_OBJECT = Config.PROTO_MESSAGES_CLASSES[
                     f'{stub_config["base"]}.Package'
                 ]
-            except KeyError:
+            except KeyError as error:
                 logging.exception('Error loading stub config SUBSTREAMS_PACKAGE_OBJECT: message class "%s" not found',
                     f'{stub_config["base"]}.Package'
                 )
-                raise
-
-            if not StubConfig.SUBSTREAMS_PACKAGE_OBJECT:
-                logging.critical('Could not determine package for generating modules parameters')
-                raise ImportError
+                raise ImportError from error
 
             stub_config['request']['params']['modules'] = load_substreams_modules_from_package(
                 stub_config['request']['params']['modules']
             )
-            StubConfig.SUBSTREAMS_OUTPUT_TYPES = list(
-                m['output']['type'].split(':', 1)[1].rsplit('.', 1)[0] for m in stub_config['request']['params']['modules']['modules']
-                if m['name'] in stub_config['request']['params']['output_modules']
-            )
 
         StubConfig.REQUEST_PARAMETERS = stub_config['request']['params']
+        StubConfig.RESPONSE_PARAMETERS = stub_config['response']['params']
 
     except ImportError as error:
         logging.exception('Error importing modules from specified directory (%s): %s',

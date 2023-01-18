@@ -6,9 +6,9 @@
 		"object": "Request",
 		"params": {
 			"output_modules": [
-				"map_transfers"
+				"map_block",
 			],
-			"modules" : "pyfirehose/proto/proto.spkg"
+			"modules" : "pyfirehose/proto/common.spkg"
 		}
 	},
 	"response": {

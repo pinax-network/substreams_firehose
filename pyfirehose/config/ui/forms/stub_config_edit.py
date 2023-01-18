@@ -396,7 +396,9 @@ class StubConfigOutputsForm(SplitActionForm):
         self.ml_output_types.value = self.previous_value
 
     def create(self):
+        # TODO: Show substreams output based on .spkg file content
         self.outputs_descriptor = [
+            # TODO: Remove 'Block' naming convention assumption ?
             m_class.DESCRIPTOR for m_name, m_class in Config.PROTO_MESSAGES_CLASSES.items() if m_name.rsplit('.', 1)[1].lower() == 'block'
         ]
 
@@ -443,7 +445,26 @@ class StubConfigOutputsForm(SplitActionForm):
         return output_tree
 
     def on_ok(self):
+        def _build_output_params(node: OutputSelectionTreeData) -> dict | str:
+            if not node.has_children():
+                # TODO: Extend custom TreeData functionnality with 'Required' and 'Optional' output fields
+                return "True"
+
+            out = {}
+            for child in node.get_children():
+                if child.selected:
+                    out[child.get_content()] = _build_output_params(child)
+
+            return out
+
         self.previous_value = list(self.ml_output_types.value) #pylint: disable=attribute-defined-outside-init
+
+        output_params = _build_output_params(self.ml_output_select.values[0])
+        logging.info('[%s] Output params : %s', self.name, output_params)
+
+        # TODO: Load previous output params from stub config file => NEED ADDING OUTPUT TYPE OBJECT TO STUB CONFIG !
+        self.parentApp.stub_config['response']['params'] = output_params
+
         self.parentApp.addForm(
             self.parentApp.STUB_CONFIG_CONFIRM_EDIT_FORM,
             StubConfigConfirmEditForm, name='Stub config editing - Confirm'

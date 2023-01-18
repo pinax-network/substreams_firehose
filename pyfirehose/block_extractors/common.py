@@ -85,7 +85,16 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel,
     """
     data = []
     current_block_number = start
+
     stub = StubConfig.SERVICE_OBJECT(secure_channel)
+    try:
+        service_method = getattr(stub, StubConfig.SERVICE_METHOD_FUNCTION)
+    except AttributeError:
+        logging.exception('Could not find method "%s" for request object "%s"',
+            StubConfig.SERVICE_METHOD_FUNCTION,
+            stub
+        )
+        raise
 
     # Move request parameters to dict to allow CLI keyword arguments to override the stub config
     request_parameters = {
@@ -106,7 +115,7 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel,
     try:
         # Duplicate code for moving invariant out of loop, preventing condition check on every block streamed
         if block_processor:
-            async for response in stub.Blocks(req):
+            async for response in service_method(req):
                 logging.debug('[%s] Getting block number #%i (%i blocks remaining)...',
                     get_current_task_name(),
                     current_block_number,
@@ -115,10 +124,24 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel,
 
                 current_block_number += 1
 
-                for blob in block_processor(response.block):
-                    data.append(blob)
+                response_data = None
+                try:
+                    response_data = response.block
+                except AttributeError:
+                    try:
+                        response_data = response.data
+                    except AttributeError:
+                        logging.warning('[%s] No valid output message found in response : %s',
+                            get_current_task_name(),
+                            response
+                        )
+
+                if response_data:
+                    for blob in block_processor(response_data):
+                        if blob:
+                            data.append(blob)
         else:
-            async for response in stub.Blocks(req):
+            async for response in service_method(req):
                 logging.debug('[%s] Getting block number #%i (%i blocks remaining)...',
                     get_current_task_name(),
                     current_block_number,
@@ -128,16 +151,16 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel,
                 current_block_number += 1
 
                 try:
-                    if response.HasField('block'):
-                        data.append(response.block)
-                except ValueError:
-                    pass
-
-                try:
-                    if response.HasField('data'):
-                        data.append(response.data)
-                except ValueError:
-                    logging.debug('[%s] Non-data response : %s', get_current_task_name(), response)
+                    data.append(response.block)
+                except AttributeError:
+                    try:
+                        if response.data.outputs:
+                            data.append(response.data)
+                    except AttributeError:
+                        logging.warning('[%s] No valid output message found in response : %s',
+                            get_current_task_name(),
+                            response
+                        )
 
     except grpc.aio.AioRpcError as error:
         logging.error('[%s] Failed to process block number #%i: %s',

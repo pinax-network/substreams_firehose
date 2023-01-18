@@ -6,80 +6,17 @@ Provides block processors to parse information from the extracted blocks of a gR
 
 import json
 import logging
+from collections.abc import Mapping, Sequence
 from datetime import datetime
-from typing import Optional
 
 from google.protobuf.json_format import MessageToJson
 from google.protobuf.message import Message
 
-from pyfirehose.config.parser import StubConfig
-from pyfirehose.utils import import_all_from_module
-
-def _unpack_block(raw_block: Message, block_type_name: Optional[str] = 'Block') -> Message:
-    """
-    Unpack a raw block to the appropriate block object determined by the raw block `Any.type_url`.
-
-    It requires the compiled proto to be present in the `proto.generated` submodule
-    with the block type named as `Block` by default.
-
-    See google's [protobuf docs](https://googleapis.dev/python/protobuf/latest/google/protobuf/any_pb2.html) for more info.
-
-    Args:
-        raw_block: `Any` message type representing a raw block from the gRPC stream.
-        block_type_name: Name of the block object in the generated protobuf files ('Block' by default).
-
-    Returns:
-        The loaded block object.
-
-    Raises:
-        ImportError: If the extracted block type is not present in the generated protobuf files.
-
-    Example:
-        A `type_url` equal to `type.googleapis.com/sf.antelope.type.v1.Block` will import and unpack the block from
-        the `pyfirehose.proto.generated.sf.antelope.type.v1' module as `Block()`.
-    """
-    block = None
-    block_type = raw_block.type_url.split("/")[1].rsplit(".", 1)[0]
-
-    # TODO : See if whole import step can only be executed once and not on every processed block
-    imported = import_all_from_module(f'pyfirehose.proto.generated.{block_type}')
-    for module in imported:
-        try:
-            block = getattr(module, block_type_name)()
-        except AttributeError:
-            pass
-
-    if not block:
-        logging.error('Could not determine block type from Message: ' \
-            'check that "%s" exists in the "proto.generated" submodule.',
-            block_type
-        )
-        raise ImportError
-
-    raw_block.Unpack(block)
-    return block
-
-def default_block_processor(raw_block: Message) -> dict:
-    """
-    Yield all the block data as a JSON-formatted dictionary.
-
-    First unpacks the block and converts all its properties to JSON.
-
-    Args:
-        raw_block: Raw block received from the gRPC stream.
-
-    Yields:
-        A dictionary containing all the block's properties as defined in the proto files.
-    """
-    block = _unpack_block(raw_block)
-    data = json.loads(MessageToJson(block))
-
-    logging.debug('Data: %s', data)
-    yield data
+from pyfirehose.config.parser import Config, StubConfig
 
 def filtered_block_processor(raw_block: Message) -> dict:
     """
-    Yield a all transactions from a gRPC filtered block, returning a subset of relevant properties.
+    Yield all transactions from a Firehose V1 gRPC filtered block, returning a subset of relevant properties.
 
     See the `README.md` file for more information on building filtered stream.
 
@@ -107,54 +44,156 @@ def filtered_block_processor(raw_block: Message) -> dict:
     }
     ```
     """
-    block = _unpack_block(raw_block)
-    for transaction_trace in block.filtered_transaction_traces:
-        for action_trace in transaction_trace.action_traces:
-            if not action_trace.filtering_matched:
-                continue
+    data = _filtered_data(raw_block)
 
-            action = action_trace.action
-            try:
-                json_data = json.loads(action.json_data)
-            except json.JSONDecodeError as error:
-                logging.warning('Could not parse action (trxid=%s): %s\n',
-                    action_trace.transaction_id,
-                    error
-                )
-                continue
+    try:
+        for transaction_trace in data['filtered_transaction_traces']:
+            for action_trace in transaction_trace['action_traces']:
+                if not 'filtering_matched' in action_trace:
+                    continue
 
-            # TODO: Handle exceptions for missing keys in json_data
-            amount, token = json_data['quantity'].split(' ')
-            data = {
-                'account': action_trace.receiver,
-                'date': datetime.utcfromtimestamp(action_trace.block_time.seconds).strftime('%Y-%m-%d %H:%M:%S'),
-                'timestamp': action_trace.block_time.seconds,
-                'amount': amount,
-                'token': token,
-                'from': json_data['from'],
-                'to': json_data['to'],
-                'block_num': transaction_trace.block_num,
-                'transaction_id': action_trace.transaction_id,
-                'memo': json_data['memo'],
-                'contract': action.account,
-                'action': action.name,
-            }
+                action = action_trace['action']
+                try:
+                    json_data = json.loads(action['json_data'])
+                except json.JSONDecodeError as error:
+                    logging.warning('Could not parse action (trxid=%s): %s\n',
+                        action_trace['transaction_id'],
+                        error
+                    )
+                    continue
 
-            logging.debug('Data: %s', data)
-            yield data
+                # TODO: Handle exceptions for missing keys in json_data
+                amount, token = json_data['quantity'].split(' ')
+                date = datetime.strptime(action_trace['block_time'], '%Y-%m-%dT%H:%M:%S.%fZ')
+                data = {
+                    'account': action_trace['receiver'],
+                    'date': date.strftime('%Y-%m-%d %H:%M:%S'),
+                    'timestamp': date.timestamp(),
+                    'amount': amount,
+                    'token': token,
+                    'from': json_data['from'],
+                    'to': json_data['to'],
+                    'block_num': transaction_trace['block_num'],
+                    'transaction_id': action_trace['transaction_id'],
+                    'memo': json_data['memo'],
+                    'contract': action['account'],
+                    'action': action['name'],
+                }
 
-def default_substreams_processor(data: Message) -> dict:
+                logging.debug('Data: %s', data)
+                yield data
+    except KeyError as error:
+        logging.warning('Skipping block : %s missing from output', error)
+
+def _filtered_data(data: Message) -> dict:
     """
-    Yield the output of a substreams as JSON data, importing any types needed for parsing.
+    Return the output of a gRPC response as JSON data using the stub config's output filter.
 
     Args:
-        data: output message from a substreams gRPC.
+        data: The output message from a gRPC service.
+
+    Returns:
+        A dictionary representing the filtered output data as JSON.
+    """
+    def __filter_keys(input_: dict, keys_filter: dict) -> dict:
+        """
+        Recursively filters the `input_` dictionary based on the keys present in `keys_filter`.
+
+        Args:
+            input_: The input nested dict to filter.
+            keys_filter: The nested dict filter matching subset of keys present in the `input_`.
+
+        Returns:
+            The filtered `input_` as a new dict.
+
+        Examples:
+        #### Input
+        ```json
+        {
+            'a': 'value',
+            'b': {
+                'b1': 'important stuff',
+                'b2': {
+                    'x': 'stop nesting stuff',
+                    'y': 'keep me !'
+                }
+            },
+            'c': {
+                'c1': [1, 2, 3],
+                'c2': 'Hello'
+            },
+            'd': [
+                {'d1': 1},
+                {'d1': 2, 'd2': 3}
+            ]
+        }
+        ```
+        #### Filter
+        ```json
+        {
+            'a': True,
+            'b': {
+                'b1': True,
+                'b2': {
+                    'y': True
+                }
+            },
+            'c': {
+                'c1': True
+            },
+            'd': {
+                'd1': True,
+            }
+        }
+        ```
+        #### Output
+        ```json
+        {
+            'a': 'value',
+            'b': {
+                'b1': 'important stuff',
+                'b2': {
+                    'y': 'keep me !'
+                }
+            },
+            'c': {
+                'c1': [1, 2, 3],
+            },
+            'd': [
+                {'d1': 1},
+                {'d1': 2}
+            ]
+        }
+        ```
+        """
+        output = {}
+        for key, value in input_.items():
+            if keys_filter == "True":
+                output[key] = value
+            elif key in keys_filter:
+                if isinstance(value, Sequence):
+                    if value and isinstance(value[0], dict):
+                        output[key] = [__filter_keys(element, keys_filter[key]) for element in value]
+                    else:
+                        output[key] = value
+                elif isinstance(value, Mapping):
+                    output[key] = __filter_keys(value, keys_filter[key])
+                else:
+                    output[key] = value
+
+        return output
+
+    json_data = json.loads(MessageToJson(data, preserving_proto_field_name=True))
+    return __filter_keys(json_data, StubConfig.RESPONSE_PARAMETERS) if StubConfig.RESPONSE_PARAMETERS else json_data
+
+def default_processor(data: Message) -> dict:
+    """
+    Yield the filtered output of a gRPC response.
+
+    Args:
+        data: The output message from a gRPC service.
 
     Yields:
-        A dictionary representing the output data as JSON.
+        The filtered data.
     """
-    for output_type in StubConfig.SUBSTREAMS_OUTPUT_TYPES:
-        logging.debug('Importing substreams output type "%s"', output_type)
-        import_all_from_module(f'pyfirehose.proto.generated.{output_type}')
-
-    yield json.loads(MessageToJson(data))
+    yield _filtered_data(data)
