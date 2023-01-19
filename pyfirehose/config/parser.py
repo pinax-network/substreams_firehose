@@ -59,7 +59,7 @@ def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
         A boolean indicating if the stub config file has also been loaded.
 
     Raises:
-        ArgumentTypeError: If the specified compression argument for a gRPC endpoint is not one of "gzip" or "deflate".
+        ArgumentTypeError: If an entry is not recognized within the config file.
         HjsonDecodeError: If the hjson module fails to parse the config file.
         ImportError: If the stub config files fails to import the specified modules.
         KeyError: If a required key is missing from the config file.
@@ -75,7 +75,12 @@ def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
         if grpc_entry_id:
             options['default'] = grpc_entry_id
 
-        default_grpc_id = [i for i, entry in enumerate(options['grpc']) if entry['id'] == options['default']][0]
+        try:
+            default_grpc_id = [i for i, entry in enumerate(options['grpc']) if entry['id'] == options['default']][0]
+        except IndexError as error:
+            logging.exception('Could not find "%s" entry in grpc endpoints array', options['default'])
+            raise ArgumentTypeError from error
+
         default_grpc = options['grpc'][default_grpc_id]
         default_auth = options['auth'][default_grpc['auth']]
         default_stub = default_grpc['stub'] if 'stub' in default_grpc else ''

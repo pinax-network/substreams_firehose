@@ -15,6 +15,7 @@ from datetime import datetime, timedelta
 from types import ModuleType
 from typing import Optional
 
+from google.protobuf.descriptor_database import DescriptorDatabase
 from google.protobuf.descriptor_pool import Default
 from google.protobuf.descriptor_pb2 import FileDescriptorSet #pylint: disable=no-name-in-module
 from google.protobuf.message_factory import GetMessages
@@ -80,10 +81,13 @@ def date_to_block_num(date: datetime, jwt: Optional[str] = None) -> int:
 
 def generate_proto_messages_classes(path: str = 'pyfirehose/proto/generated/protos.desc'):
     """
-    Generate a mapping of services and messages full name to their class object.
+    Generate a mapping of services and messages full name to their class object and populates the default descriptor pool
+    with the loaded `.proto` definitions.
+
+    Should only be called once for different descriptor sets.
 
     Args:
-        path: Path to a descriptor set file (generated from `protoc --descriptor_set_out).
+        path: Path to a descriptor set file (generated from `protoc --descriptor_set_out`).
 
     Returns:
         A dictionary with pairs of message full name and the Python class object associated with it.
@@ -101,41 +105,58 @@ def generate_proto_messages_classes(path: str = 'pyfirehose/proto/generated/prot
     }
     ```
     """
-    with open(path, 'rb') as proto_desc:
-        descriptor_set = FileDescriptorSet.FromString(proto_desc.read())
+    # Save the mappings as function attribute to prevent "duplicate file name" errors when generating messages
+    if not hasattr(generate_proto_messages_classes, 'saved_mappings'):
+        generate_proto_messages_classes.saved_mappings = {}
 
-    results = {}
+    if path not in generate_proto_messages_classes.saved_mappings:
+        with open(path, 'rb') as proto_desc:
+            descriptor_set = FileDescriptorSet.FromString(proto_desc.read())
 
-    # Load service stubs objects from generated modules
-    for proto_file_desc in descriptor_set.file:
-        for service_name in [s.name for s in proto_file_desc.service]:
-            service_key = f'{proto_file_desc.package}.{service_name}'
+        results = {}
 
-            for module in import_all_from_module(f'pyfirehose.proto.generated.{proto_file_desc.package}'):
-                try:
-                    results.update({service_key: getattr(module, f'{service_name}Stub')})
-                except AttributeError:
-                    pass
+        # Load service stubs objects from generated modules
+        for proto_file_desc in descriptor_set.file:
+            for service_name in [s.name for s in proto_file_desc.service]:
+                service_key = f'{proto_file_desc.package}.{service_name}'
 
-            if not service_key in results:
-                logging.error('Could not find service stub class for "%s" in package "%s"', service_name, proto_file_desc.package)
-                raise ImportError(f'Could not find service stub class for "{service_name}" in package "{proto_file_desc.package}"')
+                for module in import_all_from_module(f'pyfirehose.proto.generated.{proto_file_desc.package}'):
+                    try:
+                        results.update({service_key: getattr(module, f'{service_name}Stub')})
+                        logging.debug('[MODULE_LOAD] Loaded %s from %s', f'{service_name}Stub', module)
+                    except AttributeError:
+                        pass
 
-    pool = Default()
+                if not service_key in results:
+                    logging.error('Could not find service stub class for "%s" in package "%s"', service_name, proto_file_desc.package)
+                    raise ImportError(f'Could not find service stub class for "{service_name}" in package "{proto_file_desc.package}"')
 
-    # This needs to be separated from the previous loop in order to avoid "duplicate file name" errors
-    for proto_file_desc in descriptor_set.file:
-        # TODO: See if comments can be extracted without too much overhead AND if useful
-        # logging.info('[PROTO_MSG] leading_comments = %s', [loc.leading_comments for loc in proto_file_desc.source_code_info.location])
-        # logging.info('[PROTO_MSG] trailing_comments = %s', [loc.trailing_comments for loc in proto_file_desc.source_code_info.location])
+        pool = Default()
+
+        # Add to default pool in separate loop in order to avoid "duplicate file name" errors when importing generated modules
+        for proto_file_desc in descriptor_set.file:
+            # TODO: See if comments can be extracted without too much overhead AND if useful
+            # logging.info('[PROTO_MSG] leading_comments = %s', [loc.leading_comments for loc in proto_file_desc.source_code_info.location])
+            # logging.info('[PROTO_MSG] trailing_comments = %s', [loc.trailing_comments for loc in proto_file_desc.source_code_info.location])
+            try:
+                # Add to default pool in order to load all the messages definitions for later processing
+                pool.Add(proto_file_desc)
+                logging.debug('[MODULE_LOAD] Added %s to default pool', proto_file_desc.name)
+            except TypeError:
+                logging.debug('[MODULE_LOAD] %s already in default pool', proto_file_desc.name)
+
         try:
-            # Add to default pool in order to load all the messages definitions for later processing
-            pool.Add(proto_file_desc)
-        except TypeError:
-            pass
+            results.update(GetMessages(descriptor_set.file))
+            generate_proto_messages_classes.saved_mappings[path] = results
+            logging.debug('[MODULE_LOAD] Saved mappings for file "%s"', path)
+        except TypeError as error:
+            # Saved mappings should prevent this error to ever show up
+            logging.error('Symbol already loaded in default descriptor pool : %s', error)
+            raise ImportError from error
 
-    results.update(GetMessages(list(descriptor_set.file)))
-    return results
+        return results
+
+    return generate_proto_messages_classes.saved_mappings[path]
 
 def get_auth_token(use_cache: bool = True) -> str:
     """

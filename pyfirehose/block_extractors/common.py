@@ -129,7 +129,8 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel,
                     response_data = response.block
                 except AttributeError:
                     try:
-                        response_data = response.data
+                        if response.data.outputs:
+                            response_data = response.data
                     except AttributeError:
                         logging.warning('[%s] No valid output message found in response : %s',
                             get_current_task_name(),
