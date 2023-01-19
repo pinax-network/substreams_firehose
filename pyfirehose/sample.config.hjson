@@ -6,7 +6,7 @@
 	"max_block_size": 67108864, // 64MB
 
 	// Maximum number of retries for extracting failed blocks (set to 0 to disable)
-	"max_failed_block_retries": 1,
+	"max_failed_block_retries": 2,
 
 	// Authentication endpoints for issuing JWT tokens
 	"auth": {
@@ -33,14 +33,14 @@
 			"id": "eos_firehose_v1",
 			"auth": "eosnation", // One of the entry in the "auth" object
 			"chain": "EOS",
-			"stub": "pyfirehose/config/dfuse/default.hjson", // Path to default stub reference
+			"stub": "pyfirehose/config/dfuse/producerpay.hjson", // Path to default stub reference
 			"url": "eos.firehose.eosnation.io:9000",
 		},
 		{
-			"id": "wax_firehose_v1",
+			"id": "wax_firehose_v2",
 			"auth": "eosnation",
 			"chain": "WAX",
-			"url": "wax.firehose.eosnation.io:9000"
+			"url": "waxtest.firehose.eosnation.io:9001"
 		},
 		{
 			"id": "kylin_firehose_v1",
@@ -60,7 +60,7 @@
 			"auth": "eosnation",
 			"chain": "EOS",
 			"compression": "gzip", // Must be one of 'gzip' or 'deflate' if specified (no compression by default)
-			"stub": "pyfirehose/config/firehose/default.hjson",
+			"stub": "pyfirehose/config/substreams/default.hjson",
 			"url": "eos.firehose.eosnation.io:9001"
 		},
 		// See https://substreams.streamingfast.io/reference-and-specs/chains-and-endpoints
