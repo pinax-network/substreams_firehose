@@ -48,7 +48,7 @@ Stub Config Edit
 
 ## StubConfigConfirmEditForm
 
-[Show source in stub_config_edit.py:535](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L535)
+[Show source in stub_config_edit.py:560](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L560)
 
 Confirmation screen displaying the final stub config as it will appear in the saved file.
 
@@ -65,7 +65,7 @@ class StubConfigConfirmEditForm(ActionFormDiscard):
 
 ### StubConfigConfirmEditForm().create
 
-[Show source in stub_config_edit.py:539](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L539)
+[Show source in stub_config_edit.py:564](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L564)
 
 #### Signature
 
@@ -76,7 +76,7 @@ def create(self):
 
 ### StubConfigConfirmEditForm().on_cancel
 
-[Show source in stub_config_edit.py:565](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L565)
+[Show source in stub_config_edit.py:590](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L590)
 
 #### Signature
 
@@ -87,7 +87,7 @@ def on_cancel(self):
 
 ### StubConfigConfirmEditForm().on_discard
 
-[Show source in stub_config_edit.py:568](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L568)
+[Show source in stub_config_edit.py:593](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L593)
 
 #### Signature
 
@@ -98,7 +98,7 @@ def on_discard(self):
 
 ### StubConfigConfirmEditForm().on_ok
 
-[Show source in stub_config_edit.py:547](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L547)
+[Show source in stub_config_edit.py:572](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L572)
 
 #### Signature
 
@@ -111,7 +111,7 @@ def on_ok(self):
 
 ## StubConfigEndpointsForm
 
-[Show source in stub_config_edit.py:34](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L34)
+[Show source in stub_config_edit.py:33](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L33)
 
 Choose an endpoint to edit or create a new stub config for.
 
@@ -128,7 +128,7 @@ class StubConfigEndpointsForm(ActionFormV2):
 
 ### StubConfigEndpointsForm().beforeEditing
 
-[Show source in stub_config_edit.py:41](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L41)
+[Show source in stub_config_edit.py:40](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L40)
 
 Called by `npyscreen` before the form gets drawn on the screen.
 
@@ -141,7 +141,7 @@ def beforeEditing(self):
 
 ### StubConfigEndpointsForm().create
 
-[Show source in stub_config_edit.py:51](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L51)
+[Show source in stub_config_edit.py:50](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L50)
 
 #### Signature
 
@@ -152,7 +152,7 @@ def create(self):
 
 ### StubConfigEndpointsForm().on_cancel
 
-[Show source in stub_config_edit.py:70](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L70)
+[Show source in stub_config_edit.py:69](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L69)
 
 #### Signature
 
@@ -163,7 +163,7 @@ def on_cancel(self):
 
 ### StubConfigEndpointsForm().on_ok
 
-[Show source in stub_config_edit.py:59](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L59)
+[Show source in stub_config_edit.py:58](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L58)
 
 #### Signature
 
@@ -176,7 +176,7 @@ def on_ok(self):
 
 ## StubConfigInputsForm
 
-[Show source in stub_config_edit.py:231](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L231)
+[Show source in stub_config_edit.py:230](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L230)
 
 Edit the request parameters sent to the gRPC endpoint.
 
@@ -195,7 +195,7 @@ class StubConfigInputsForm(ActionFormV2):
 
 ### StubConfigInputsForm().clear_input
 
-[Show source in stub_config_edit.py:240](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L240)
+[Show source in stub_config_edit.py:239](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L239)
 
 Callback function for clearing input shortcuts.
 
@@ -208,13 +208,13 @@ Pressing 'c' will ask for confirmation before clearing, 'C' will not.
 #### Signature
 
 ```python
-def clear_input(self, show_popup: Optional[bool] = True) -> None:
+def clear_input(self, show_popup: bool = True) -> None:
     ...
 ```
 
 ### StubConfigInputsForm().create
 
-[Show source in stub_config_edit.py:263](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L263)
+[Show source in stub_config_edit.py:262](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L262)
 
 #### Signature
 
@@ -225,7 +225,7 @@ def create(self):
 
 ### StubConfigInputsForm().on_cancel
 
-[Show source in stub_config_edit.py:382](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L382)
+[Show source in stub_config_edit.py:381](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L381)
 
 #### Signature
 
@@ -236,7 +236,7 @@ def on_cancel(self):
 
 ### StubConfigInputsForm().on_ok
 
-[Show source in stub_config_edit.py:346](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L346)
+[Show source in stub_config_edit.py:345](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L345)
 
 #### Signature
 
@@ -249,7 +249,7 @@ def on_ok(self):
 
 ## StubConfigMethodsForm
 
-[Show source in stub_config_edit.py:184](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L184)
+[Show source in stub_config_edit.py:183](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L183)
 
 Choose a gRPC method from the specified service.
 
@@ -267,7 +267,7 @@ class StubConfigMethodsForm(ActionFormV2):
 
 ### StubConfigMethodsForm().beforeEditing
 
-[Show source in stub_config_edit.py:192](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L192)
+[Show source in stub_config_edit.py:191](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L191)
 
 Called by `npyscreen` before the form gets drawn on the screen.
 
@@ -280,7 +280,7 @@ def beforeEditing(self):
 
 ### StubConfigMethodsForm().create
 
-[Show source in stub_config_edit.py:202](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L202)
+[Show source in stub_config_edit.py:201](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L201)
 
 #### Signature
 
@@ -291,7 +291,7 @@ def create(self):
 
 ### StubConfigMethodsForm().on_cancel
 
-[Show source in stub_config_edit.py:227](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L227)
+[Show source in stub_config_edit.py:226](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L226)
 
 #### Signature
 
@@ -302,7 +302,7 @@ def on_cancel(self):
 
 ### StubConfigMethodsForm().on_ok
 
-[Show source in stub_config_edit.py:213](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L213)
+[Show source in stub_config_edit.py:212](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L212)
 
 #### Signature
 
@@ -315,9 +315,18 @@ def on_ok(self):
 
 ## StubConfigOutputsForm
 
-[Show source in stub_config_edit.py:385](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L385)
+[Show source in stub_config_edit.py:384](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L384)
 
-...
+Select and filter fields that will be received from the gRPC stream.
+
+The top selection widget presents a list of compatible output types while the bottom tree widget list the
+available fields that can be selected to be kept from the response.
+
+#### Attributes
+
+- `is_substream` - Identifies if the service is using Substreams.
+- `output_descriptors` - List of available `Descriptor` for the corresponding method.
+- `saved_output_selection` - Stores the state of a selection tree to be restored when switching output types.
 
 #### Signature
 
@@ -332,7 +341,7 @@ class StubConfigOutputsForm(SplitActionForm):
 
 ### StubConfigOutputsForm().beforeEditing
 
-[Show source in stub_config_edit.py:389](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L389)
+[Show source in stub_config_edit.py:396](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L396)
 
 Called by `npyscreen` before the form gets drawn on the screen.
 
@@ -345,7 +354,7 @@ def beforeEditing(self):
 
 ### StubConfigOutputsForm().create
 
-[Show source in stub_config_edit.py:399](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L399)
+[Show source in stub_config_edit.py:406](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L406)
 
 #### Signature
 
@@ -356,13 +365,24 @@ def create(self):
 
 ### StubConfigOutputsForm().create_output_selection
 
-[Show source in stub_config_edit.py:462](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L462)
+[Show source in stub_config_edit.py:469](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L469)
+
+Create the output field selection tree from the selected output type. If `previous_selected` is supplied,
+the state of the node in the tree (`selected` and `expanded`) will be set according to its description.
+
+#### Arguments
+
+- `previous_selected` - A dictionnary with a node's (depth, content) as key and its state (selected, expanded) as value.
+
+#### Returns
+
+The root node of the selection tree.
 
 #### Signature
 
 ```python
 def create_output_selection(
-    self, previous_selected: Optional[dict[tuple[int, str], tuple[int, int]]] = None
+    self, previous_selected: dict[tuple[int, str], tuple[int, int]] | None = None
 ) -> OutputSelectionTreeData:
     ...
 ```
@@ -373,7 +393,7 @@ def create_output_selection(
 
 ### StubConfigOutputsForm().on_cancel
 
-[Show source in stub_config_edit.py:531](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L531)
+[Show source in stub_config_edit.py:556](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L556)
 
 #### Signature
 
@@ -384,7 +404,7 @@ def on_cancel(self):
 
 ### StubConfigOutputsForm().on_ok
 
-[Show source in stub_config_edit.py:494](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L494)
+[Show source in stub_config_edit.py:519](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L519)
 
 #### Signature
 
@@ -397,7 +417,7 @@ def on_ok(self):
 
 ## StubConfigSaveFileForm
 
-[Show source in stub_config_edit.py:74](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L74)
+[Show source in stub_config_edit.py:73](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L73)
 
 Choose the save file location for the stub config.
 
@@ -415,7 +435,7 @@ class StubConfigSaveFileForm(ActionFormV2):
 
 ### StubConfigSaveFileForm().create
 
-[Show source in stub_config_edit.py:82](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L82)
+[Show source in stub_config_edit.py:81](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L81)
 
 #### Signature
 
@@ -426,7 +446,7 @@ def create(self):
 
 ### StubConfigSaveFileForm().on_cancel
 
-[Show source in stub_config_edit.py:129](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L129)
+[Show source in stub_config_edit.py:128](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L128)
 
 #### Signature
 
@@ -437,7 +457,7 @@ def on_cancel(self):
 
 ### StubConfigSaveFileForm().on_ok
 
-[Show source in stub_config_edit.py:102](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L102)
+[Show source in stub_config_edit.py:101](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L101)
 
 #### Signature
 
@@ -450,7 +470,7 @@ def on_ok(self):
 
 ## StubConfigServicesForm
 
-[Show source in stub_config_edit.py:132](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L132)
+[Show source in stub_config_edit.py:131](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L131)
 
 Choose a service from the services available on the specified endpoint.
 
@@ -469,7 +489,7 @@ class StubConfigServicesForm(ActionFormV2):
 
 ### StubConfigServicesForm().beforeEditing
 
-[Show source in stub_config_edit.py:141](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L141)
+[Show source in stub_config_edit.py:140](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L140)
 
 Called by `npyscreen` before the form gets drawn on the screen.
 
@@ -482,7 +502,7 @@ def beforeEditing(self):
 
 ### StubConfigServicesForm().create
 
-[Show source in stub_config_edit.py:151](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L151)
+[Show source in stub_config_edit.py:150](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L150)
 
 #### Signature
 
@@ -493,7 +513,7 @@ def create(self):
 
 ### StubConfigServicesForm().on_cancel
 
-[Show source in stub_config_edit.py:180](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L180)
+[Show source in stub_config_edit.py:179](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L179)
 
 #### Signature
 
@@ -504,7 +524,7 @@ def on_cancel(self):
 
 ### StubConfigServicesForm().on_ok
 
-[Show source in stub_config_edit.py:169](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L169)
+[Show source in stub_config_edit.py:168](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L168)
 
 #### Signature
 

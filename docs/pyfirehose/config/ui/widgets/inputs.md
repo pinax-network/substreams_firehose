@@ -156,7 +156,7 @@ Custom option input for repeated input fields with type validation.
 ```python
 class InputRepeated(InputValidator, OptionMultiFreeList):
     def __init__(
-        self, value_type: str, choices: Optional[Sequence[str]] = None, *args, **kwargs
+        self, value_type: str, choices: Sequence[str] | None = None, *args, **kwargs
     ):
         ...
 ```
@@ -167,7 +167,7 @@ class InputRepeated(InputValidator, OptionMultiFreeList):
 
 ### InputRepeated().set
 
-[Show source in inputs.py:137](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L137)
+[Show source in inputs.py:140](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L140)
 
 #### Signature
 

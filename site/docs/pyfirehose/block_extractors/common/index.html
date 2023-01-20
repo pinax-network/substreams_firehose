@@ -1144,7 +1144,7 @@ Common</p>
 <li><a href="#stream_blocks">stream_blocks</a></li>
 </ul>
 <h2 id="get_secure_channel">get_secure_channel</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_extractors/common.py#L21">Show source in common.py:21</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_extractors/common.py#L20">Show source in common.py:20</a></p>
 <p>Instantiate a secure gRPC channel as an asynchronous context manager for use by block extractors.</p>
 <h4 id="yields">Yields</h4>
 <p>A grpc.aio.Channel as an asynchronous context manager.</p>
@@ -1154,7 +1154,7 @@ Common</p>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="o">...</span>
 </code></pre></div>
 <h2 id="process_blocks">process_blocks</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_extractors/common.py#L46">Show source in common.py:46</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_extractors/common.py#L45">Show source in common.py:45</a></p>
 <p>Parse data using the given block processor, feeding it previously extracted raw blocks from a gRPC stream.</p>
 <h4 id="arguments">Arguments</h4>
 <ul>
@@ -1170,7 +1170,7 @@ Common</p>
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="o">...</span>
 </code></pre></div>
 <h2 id="stream_blocks">stream_blocks</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_extractors/common.py#L66">Show source in common.py:66</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_extractors/common.py#L65">Show source in common.py:65</a></p>
 <p>Return raw blocks (or parsed data) for the subset period between <code>start</code> and <code>end</code>.</p>
 <h4 id="arguments_1">Arguments</h4>
 <ul>
@@ -1193,7 +1193,7 @@ Parsing the blocks <em>after</em> extraction allows for maximum throughput from 
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">secure_channel</span><span class="p">:</span> <span class="n">grpc</span><span class="o">.</span><span class="n">aio</span><span class="o">.</span><span class="n">Channel</span><span class="p">,</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">block_processor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Message</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">block_processor</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Message</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="o">**</span><span class="n">kwargs</span>
 <a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Message</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">]:</span>
 <a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="o">...</span>

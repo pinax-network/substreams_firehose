@@ -15,7 +15,7 @@ Utils
 
 ## date_to_block_num
 
-[Show source in utils.py:26](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L26)
+[Show source in utils.py:24](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L24)
 
 Query the `graphql_endpoint` specified in the main config file for the block number associated with a given date time.
 
@@ -33,7 +33,7 @@ The block number associated with the given date time.
 #### Signature
 
 ```python
-def date_to_block_num(date: datetime, jwt: Optional[str] = None) -> int:
+def date_to_block_num(date: datetime, jwt: str | None = None) -> int:
     ...
 ```
 
@@ -41,7 +41,7 @@ def date_to_block_num(date: datetime, jwt: Optional[str] = None) -> int:
 
 ## generate_proto_messages_classes
 
-[Show source in utils.py:82](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L82)
+[Show source in utils.py:80](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L80)
 
 Generate a mapping of services and messages full name to their class object and populates the default descriptor pool
 with the loaded `.proto` definitions.
@@ -83,7 +83,7 @@ def generate_proto_messages_classes(
 
 ## get_auth_token
 
-[Show source in utils.py:161](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L161)
+[Show source in utils.py:159](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L159)
 
 Fetch a JWT authorization token from the authentication endpoints defined in the main config file.
 
@@ -108,7 +108,7 @@ def get_auth_token(use_cache: bool = True) -> str:
 
 ## get_current_task_name
 
-[Show source in utils.py:197](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L197)
+[Show source in utils.py:195](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L195)
 
 Helper function for generating a unique task id from an asyncio task.
 
@@ -123,7 +123,7 @@ def get_current_task_name() -> str:
 
 ## import_all_from_module
 
-[Show source in utils.py:206](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L206)
+[Show source in utils.py:204](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L204)
 
 Dynamically import all python files located in the specified module's folder.
 
