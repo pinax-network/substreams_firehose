@@ -8,53 +8,41 @@ Processors
 > Auto-generated documentation for [pyfirehose.block_processors.processors](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py) module.
 
 - [Processors](#processors)
-  - [default_block_processor](#default_block_processor)
-  - [default_substreams_processor](#default_substreams_processor)
+  - [default_processor](#default_processor)
+  - [default_substream_processor](#default_substream_processor)
   - [filtered_block_processor](#filtered_block_processor)
 
-## default_block_processor
+## default_processor
 
-[Show source in processors.py:62](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L62)
+[Show source in processors.py:190](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L190)
 
-Yield all the block data as a JSON-formatted dictionary.
-
-First unpacks the block and converts all its properties to JSON.
+Yield the filtered output of a gRPC response.
 
 #### Arguments
 
-- `raw_block` - Raw block received from the gRPC stream.
+- `data` - The output message from a gRPC service.
 
 #### Yields
 
-A dictionary containing all the block's properties as defined in the proto files.
+The filtered data.
 
 #### Signature
 
 ```python
-def default_block_processor(raw_block: Message) -> dict:
+def default_processor(data: Message) -> dict:
     ...
 ```
 
 
 
-## default_substreams_processor
+## default_substream_processor
 
-[Show source in processors.py:146](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L146)
-
-Yield the output of a substreams as JSON data, importing any types needed for parsing.
-
-#### Arguments
-
-- `data` - output message from a substreams gRPC.
-
-#### Yields
-
-A dictionary representing the output data as JSON.
+[Show source in processors.py:202](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L202)
 
 #### Signature
 
 ```python
-def default_substreams_processor(data: Message) -> dict:
+def default_substream_processor(data: Message) -> dict:
     ...
 ```
 
@@ -62,9 +50,9 @@ def default_substreams_processor(data: Message) -> dict:
 
 ## filtered_block_processor
 
-[Show source in processors.py:80](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L80)
+[Show source in processors.py:17](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L17)
 
-Yield a all transactions from a gRPC filtered block, returning a subset of relevant properties.
+Yield all transactions from a Firehose V1 gRPC filtered block, returning a subset of relevant properties.
 
 See the `README.md` file for more information on building filtered stream.
 

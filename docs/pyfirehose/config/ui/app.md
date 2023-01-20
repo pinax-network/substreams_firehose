@@ -14,7 +14,7 @@ App
 
 ## ConfigApp
 
-[Show source in app.py:14](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/app.py#L14)
+[Show source in app.py:17](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/app.py#L17)
 
 Main app containing the forms for the config GUI.
 
@@ -34,7 +34,7 @@ class ConfigApp(NPSAppManaged):
 
 ### ConfigApp().onStart
 
-[Show source in app.py:44](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/app.py#L44)
+[Show source in app.py:48](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/app.py#L48)
 
 #### Signature
 

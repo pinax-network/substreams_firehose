@@ -1,0 +1,2866 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+    
+    
+      
+        <title>Stub Config Edit - Eos-blockchain-data</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.975780f9.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.2505c338.min.css">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#stub-config-edit" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../../.." title="Eos-blockchain-data" class="md-header__button md-logo" aria-label="Eos-blockchain-data" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Eos-blockchain-data
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Stub Config Edit
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Krow10/eos-blockchain-data" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../../.." title="Eos-blockchain-data" class="md-nav__button md-logo" aria-label="Eos-blockchain-data" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Eos-blockchain-data
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Krow10/eos-blockchain-data" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../.." class="md-nav__link">
+        Pyfirehose Index
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Pyfirehose
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Pyfirehose" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Pyfirehose
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../" class="md-nav__link">
+        Pyfirehose
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../args/" class="md-nav__link">
+        Args
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../exceptions/" class="md-nav__link">
+        Exceptions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../module/" class="md-nav__link">
+        Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../utils/" class="md-nav__link">
+        Utils
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_6" type="checkbox" id="__nav_2_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_6">
+          Block extractors
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Block extractors" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_6">
+          <span class="md-nav__icon md-icon"></span>
+          Block extractors
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../block_extractors/" class="md-nav__link">
+        Block Extractors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../block_extractors/async_multi_channel/" class="md-nav__link">
+        Async Multi Channel
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../block_extractors/async_optimized/" class="md-nav__link">
+        Async Optimized
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../block_extractors/async_single_channel/" class="md-nav__link">
+        Async Single Channel
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../block_extractors/common/" class="md-nav__link">
+        Common
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_7" type="checkbox" id="__nav_2_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_7">
+          Block processors
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Block processors" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_7">
+          <span class="md-nav__icon md-icon"></span>
+          Block processors
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../block_processors/" class="md-nav__link">
+        Block Processors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../block_processors/processors/" class="md-nav__link">
+        Processors
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_8" type="checkbox" id="__nav_2_8" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_8">
+          Config
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Config" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_8">
+          <span class="md-nav__icon md-icon"></span>
+          Config
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../" class="md-nav__link">
+        Config
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../module/" class="md-nav__link">
+        Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../parser/" class="md-nav__link">
+        Parser
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_8_4" type="checkbox" id="__nav_2_8_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_8_4">
+          Ui
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Ui" data-md-level="3">
+        <label class="md-nav__title" for="__nav_2_8_4">
+          <span class="md-nav__icon md-icon"></span>
+          Ui
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        Ui
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../app/" class="md-nav__link">
+        App
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_8_4_3" type="checkbox" id="__nav_2_8_4_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_8_4_3">
+          Forms
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Forms" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_8_4_3">
+          <span class="md-nav__icon md-icon"></span>
+          Forms
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        Forms
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../generic/" class="md-nav__link">
+        Generic
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../main/" class="md-nav__link">
+        Main
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Stub Config Edit
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Stub Config Edit
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#stubconfigconfirmeditform" class="md-nav__link">
+    StubConfigConfirmEditForm
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigConfirmEditForm">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    See also
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigconfirmeditformcreate" class="md-nav__link">
+    StubConfigConfirmEditForm().create
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigConfirmEditForm().create">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_1" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigconfirmeditformon_cancel" class="md-nav__link">
+    StubConfigConfirmEditForm().on_cancel
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigConfirmEditForm().on_cancel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_2" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigconfirmeditformon_discard" class="md-nav__link">
+    StubConfigConfirmEditForm().on_discard
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigConfirmEditForm().on_discard">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_3" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigconfirmeditformon_ok" class="md-nav__link">
+    StubConfigConfirmEditForm().on_ok
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigConfirmEditForm().on_ok">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_4" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stubconfigendpointsform" class="md-nav__link">
+    StubConfigEndpointsForm
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigEndpointsForm">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#attributes" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature_5" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigendpointsformbeforeediting" class="md-nav__link">
+    StubConfigEndpointsForm().beforeEditing
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigEndpointsForm().beforeEditing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_6" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigendpointsformcreate" class="md-nav__link">
+    StubConfigEndpointsForm().create
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigEndpointsForm().create">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_7" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigendpointsformon_cancel" class="md-nav__link">
+    StubConfigEndpointsForm().on_cancel
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigEndpointsForm().on_cancel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_8" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigendpointsformon_ok" class="md-nav__link">
+    StubConfigEndpointsForm().on_ok
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigEndpointsForm().on_ok">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_9" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stubconfiginputsform" class="md-nav__link">
+    StubConfigInputsForm
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigInputsForm">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#attributes_1" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature_10" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfiginputsformclear_input" class="md-nav__link">
+    StubConfigInputsForm().clear_input
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigInputsForm().clear_input">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arguments" class="md-nav__link">
+    Arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature_11" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfiginputsformcreate" class="md-nav__link">
+    StubConfigInputsForm().create
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigInputsForm().create">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_12" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfiginputsformon_cancel" class="md-nav__link">
+    StubConfigInputsForm().on_cancel
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigInputsForm().on_cancel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_13" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfiginputsformon_ok" class="md-nav__link">
+    StubConfigInputsForm().on_ok
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigInputsForm().on_ok">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_14" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stubconfigmethodsform" class="md-nav__link">
+    StubConfigMethodsForm
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigMethodsForm">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#attributes_2" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature_15" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigmethodsformbeforeediting" class="md-nav__link">
+    StubConfigMethodsForm().beforeEditing
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigMethodsForm().beforeEditing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_16" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigmethodsformcreate" class="md-nav__link">
+    StubConfigMethodsForm().create
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigMethodsForm().create">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_17" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigmethodsformon_cancel" class="md-nav__link">
+    StubConfigMethodsForm().on_cancel
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigMethodsForm().on_cancel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_18" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigmethodsformon_ok" class="md-nav__link">
+    StubConfigMethodsForm().on_ok
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigMethodsForm().on_ok">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_19" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stubconfigoutputsform" class="md-nav__link">
+    StubConfigOutputsForm
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigOutputsForm">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_20" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#see-also_1" class="md-nav__link">
+    See also
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigoutputsformbeforeediting" class="md-nav__link">
+    StubConfigOutputsForm().beforeEditing
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigOutputsForm().beforeEditing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_21" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigoutputsformcreate" class="md-nav__link">
+    StubConfigOutputsForm().create
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigOutputsForm().create">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_22" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigoutputsformcreate_output_selection" class="md-nav__link">
+    StubConfigOutputsForm().create_output_selection
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigOutputsForm().create_output_selection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_23" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#see-also_2" class="md-nav__link">
+    See also
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigoutputsformon_cancel" class="md-nav__link">
+    StubConfigOutputsForm().on_cancel
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigOutputsForm().on_cancel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_24" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigoutputsformon_ok" class="md-nav__link">
+    StubConfigOutputsForm().on_ok
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigOutputsForm().on_ok">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_25" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stubconfigsavefileform" class="md-nav__link">
+    StubConfigSaveFileForm
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigSaveFileForm">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#attributes_3" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature_26" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigsavefileformcreate" class="md-nav__link">
+    StubConfigSaveFileForm().create
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigSaveFileForm().create">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_27" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigsavefileformon_cancel" class="md-nav__link">
+    StubConfigSaveFileForm().on_cancel
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigSaveFileForm().on_cancel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_28" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigsavefileformon_ok" class="md-nav__link">
+    StubConfigSaveFileForm().on_ok
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigSaveFileForm().on_ok">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_29" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stubconfigservicesform" class="md-nav__link">
+    StubConfigServicesForm
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigServicesForm">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#attributes_4" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature_30" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigservicesformbeforeediting" class="md-nav__link">
+    StubConfigServicesForm().beforeEditing
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigServicesForm().beforeEditing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_31" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigservicesformcreate" class="md-nav__link">
+    StubConfigServicesForm().create
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigServicesForm().create">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_32" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigservicesformon_cancel" class="md-nav__link">
+    StubConfigServicesForm().on_cancel
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigServicesForm().on_cancel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_33" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigservicesformon_ok" class="md-nav__link">
+    StubConfigServicesForm().on_ok
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigServicesForm().on_ok">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_34" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_8_4_4" type="checkbox" id="__nav_2_8_4_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_8_4_4">
+          Widgets
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Widgets" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_8_4_4">
+          <span class="md-nav__icon md-icon"></span>
+          Widgets
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/" class="md-nav__link">
+        Widgets
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/custom/" class="md-nav__link">
+        Custom
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/input_validators/" class="md-nav__link">
+        Input Validators
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/inputs/" class="md-nav__link">
+        Inputs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_9" type="checkbox" id="__nav_2_9" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_9">
+          Tests
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Tests" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_9">
+          <span class="md-nav__icon md-icon"></span>
+          Tests
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tests/" class="md-nav__link">
+        Tests
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#stubconfigconfirmeditform" class="md-nav__link">
+    StubConfigConfirmEditForm
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigConfirmEditForm">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    See also
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigconfirmeditformcreate" class="md-nav__link">
+    StubConfigConfirmEditForm().create
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigConfirmEditForm().create">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_1" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigconfirmeditformon_cancel" class="md-nav__link">
+    StubConfigConfirmEditForm().on_cancel
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigConfirmEditForm().on_cancel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_2" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigconfirmeditformon_discard" class="md-nav__link">
+    StubConfigConfirmEditForm().on_discard
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigConfirmEditForm().on_discard">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_3" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigconfirmeditformon_ok" class="md-nav__link">
+    StubConfigConfirmEditForm().on_ok
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigConfirmEditForm().on_ok">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_4" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stubconfigendpointsform" class="md-nav__link">
+    StubConfigEndpointsForm
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigEndpointsForm">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#attributes" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature_5" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigendpointsformbeforeediting" class="md-nav__link">
+    StubConfigEndpointsForm().beforeEditing
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigEndpointsForm().beforeEditing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_6" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigendpointsformcreate" class="md-nav__link">
+    StubConfigEndpointsForm().create
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigEndpointsForm().create">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_7" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigendpointsformon_cancel" class="md-nav__link">
+    StubConfigEndpointsForm().on_cancel
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigEndpointsForm().on_cancel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_8" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigendpointsformon_ok" class="md-nav__link">
+    StubConfigEndpointsForm().on_ok
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigEndpointsForm().on_ok">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_9" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stubconfiginputsform" class="md-nav__link">
+    StubConfigInputsForm
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigInputsForm">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#attributes_1" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature_10" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfiginputsformclear_input" class="md-nav__link">
+    StubConfigInputsForm().clear_input
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigInputsForm().clear_input">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arguments" class="md-nav__link">
+    Arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature_11" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfiginputsformcreate" class="md-nav__link">
+    StubConfigInputsForm().create
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigInputsForm().create">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_12" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfiginputsformon_cancel" class="md-nav__link">
+    StubConfigInputsForm().on_cancel
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigInputsForm().on_cancel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_13" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfiginputsformon_ok" class="md-nav__link">
+    StubConfigInputsForm().on_ok
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigInputsForm().on_ok">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_14" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stubconfigmethodsform" class="md-nav__link">
+    StubConfigMethodsForm
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigMethodsForm">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#attributes_2" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature_15" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigmethodsformbeforeediting" class="md-nav__link">
+    StubConfigMethodsForm().beforeEditing
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigMethodsForm().beforeEditing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_16" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigmethodsformcreate" class="md-nav__link">
+    StubConfigMethodsForm().create
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigMethodsForm().create">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_17" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigmethodsformon_cancel" class="md-nav__link">
+    StubConfigMethodsForm().on_cancel
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigMethodsForm().on_cancel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_18" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigmethodsformon_ok" class="md-nav__link">
+    StubConfigMethodsForm().on_ok
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigMethodsForm().on_ok">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_19" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stubconfigoutputsform" class="md-nav__link">
+    StubConfigOutputsForm
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigOutputsForm">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_20" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#see-also_1" class="md-nav__link">
+    See also
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigoutputsformbeforeediting" class="md-nav__link">
+    StubConfigOutputsForm().beforeEditing
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigOutputsForm().beforeEditing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_21" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigoutputsformcreate" class="md-nav__link">
+    StubConfigOutputsForm().create
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigOutputsForm().create">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_22" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigoutputsformcreate_output_selection" class="md-nav__link">
+    StubConfigOutputsForm().create_output_selection
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigOutputsForm().create_output_selection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_23" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#see-also_2" class="md-nav__link">
+    See also
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigoutputsformon_cancel" class="md-nav__link">
+    StubConfigOutputsForm().on_cancel
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigOutputsForm().on_cancel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_24" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigoutputsformon_ok" class="md-nav__link">
+    StubConfigOutputsForm().on_ok
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigOutputsForm().on_ok">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_25" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stubconfigsavefileform" class="md-nav__link">
+    StubConfigSaveFileForm
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigSaveFileForm">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#attributes_3" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature_26" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigsavefileformcreate" class="md-nav__link">
+    StubConfigSaveFileForm().create
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigSaveFileForm().create">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_27" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigsavefileformon_cancel" class="md-nav__link">
+    StubConfigSaveFileForm().on_cancel
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigSaveFileForm().on_cancel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_28" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigsavefileformon_ok" class="md-nav__link">
+    StubConfigSaveFileForm().on_ok
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigSaveFileForm().on_ok">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_29" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stubconfigservicesform" class="md-nav__link">
+    StubConfigServicesForm
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigServicesForm">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#attributes_4" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature_30" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigservicesformbeforeediting" class="md-nav__link">
+    StubConfigServicesForm().beforeEditing
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigServicesForm().beforeEditing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_31" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigservicesformcreate" class="md-nav__link">
+    StubConfigServicesForm().create
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigServicesForm().create">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_32" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigservicesformon_cancel" class="md-nav__link">
+    StubConfigServicesForm().on_cancel
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigServicesForm().on_cancel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_33" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stubconfigservicesformon_ok" class="md-nav__link">
+    StubConfigServicesForm().on_ok
+  </a>
+  
+    <nav class="md-nav" aria-label="StubConfigServicesForm().on_ok">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signature_34" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <a href="https://github.com/Krow10/eos-blockchain-data/edit/master/docs/pyfirehose/config/ui/forms/stub_config_edit.md" title="Edit this page" class="md-content__button md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
+
+
+<h1 id="stub-config-edit">Stub Config Edit</h1>
+<p><a href="../../../../../#pyfirehose-index">Pyfirehose Index</a> /
+<a href="../../../../#pyfirehose">Pyfirehose</a> /
+<a href="../../../#config">Config</a> /
+<a href="../../#ui">Ui</a> /
+<a href="../#forms">Forms</a> /
+Stub Config Edit</p>
+<blockquote>
+<p>Auto-generated documentation for <a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py">pyfirehose.config.ui.forms.stub_config_edit</a> module.</p>
+</blockquote>
+<ul>
+<li><a href="#stub-config-edit">Stub Config Edit</a></li>
+<li><a href="#stubconfigconfirmeditform">StubConfigConfirmEditForm</a><ul>
+<li><a href="#stubconfigconfirmeditform()create">StubConfigConfirmEditForm().create</a></li>
+<li><a href="#stubconfigconfirmeditform()on_cancel">StubConfigConfirmEditForm().on_cancel</a></li>
+<li><a href="#stubconfigconfirmeditform()on_discard">StubConfigConfirmEditForm().on_discard</a></li>
+<li><a href="#stubconfigconfirmeditform()on_ok">StubConfigConfirmEditForm().on_ok</a></li>
+</ul>
+</li>
+<li><a href="#stubconfigendpointsform">StubConfigEndpointsForm</a><ul>
+<li><a href="#stubconfigendpointsform()beforeediting">StubConfigEndpointsForm().beforeEditing</a></li>
+<li><a href="#stubconfigendpointsform()create">StubConfigEndpointsForm().create</a></li>
+<li><a href="#stubconfigendpointsform()on_cancel">StubConfigEndpointsForm().on_cancel</a></li>
+<li><a href="#stubconfigendpointsform()on_ok">StubConfigEndpointsForm().on_ok</a></li>
+</ul>
+</li>
+<li><a href="#stubconfiginputsform">StubConfigInputsForm</a><ul>
+<li><a href="#stubconfiginputsform()clear_input">StubConfigInputsForm().clear_input</a></li>
+<li><a href="#stubconfiginputsform()create">StubConfigInputsForm().create</a></li>
+<li><a href="#stubconfiginputsform()on_cancel">StubConfigInputsForm().on_cancel</a></li>
+<li><a href="#stubconfiginputsform()on_ok">StubConfigInputsForm().on_ok</a></li>
+</ul>
+</li>
+<li><a href="#stubconfigmethodsform">StubConfigMethodsForm</a><ul>
+<li><a href="#stubconfigmethodsform()beforeediting">StubConfigMethodsForm().beforeEditing</a></li>
+<li><a href="#stubconfigmethodsform()create">StubConfigMethodsForm().create</a></li>
+<li><a href="#stubconfigmethodsform()on_cancel">StubConfigMethodsForm().on_cancel</a></li>
+<li><a href="#stubconfigmethodsform()on_ok">StubConfigMethodsForm().on_ok</a></li>
+</ul>
+</li>
+<li><a href="#stubconfigoutputsform">StubConfigOutputsForm</a><ul>
+<li><a href="#stubconfigoutputsform()beforeediting">StubConfigOutputsForm().beforeEditing</a></li>
+<li><a href="#stubconfigoutputsform()create">StubConfigOutputsForm().create</a></li>
+<li><a href="#stubconfigoutputsform()create_output_selection">StubConfigOutputsForm().create_output_selection</a></li>
+<li><a href="#stubconfigoutputsform()on_cancel">StubConfigOutputsForm().on_cancel</a></li>
+<li><a href="#stubconfigoutputsform()on_ok">StubConfigOutputsForm().on_ok</a></li>
+</ul>
+</li>
+<li><a href="#stubconfigsavefileform">StubConfigSaveFileForm</a><ul>
+<li><a href="#stubconfigsavefileform()create">StubConfigSaveFileForm().create</a></li>
+<li><a href="#stubconfigsavefileform()on_cancel">StubConfigSaveFileForm().on_cancel</a></li>
+<li><a href="#stubconfigsavefileform()on_ok">StubConfigSaveFileForm().on_ok</a></li>
+</ul>
+</li>
+<li><a href="#stubconfigservicesform">StubConfigServicesForm</a><ul>
+<li><a href="#stubconfigservicesform()beforeediting">StubConfigServicesForm().beforeEditing</a></li>
+<li><a href="#stubconfigservicesform()create">StubConfigServicesForm().create</a></li>
+<li><a href="#stubconfigservicesform()on_cancel">StubConfigServicesForm().on_cancel</a></li>
+<li><a href="#stubconfigservicesform()on_ok">StubConfigServicesForm().on_ok</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="stubconfigconfirmeditform">StubConfigConfirmEditForm</h2>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L535">Show source in stub_config_edit.py:535</a></p>
+<p>Confirmation screen displaying the final stub config as it will appear in the saved file.</p>
+<h4 id="signature">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span> <span class="nc">StubConfigConfirmEditForm</span><span class="p">(</span><span class="n">ActionFormDiscard</span><span class="p">):</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h4 id="see-also">See also</h4>
+<ul>
+<li><a href="../generic/#actionformdiscard">ActionFormDiscard</a></li>
+</ul>
+<h3 id="stubconfigconfirmeditformcreate">StubConfigConfirmEditForm().create</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L539">Show source in stub_config_edit.py:539</a></p>
+<h4 id="signature_1">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigconfirmeditformon_cancel">StubConfigConfirmEditForm().on_cancel</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L565">Show source in stub_config_edit.py:565</a></p>
+<h4 id="signature_2">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">def</span> <span class="nf">on_cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigconfirmeditformon_discard">StubConfigConfirmEditForm().on_discard</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L568">Show source in stub_config_edit.py:568</a></p>
+<h4 id="signature_3">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">def</span> <span class="nf">on_discard</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigconfirmeditformon_ok">StubConfigConfirmEditForm().on_ok</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L547">Show source in stub_config_edit.py:547</a></p>
+<h4 id="signature_4">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">def</span> <span class="nf">on_ok</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h2 id="stubconfigendpointsform">StubConfigEndpointsForm</h2>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L34">Show source in stub_config_edit.py:34</a></p>
+<p>Choose an endpoint to edit or create a new stub config for.</p>
+<h4 id="attributes">Attributes</h4>
+<ul>
+<li><code>ml_endpoints</code> - an <code>EndpointsTitleSelectOne</code> widget to select an endpoint.</li>
+</ul>
+<h4 id="signature_5">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">class</span> <span class="nc">StubConfigEndpointsForm</span><span class="p">(</span><span class="n">ActionFormV2</span><span class="p">):</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigendpointsformbeforeediting">StubConfigEndpointsForm().beforeEditing</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L41">Show source in stub_config_edit.py:41</a></p>
+<p>Called by <code>npyscreen</code> before the form gets drawn on the screen.</p>
+<h4 id="signature_6">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">def</span> <span class="nf">beforeEditing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigendpointsformcreate">StubConfigEndpointsForm().create</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L51">Show source in stub_config_edit.py:51</a></p>
+<h4 id="signature_7">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigendpointsformon_cancel">StubConfigEndpointsForm().on_cancel</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L70">Show source in stub_config_edit.py:70</a></p>
+<h4 id="signature_8">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">def</span> <span class="nf">on_cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigendpointsformon_ok">StubConfigEndpointsForm().on_ok</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L59">Show source in stub_config_edit.py:59</a></p>
+<h4 id="signature_9">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">def</span> <span class="nf">on_ok</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h2 id="stubconfiginputsform">StubConfigInputsForm</h2>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L231">Show source in stub_config_edit.py:231</a></p>
+<p>Edit the request parameters sent to the gRPC endpoint.</p>
+<p>Input options will be created according to their expected types (bool -&gt; <code>InputBoolean</code>, etc.).</p>
+<h4 id="attributes_1">Attributes</h4>
+<ul>
+<li><code>w_inputs</code> - an <code>InputsListDisplay</code> widget to present the list of input options.</li>
+</ul>
+<h4 id="signature_10">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">class</span> <span class="nc">StubConfigInputsForm</span><span class="p">(</span><span class="n">ActionFormV2</span><span class="p">):</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfiginputsformclear_input">StubConfigInputsForm().clear_input</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L240">Show source in stub_config_edit.py:240</a></p>
+<p>Callback function for clearing input shortcuts.</p>
+<p>Pressing 'c' will ask for confirmation before clearing, 'C' will not.</p>
+<h4 id="arguments">Arguments</h4>
+<ul>
+<li><code>show_popup</code> - if True, asks the user for confirmation before clearing the input.</li>
+</ul>
+<h4 id="signature_11">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">def</span> <span class="nf">clear_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_popup</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfiginputsformcreate">StubConfigInputsForm().create</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L263">Show source in stub_config_edit.py:263</a></p>
+<h4 id="signature_12">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfiginputsformon_cancel">StubConfigInputsForm().on_cancel</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L382">Show source in stub_config_edit.py:382</a></p>
+<h4 id="signature_13">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">def</span> <span class="nf">on_cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfiginputsformon_ok">StubConfigInputsForm().on_ok</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L346">Show source in stub_config_edit.py:346</a></p>
+<h4 id="signature_14">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">def</span> <span class="nf">on_ok</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h2 id="stubconfigmethodsform">StubConfigMethodsForm</h2>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L184">Show source in stub_config_edit.py:184</a></p>
+<p>Choose a gRPC method from the specified service.</p>
+<h4 id="attributes_2">Attributes</h4>
+<ul>
+<li><code>methods</code> - available methods provided by the reflection service.</li>
+<li><code>ml_methods</code> - a <code>TitleSelectOne</code> widget to select which method the stub will use.</li>
+</ul>
+<h4 id="signature_15">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">class</span> <span class="nc">StubConfigMethodsForm</span><span class="p">(</span><span class="n">ActionFormV2</span><span class="p">):</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigmethodsformbeforeediting">StubConfigMethodsForm().beforeEditing</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L192">Show source in stub_config_edit.py:192</a></p>
+<p>Called by <code>npyscreen</code> before the form gets drawn on the screen.</p>
+<h4 id="signature_16">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">def</span> <span class="nf">beforeEditing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigmethodsformcreate">StubConfigMethodsForm().create</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L202">Show source in stub_config_edit.py:202</a></p>
+<h4 id="signature_17">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigmethodsformon_cancel">StubConfigMethodsForm().on_cancel</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L227">Show source in stub_config_edit.py:227</a></p>
+<h4 id="signature_18">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="k">def</span> <span class="nf">on_cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigmethodsformon_ok">StubConfigMethodsForm().on_ok</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L213">Show source in stub_config_edit.py:213</a></p>
+<h4 id="signature_19">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="k">def</span> <span class="nf">on_ok</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h2 id="stubconfigoutputsform">StubConfigOutputsForm</h2>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L385">Show source in stub_config_edit.py:385</a></p>
+<p>...</p>
+<h4 id="signature_20">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="k">class</span> <span class="nc">StubConfigOutputsForm</span><span class="p">(</span><span class="n">SplitActionForm</span><span class="p">):</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h4 id="see-also_1">See also</h4>
+<ul>
+<li><a href="../generic/#splitactionform">SplitActionForm</a></li>
+</ul>
+<h3 id="stubconfigoutputsformbeforeediting">StubConfigOutputsForm().beforeEditing</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L389">Show source in stub_config_edit.py:389</a></p>
+<p>Called by <code>npyscreen</code> before the form gets drawn on the screen.</p>
+<h4 id="signature_21">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="k">def</span> <span class="nf">beforeEditing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigoutputsformcreate">StubConfigOutputsForm().create</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L399">Show source in stub_config_edit.py:399</a></p>
+<h4 id="signature_22">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigoutputsformcreate_output_selection">StubConfigOutputsForm().create_output_selection</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L462">Show source in stub_config_edit.py:462</a></p>
+<h4 id="signature_23">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="k">def</span> <span class="nf">create_output_selection</span><span class="p">(</span>
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>    <span class="bp">self</span><span class="p">,</span> <span class="n">previous_selected</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OutputSelectionTreeData</span><span class="p">:</span>
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>    <span class="o">...</span>
+</code></pre></div>
+<h4 id="see-also_2">See also</h4>
+<ul>
+<li><a href="../../widgets/custom/#outputselectiontreedata">OutputSelectionTreeData</a></li>
+</ul>
+<h3 id="stubconfigoutputsformon_cancel">StubConfigOutputsForm().on_cancel</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L531">Show source in stub_config_edit.py:531</a></p>
+<h4 id="signature_24">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="k">def</span> <span class="nf">on_cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigoutputsformon_ok">StubConfigOutputsForm().on_ok</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L494">Show source in stub_config_edit.py:494</a></p>
+<h4 id="signature_25">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="k">def</span> <span class="nf">on_ok</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h2 id="stubconfigsavefileform">StubConfigSaveFileForm</h2>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L74">Show source in stub_config_edit.py:74</a></p>
+<p>Choose the save file location for the stub config.</p>
+<h4 id="attributes_3">Attributes</h4>
+<ul>
+<li><code>stub_loaded</code> - indicates if the stub has been loaded from the specified file.</li>
+<li><code>tfc_stub_save_file</code> - a <code>TitleFilenameCombo</code> widget to select the stub save file.</li>
+</ul>
+<h4 id="signature_26">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="k">class</span> <span class="nc">StubConfigSaveFileForm</span><span class="p">(</span><span class="n">ActionFormV2</span><span class="p">):</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigsavefileformcreate">StubConfigSaveFileForm().create</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L82">Show source in stub_config_edit.py:82</a></p>
+<h4 id="signature_27">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigsavefileformon_cancel">StubConfigSaveFileForm().on_cancel</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L129">Show source in stub_config_edit.py:129</a></p>
+<h4 id="signature_28">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="k">def</span> <span class="nf">on_cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigsavefileformon_ok">StubConfigSaveFileForm().on_ok</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L102">Show source in stub_config_edit.py:102</a></p>
+<h4 id="signature_29">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="k">def</span> <span class="nf">on_ok</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h2 id="stubconfigservicesform">StubConfigServicesForm</h2>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L132">Show source in stub_config_edit.py:132</a></p>
+<p>Choose a service from the services available on the specified endpoint.</p>
+<p>The endpoint <strong>has</strong> to provide a reflection service in order to determine the available services.</p>
+<h4 id="attributes_4">Attributes</h4>
+<ul>
+<li><code>ml_services</code> - a <code>TitleSelectOne</code> widget to select which service the stub will use.</li>
+</ul>
+<h4 id="signature_30">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="k">class</span> <span class="nc">StubConfigServicesForm</span><span class="p">(</span><span class="n">ActionFormV2</span><span class="p">):</span>
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigservicesformbeforeediting">StubConfigServicesForm().beforeEditing</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L141">Show source in stub_config_edit.py:141</a></p>
+<p>Called by <code>npyscreen</code> before the form gets drawn on the screen.</p>
+<h4 id="signature_31">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="k">def</span> <span class="nf">beforeEditing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigservicesformcreate">StubConfigServicesForm().create</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L151">Show source in stub_config_edit.py:151</a></p>
+<h4 id="signature_32">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigservicesformon_cancel">StubConfigServicesForm().on_cancel</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L180">Show source in stub_config_edit.py:180</a></p>
+<h4 id="signature_33">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="k">def</span> <span class="nf">on_cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="stubconfigservicesformon_ok">StubConfigServicesForm().on_ok</h3>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L169">Show source in stub_config_edit.py:169</a></p>
+<h4 id="signature_34">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="k">def</span> <span class="nf">on_ok</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>    <span class="o">...</span>
+</code></pre></div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="../main/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Main" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Main
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../../widgets/" class="md-footer__link md-footer__link--next" aria-label="Next: Widgets" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Widgets
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant"], "search": "../../../../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../../../../../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      
+    
+    
+  </body>
+</html>
