@@ -19,7 +19,7 @@ Input Validators
 
 ## bool_validator
 
-[Show source in input_validators.py:43](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/input_validators.py#L43)
+[Show source in input_validators.py:45](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/input_validators.py#L45)
 
 Checks that a string is a valid boolean representation.
 
@@ -43,7 +43,7 @@ def bool_validator(value: str, **kwargs) -> bool:
 
 ## enum_validator
 
-[Show source in input_validators.py:56](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/input_validators.py#L56)
+[Show source in input_validators.py:58](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/input_validators.py#L58)
 
 Checks that a string is a valid enum value from a given sequence of enum values.
 
@@ -67,7 +67,7 @@ def enum_validator(value: str, enum_values: Sequence[str]):
 
 ## float_validator
 
-[Show source in input_validators.py:25](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/input_validators.py#L25)
+[Show source in input_validators.py:27](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/input_validators.py#L27)
 
 Checks that a string is a valid floating point representation.
 
@@ -91,7 +91,7 @@ def float_validator(value: str, **kwargs) -> bool:
 
 ## integer_validator
 
-[Show source in input_validators.py:7](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/input_validators.py#L7)
+[Show source in input_validators.py:9](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/input_validators.py#L9)
 
 Checks that a string is a valid integer representation.
 
@@ -115,7 +115,7 @@ def integer_validator(value: str, **kwargs) -> bool:
 
 ## message_validator
 
-[Show source in input_validators.py:82](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/input_validators.py#L82)
+[Show source in input_validators.py:84](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/input_validators.py#L84)
 
 Placeholder validator for messages.
 
@@ -139,7 +139,7 @@ def message_validator(value: str, **kwargs):
 
 ## string_validator
 
-[Show source in input_validators.py:69](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/input_validators.py#L69)
+[Show source in input_validators.py:71](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/input_validators.py#L71)
 
 Placeholder validator for strings.
 

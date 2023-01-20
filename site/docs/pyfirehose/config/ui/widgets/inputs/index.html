@@ -1610,27 +1610,27 @@ Inputs</p>
 <li><a href="#on_ok_input_validation_hook">on_ok_input_validation_hook</a></li>
 </ul>
 <h2 id="inputbool">InputBool</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L97">Show source in inputs.py:97</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L99">Show source in inputs.py:99</a></p>
 <p>Custom option boolean input to convert string values to bool.</p>
 <h4 id="signature">Signature</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span> <span class="nc">InputBool</span><span class="p">(</span><span class="n">OptionBoolean</span><span class="p">):</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="o">...</span>
 </code></pre></div>
 <h3 id="inputboolwhen_set">InputBool().when_set</h3>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L101">Show source in inputs.py:101</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L103">Show source in inputs.py:103</a></p>
 <h4 id="signature_1">Signature</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">def</span> <span class="nf">when_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="o">...</span>
 </code></pre></div>
 <h2 id="inputenum">InputEnum</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L105">Show source in inputs.py:105</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L107">Show source in inputs.py:107</a></p>
 <p>Custom option single choice input to allow selecting enum values (or none).</p>
 <h4 id="signature_2">Signature</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">class</span> <span class="nc">InputEnum</span><span class="p">(</span><span class="n">OptionSingleChoice</span><span class="p">):</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="o">...</span>
 </code></pre></div>
 <h2 id="inputfloat">InputFloat</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L80">Show source in inputs.py:80</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L82">Show source in inputs.py:82</a></p>
 <p>Custom option input to only allow floating point input.</p>
 <h4 id="signature_3">Signature</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">class</span> <span class="nc">InputFloat</span><span class="p">(</span><span class="n">InputValidator</span><span class="p">,</span> <span class="n">OptionFreeText</span><span class="p">):</span>
@@ -1641,13 +1641,13 @@ Inputs</p>
 <li><a href="#inputvalidator">InputValidator</a></li>
 </ul>
 <h3 id="inputfloatset">InputFloat().set</h3>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L84">Show source in inputs.py:84</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L86">Show source in inputs.py:86</a></p>
 <h4 id="signature_4">Signature</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="o">...</span>
 </code></pre></div>
 <h2 id="inputinteger">InputInteger</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L64">Show source in inputs.py:64</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L66">Show source in inputs.py:66</a></p>
 <p>Custom option input to only allow integer input.</p>
 <h4 id="signature_5">Signature</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">class</span> <span class="nc">InputInteger</span><span class="p">(</span><span class="n">InputValidator</span><span class="p">,</span> <span class="n">OptionFreeText</span><span class="p">):</span>
@@ -1658,13 +1658,13 @@ Inputs</p>
 <li><a href="#inputvalidator">InputValidator</a></li>
 </ul>
 <h3 id="inputintegerset">InputInteger().set</h3>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L68">Show source in inputs.py:68</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L70">Show source in inputs.py:70</a></p>
 <h4 id="signature_6">Signature</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="o">...</span>
 </code></pre></div>
 <h2 id="inputmessage">InputMessage</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L119">Show source in inputs.py:119</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L121">Show source in inputs.py:121</a></p>
 <p>Custom option input for complex <code>Message</code> object input.</p>
 <p>Note that this class is empty as everything is handled by the parent <code>OptionFreeText</code>.
 It exists to allow generic input creation (see <code>StubConfigInputsForm.create</code> method).</p>
@@ -1673,7 +1673,7 @@ It exists to allow generic input creation (see <code>StubConfigInputsForm.create
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="o">...</span>
 </code></pre></div>
 <h2 id="inputrepeated">InputRepeated</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L127">Show source in inputs.py:127</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L129">Show source in inputs.py:129</a></p>
 <p>Custom option input for repeated input fields with type validation.</p>
 <h4 id="signature_8">Signature</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">class</span> <span class="nc">InputRepeated</span><span class="p">(</span><span class="n">InputValidator</span><span class="p">,</span> <span class="n">OptionMultiFreeList</span><span class="p">):</span>
@@ -1687,13 +1687,13 @@ It exists to allow generic input creation (see <code>StubConfigInputsForm.create
 <li><a href="#inputvalidator">InputValidator</a></li>
 </ul>
 <h3 id="inputrepeatedset">InputRepeated().set</h3>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L140">Show source in inputs.py:140</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L142">Show source in inputs.py:142</a></p>
 <h4 id="signature_9">Signature</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="o">...</span>
 </code></pre></div>
 <h2 id="inputstring">InputString</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L111">Show source in inputs.py:111</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L113">Show source in inputs.py:113</a></p>
 <p>Custom option input for string input.</p>
 <p>Note that this class is empty as everything is handled by the parent <code>OptionFreeText</code>.
 It exists to allow generic input creation (see <code>StubConfigInputsForm.create</code> method).</p>
@@ -1702,7 +1702,7 @@ It exists to allow generic input creation (see <code>StubConfigInputsForm.create
 <a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="o">...</span>
 </code></pre></div>
 <h2 id="inputvalidator">InputValidator</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L27">Show source in inputs.py:27</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L29">Show source in inputs.py:29</a></p>
 <p>Generic class for validating an option input with the return value of the <code>set</code> method.</p>
 <p>Overload the <code>set(self, value)</code> method and return <code>True</code> to keep editing, <code>False</code> to quit.</p>
 <h4 id="signature_11">Signature</h4>
@@ -1711,7 +1711,7 @@ It exists to allow generic input creation (see <code>StubConfigInputsForm.create
 <a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>        <span class="o">...</span>
 </code></pre></div>
 <h3 id="inputvalidatorset_from_widget_value">InputValidator().set_from_widget_value</h3>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L38">Show source in inputs.py:38</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L40">Show source in inputs.py:40</a></p>
 <p>Method override allowing to quit or continue the option editing depending on the return value.</p>
 <p>See <a href="#on_ok_input_validation_hook">on_ok_input_validation_hook</a>.</p>
 <h4 id="signature_12">Signature</h4>
@@ -1719,7 +1719,7 @@ It exists to allow generic input creation (see <code>StubConfigInputsForm.create
 <a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    <span class="o">...</span>
 </code></pre></div>
 <h2 id="inputslistdisplay">InputsListDisplay</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L16">Show source in inputs.py:16</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L18">Show source in inputs.py:18</a></p>
 <p>Custom option list display for increased option title width.</p>
 <p>See <a href="https://npyscreen.readthedocs.io/options.html#options-and-option-lists">npyscreen's documentation</a>
 for reference.</p>
@@ -1729,7 +1729,7 @@ for reference.</p>
 <a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>        <span class="o">...</span>
 </code></pre></div>
 <h2 id="on_ok_input_validation_hook">on_ok_input_validation_hook</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L55">Show source in inputs.py:55</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L57">Show source in inputs.py:57</a></p>
 <p>Hook to replace the <code>on_ok</code> event handler for validating an option input.</p>
 <p>It returns the value of the <code>Option.set</code> function to continue or stop the editing.
 Used to prevent entering invalid input for options.</p>
