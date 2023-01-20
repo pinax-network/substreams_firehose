@@ -44,7 +44,7 @@ def filtered_block_processor(raw_block: Message) -> dict:
     }
     ```
     """
-    data = _filtered_data(raw_block)
+    data = _filter_data(raw_block, StubConfig.RESPONSE_PARAMETERS)
 
     try:
         for transaction_trace in data['filtered_transaction_traces']:
@@ -85,12 +85,13 @@ def filtered_block_processor(raw_block: Message) -> dict:
     except KeyError as error:
         logging.warning('Skipping block : %s missing from output', error)
 
-def _filtered_data(data: Message) -> dict:
+def _filter_data(data: Message, _filter: dict) -> dict:
     """
     Return the output of a gRPC response as JSON data using the stub config's output filter.
 
     Args:
         data: The output message from a gRPC service.
+        _filter: The nested dictionary filter.
 
     Returns:
         A dictionary representing the filtered output data as JSON.
@@ -100,8 +101,8 @@ def _filtered_data(data: Message) -> dict:
         Recursively filters the `input_` dictionary based on the keys present in `keys_filter`.
 
         Args:
-            input_: The input nested dict to filter.
-            keys_filter: The nested dict filter matching subset of keys present in the `input_`.
+            input_: The input nested dictionary to filter.
+            keys_filter: The nested dictionary filter matching subset of keys present in the `input_`.
 
         Returns:
             The filtered `input_` as a new dict.
@@ -184,7 +185,7 @@ def _filtered_data(data: Message) -> dict:
         return output
 
     json_data = json.loads(MessageToJson(data, preserving_proto_field_name=True))
-    return __filter_keys(json_data, StubConfig.RESPONSE_PARAMETERS) if StubConfig.RESPONSE_PARAMETERS else json_data
+    return __filter_keys(json_data, _filter) if _filter else json_data
 
 def default_processor(data: Message) -> dict:
     """
@@ -196,4 +197,8 @@ def default_processor(data: Message) -> dict:
     Yields:
         The filtered data.
     """
-    yield _filtered_data(data)
+    yield _filter_data(data, StubConfig.RESPONSE_PARAMETERS)
+
+def default_substream_processor(data: Message) -> dict:
+    for output in data.outputs:
+        yield _filter_data(output.map_output, StubConfig.RESPONSE_PARAMETERS[output.name])

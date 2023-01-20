@@ -10,6 +10,7 @@ import grpc
 import hjson
 from google.protobuf.descriptor import Descriptor, FieldDescriptor
 from google.protobuf.descriptor_pool import DescriptorPool
+from google.protobuf.json_format import MessageToJson
 from grpc_reflection.v1alpha.proto_reflection_descriptor_database import ProtoReflectionDescriptorDatabase
 from npyscreen import ActionFormV2
 from npyscreen import TitleFilenameCombo, TitleSelectOne
@@ -298,7 +299,7 @@ class StubConfigInputsForm(ActionFormV2):
             option_type = getattr(input_options, f'Input{input_type}')
             option_args = {
                 'documentation': [
-                    f'A parameter of type {input_type.upper()}'
+                    f'A parameter of type {input_type.upper()} '
                     f'is expected for "{input_parameter.name}."'
                 ],
                 'name': input_parameter.name,
@@ -361,7 +362,7 @@ class StubConfigInputsForm(ActionFormV2):
             try:
                 iter(input_option.value)
             except TypeError:
-                is_empty_input = not input_option.value
+                is_empty_input = not (input_option.value or isinstance(input_option.value, bool))
             else:
                 is_empty_input = not any(input_option.value)
 
@@ -396,22 +397,60 @@ class StubConfigOutputsForm(SplitActionForm):
         self.ml_output_types.value = self.previous_value
 
     def create(self):
-        # TODO: Show substreams output based on .spkg file content
-        self.outputs_descriptor = [
-            # TODO: Remove 'Block' naming convention assumption ?
-            m_class.DESCRIPTOR for m_name, m_class in Config.PROTO_MESSAGES_CLASSES.items() if m_name.rsplit('.', 1)[1].lower() == 'block'
-        ]
+        self.is_substream = 'substream' in self.parentApp.selected_service and \
+                            'modules' in self.parentApp.stub_config['request']['params']
+        if self.is_substream:
+            with open(self.parentApp.stub_config['request']['params']['modules'], 'rb') as package_file:
+                pkg = Config.PROTO_MESSAGES_CLASSES[
+                    f'{self.parentApp.stub_config["base"]}.Package'
+                ]()
+                pkg.ParseFromString(package_file.read())
+
+            selected_output_modules = []
+            try:
+                selected_output_modules += self.parentApp.stub_config['request']['params']['output_modules']
+            except KeyError:
+                try:
+                    selected_output_modules += [self.parentApp.stub_config['request']['params']['output_module']]
+                except KeyError:
+                    logging.error('No output module(s) specified for substream')
+                    raise
+
+            output_modules = [
+                m for m in hjson.loads(MessageToJson(pkg.modules))['modules'] if m['name'] in selected_output_modules
+            ]
+
+            logging.info('[%s] Modules from package : %s', self.name,
+                hjson.dumps(output_modules, indent=4)
+            )
+
+            self.outputs_descriptor = []
+            output_types = []
+            for module in output_modules:
+                if 'output' in module:
+                    self.outputs_descriptor.append(
+                        Config.PROTO_MESSAGES_CLASSES[module['output']['type'].rsplit(':', 1)[1]].DESCRIPTOR
+                    )
+                    output_types.append(f'{module["name"]} ({self.outputs_descriptor[-1].full_name})')
+        else:
+            self.outputs_descriptor = [
+                # TODO: Remove 'Block' naming convention assumption ?
+                m_class.DESCRIPTOR for m_name, m_class in Config.PROTO_MESSAGES_CLASSES.items()
+                if m_name.rsplit('.', 1)[1].lower() == 'block'
+            ]
+            output_types = [desc.full_name for desc in self.outputs_descriptor]
 
         self.ml_output_types = self.add(
             OutputTypesTitleSelectOne,
             name='Select an output type :',
-            values=self.outputs_descriptor,
+            values=output_types,
             value=[0],
             scroll_exit=True,
             # First call to `get_half_way` will set the split line
             max_height=self.get_half_way(self.curses_pad.getmaxyx()[0] // 3) - 2
         )
 
+        self.saved_output_selection = {}
         self.ml_output_select = self.add(
             OutputSelectionMLTreeMultiSelectAnnotated,
             name='Select which data to save from the output :',
@@ -420,18 +459,26 @@ class StubConfigOutputsForm(SplitActionForm):
             rely=self.get_half_way() + 1
         )
 
-    def create_output_selection(self):
+    def create_output_selection(self, previous_selected: Optional[dict[tuple[int, str], tuple[int, int]]] = None
+    ) -> OutputSelectionTreeData:
         def _make_tree_node(
                 node: OutputSelectionTreeData,
                 descriptor: Descriptor,
-                previous_desc: Optional[Descriptor] = None
+                previous_desc: Optional[Descriptor] = None,
+                previous_selected: Optional[dict[tuple[int, str], tuple[int, int]]] = None
             ):
             for field in descriptor.fields:
                 child = node.new_child(content=field.name)
                 child.expanded = False
+                if previous_selected:
+                    try:
+                        child.selected, child.expanded = previous_selected[(child.find_depth(), child.get_content())]
+                    except KeyError:
+                        pass
 
+                # Prevent recursive field inclusion
                 if field.message_type and field.message_type != previous_desc:
-                    _make_tree_node(child, field.message_type, descriptor)
+                    _make_tree_node(child, field.message_type, descriptor, previous_selected)
 
         output_tree = OutputSelectionTreeData()
         root_element = output_tree.new_child(
@@ -440,14 +487,14 @@ class StubConfigOutputsForm(SplitActionForm):
             annotate_color='STANDOUT'
         )
 
-        _make_tree_node(root_element, self.outputs_descriptor[self.ml_output_types.value[0]])
+        _make_tree_node(root_element, self.outputs_descriptor[self.ml_output_types.value[0]], previous_selected=previous_selected)
 
         return output_tree
 
     def on_ok(self):
         def _build_output_params(node: OutputSelectionTreeData) -> dict | str:
             if not node.has_children():
-                # TODO: Extend custom TreeData functionnality with 'Required' and 'Optional' output fields
+                # TODO: Extend custom TreeData functionality with 'Required' and 'Optional' output fields
                 return "True"
 
             out = {}
@@ -455,11 +502,21 @@ class StubConfigOutputsForm(SplitActionForm):
                 if child.selected:
                     out[child.get_content()] = _build_output_params(child)
 
-            return out
+            return out if out else "True"
 
         self.previous_value = list(self.ml_output_types.value) #pylint: disable=attribute-defined-outside-init
 
-        output_params = _build_output_params(self.ml_output_select.values[0])
+        output_params = {}
+        if self.is_substream:
+            # Simulate switching output types to generate the output parameters for each module
+            output_modules = [v.split(' ', 1)[0] for v in self.ml_output_types.values]
+            for output_module in output_modules:
+                self.ml_output_types.entry_widget.cursor_line = output_modules.index(output_module)
+                self.ml_output_types.entry_widget.actionHighlighted(None, None)
+                output_params[output_module] = _build_output_params(self.ml_output_select.values[0])
+        else:
+            output_params = _build_output_params(self.ml_output_select.values[0])
+
         logging.info('[%s] Output params : %s', self.name, output_params)
 
         # TODO: Load previous output params from stub config file => NEED ADDING OUTPUT TYPE OBJECT TO STUB CONFIG !

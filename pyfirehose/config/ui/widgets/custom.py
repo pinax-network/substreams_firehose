@@ -149,20 +149,30 @@ class OutputSelectionMLTreeMultiSelectAnnotated(MLTreeMultiSelectAnnotated):
 
 class OutputTypesSelectOne(SelectOne, MultiLineAction):
     """
-    Custom single selection widget to display `Block` output type for DFuse/Firehose-enabled endpoints.
+    Custom single selection widget to display gRPC output types and link them to the output field selection widget.
 
     See [npyscreen's documentation](https://npyscreen.readthedocs.io/widgets-multiline.html#widgets-picking-options)
     for reference.
     """
-    def display_value(self, vl: Descriptor):
-        try:
-            return vl.full_name
-        except AttributeError:
-            return str(vl)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.parent.saved_output_selection = {}
 
     def actionHighlighted(self, act_on_this, key_press):
+        # Save the current output fields selection state
+        self.parent.saved_output_selection[self.values[self.value[0]]] = {
+            (node.find_depth(), node.get_content()): (node.selected, node.expanded)
+            for node in self.parent.ml_output_select.values[0].walk_tree()
+        }
+
+        # Update the output field selection based on the saved `TreeData` properties if they exists
         self.value = [self.cursor_line]
-        self.parent.ml_output_select.values = self.parent.create_output_selection()
+        try:
+            saved_data = self.parent.saved_output_selection[self.values[self.value[0]]]
+        except KeyError:
+            saved_data = None
+
+        self.parent.ml_output_select.values = self.parent.create_output_selection(previous_selected=saved_data)
         self.parent.display()
 
 class OutputTypesTitleSelectOne(TitleSelectOne):
