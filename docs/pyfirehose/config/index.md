@@ -12,5 +12,5 @@ Config
 ## Modules
 
 - [Module](./module.md)
+- [Parser](./parser.md)
 - [Ui](ui/index.md)
-- [Utils](./utils.md)

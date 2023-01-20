@@ -13,5 +13,5 @@ Ui
 ## Modules
 
 - [App](./app.md)
-- [Forms](./forms.md)
-- [Widgets](./widgets.md)
+- [Forms](forms/index.md)
+- [Widgets](widgets/index.md)

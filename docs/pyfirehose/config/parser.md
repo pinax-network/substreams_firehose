@@ -1,13 +1,13 @@
-# Utils
+# Parser
 
 [Pyfirehose Index](../../README.md#pyfirehose-index) /
 [Pyfirehose](../index.md#pyfirehose) /
 [Config](./index.md#config) /
-Utils
+Parser
 
-> Auto-generated documentation for [pyfirehose.config.utils](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py) module.
+> Auto-generated documentation for [pyfirehose.config.parser](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/parser.py) module.
 
-- [Utils](#utils)
+- [Parser](#parser)
   - [Config](#config)
   - [StubConfig](#stubconfig)
   - [load_config](#load_config)
@@ -16,7 +16,7 @@ Utils
 
 ## Config
 
-[Show source in utils.py:33](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py#L33)
+[Show source in parser.py:34](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/parser.py#L34)
 
 Holds the main config.
 
@@ -31,7 +31,7 @@ class Config:
 
 ## StubConfig
 
-[Show source in utils.py:22](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py#L22)
+[Show source in parser.py:22](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/parser.py#L22)
 
 Holds the stub config.
 
@@ -46,7 +46,7 @@ class StubConfig:
 
 ## load_config
 
-[Show source in utils.py:47](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py#L47)
+[Show source in parser.py:49](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/parser.py#L49)
 
 Load the main config from the specified file. If a gRPC entry id is specified, it overwrites the default specified
 in the config.
@@ -62,7 +62,7 @@ A boolean indicating if the stub config file has also been loaded.
 
 #### Raises
 
-- `ArgumentTypeError` - If the specified compression argument for a gRPC endpoint is not one of "gzip" or "deflate".
+- `ArgumentTypeError` - If an entry is not recognized within the config file.
 - `HjsonDecodeError` - If the hjson module fails to parse the config file.
 - `ImportError` - If the stub config files fails to import the specified modules.
 - `KeyError` - If a required key is missing from the config file.
@@ -78,7 +78,7 @@ def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
 
 ## load_stub_config
 
-[Show source in utils.py:128](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py#L128)
+[Show source in parser.py:137](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/parser.py#L137)
 
 Load the stub config from a file (str) or directly from a key-value dictionary.
 
@@ -103,7 +103,7 @@ def load_stub_config(stub: str | dict) -> None:
 
 ## load_substreams_modules_from_package
 
-[Show source in utils.py:112](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/utils.py#L112)
+[Show source in parser.py:121](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/parser.py#L121)
 
 Parses substreams modules from an `.spkg` file.
 
