@@ -21,8 +21,6 @@ THIS SOFTWARE.
 --- Cansi library (https://github.com/tslight/cansi) ---
 """
 
-from typing import Optional
-
 import curses
 from npyscreen import MultiLineAction, Pager, SelectOne, Textfield, TitlePager, TitleSelectOne
 from npyscreen import MLTreeMultiSelectAnnotated, TreeData, TreeLineSelectableAnnotated
@@ -141,7 +139,7 @@ class OutputSelectionTreeData(TreeData):
         annotate: Text annotation to display next to the node content.
         annotate_color: Color of the text annotation (see [reference](https://npyscreen.readthedocs.io/color.html) for a list of valid values).
     """
-    def __init__(self, *args, annotate: Optional[str] = '?', annotate_color: Optional[str] = 'CONTROL', **kwargs):
+    def __init__(self, *args, annotate: str = '?', annotate_color: str = 'CONTROL', **kwargs):
         super().__init__(*args, **kwargs)
         self.annotate = f' {annotate} '
         self.annotate_color = annotate_color
@@ -213,7 +211,7 @@ def colorize(default_color: int, string: str) -> list[tuple[int, int]]:
         `[(2097152, 10)]` will color 10 characters bold (`curses.A_BOLD = 2097152`).
     """
 
-    def _mkcolor(default_color: int, offset: Optional[int] = 49) -> dict[str, int]:
+    def _mkcolor(default_color: int, offset: int = 49) -> dict[str, int]:
         """
         Initialize `curses` colors and mapping of ANSI escape codes.
 

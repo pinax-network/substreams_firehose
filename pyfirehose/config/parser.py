@@ -8,7 +8,7 @@ Refer to the README.md and comments within the config files for more details abo
 import logging
 from argparse import ArgumentTypeError
 from dataclasses import dataclass
-from typing import Any, ClassVar, Optional, Type
+from typing import Any, ClassVar
 
 # https://hjson.github.io/hjson-py/ -- allow comments in JSON files for configuration purposes
 import hjson
@@ -44,9 +44,9 @@ class Config:
     GRPC_ENDPOINT: ClassVar[str]
     MAX_BLOCK_SIZE: ClassVar[int]
     MAX_FAILED_BLOCK_RETRIES: ClassVar[int]
-    PROTO_MESSAGES_CLASSES: ClassVar[dict[str, Type]]
+    PROTO_MESSAGES_CLASSES: ClassVar[dict[str, type]]
 
-def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
+def load_config(file: str, grpc_entry_id: str | None = None) -> bool:
     """
     Load the main config from the specified file. If a gRPC entry id is specified, it overwrites the default specified
     in the config.

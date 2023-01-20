@@ -3,8 +3,8 @@ SPDX-License-Identifier: MIT
 """
 
 import logging
+from collections.abc import Sequence
 from types import MethodType
-from typing import Optional, Sequence
 
 from npyscreen import OptionBoolean, OptionFreeText, OptionListDisplay, OptionMultiFreeList, OptionSingleChoice
 from npyscreen import notify_confirm
@@ -128,9 +128,12 @@ class InputRepeated(InputValidator, OptionMultiFreeList):
     """
     Custom option input for repeated input fields with type validation.
     """
-    def __init__(self, value_type: str, *args, choices: Optional[Sequence[str]] = None, **kwargs):
+    def __init__(self, value_type: str, *args, choices: Sequence[str] | None = None, **kwargs):
         self.value_type = value_type
-        self.validate_input = lambda value: getattr(validators, f'{value_type.lower()}_validator')(value, enum_values=choices)
+        # Associate the appropriate type validator function
+        self.validate_input = lambda value: getattr(validators, f'{value_type.lower()}_validator')(
+            value, enum_values=choices if choices else []
+        )
 
         super().__init__(multiline=True, *args, **kwargs)
 

@@ -4,7 +4,6 @@ SPDX-License-Identifier: MIT
 
 import logging
 import os.path
-from typing import Optional
 
 import grpc
 import hjson
@@ -237,7 +236,7 @@ class StubConfigInputsForm(ActionFormV2):
     Attributes:
         w_inputs: an `InputsListDisplay` widget to present the list of input options.
     """
-    def clear_input(self, show_popup: Optional[bool] = True) -> None:
+    def clear_input(self, show_popup: bool = True) -> None:
         """
         Callback function for clearing input shortcuts.
 
@@ -467,7 +466,7 @@ class StubConfigOutputsForm(SplitActionForm): #pylint: disable=too-many-ancestor
             rely=self.get_half_way() + 1
         )
 
-    def create_output_selection(self, previous_selected: Optional[dict[tuple[int, str], tuple[int, int]]] = None) -> OutputSelectionTreeData:
+    def create_output_selection(self, previous_selected: dict[tuple[int, str], tuple[int, int]] | None = None) -> OutputSelectionTreeData:
         """
         Create the output field selection tree from the selected output type. If `previous_selected` is supplied,
         the state of the node in the tree (`selected` and `expanded`) will be set according to its description.
@@ -481,8 +480,8 @@ class StubConfigOutputsForm(SplitActionForm): #pylint: disable=too-many-ancestor
         def _make_tree_node(
                 node: OutputSelectionTreeData,
                 descriptor: Descriptor,
-                previous_desc: Optional[Descriptor] = None,
-                previous_selected: Optional[dict[tuple[int, str], tuple[int, int]]] = None
+                previous_desc: Descriptor | None = None,
+                previous_selected: dict[tuple[int, str], tuple[int, int]] | None = None
             ) -> None:
             """
             Recursively append nodes from the `descriptor` fields to create the selection tree.

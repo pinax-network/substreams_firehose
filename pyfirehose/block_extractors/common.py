@@ -5,9 +5,8 @@ Holds common functions used by the block extractors.
 """
 
 import logging
-from collections.abc import Generator
+from collections.abc import Callable, Generator, Sequence
 from contextlib import asynccontextmanager
-from typing import Callable, Optional, Sequence
 
 import grpc
 from google.protobuf.json_format import ParseDict
@@ -64,7 +63,7 @@ def process_blocks(raw_blocks: Sequence[Message], block_processor: Callable[[Mes
     return data
 
 async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel,
-                        block_processor: Optional[Callable[[Message], dict]] = None, **kwargs) -> list[Message | dict]:
+                        block_processor: Callable[[Message], dict] | None = None, **kwargs) -> list[Message | dict]:
     """
     Return raw blocks (or parsed data) for the subset period between `start` and `end`.
 

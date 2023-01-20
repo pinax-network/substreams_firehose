@@ -13,7 +13,6 @@ import os
 from contextlib import nullcontext
 from datetime import datetime, timedelta
 from types import ModuleType
-from typing import Optional
 
 from google.protobuf.descriptor_pool import Default
 from google.protobuf.descriptor_pb2 import FileDescriptorSet #pylint: disable=no-name-in-module
@@ -22,7 +21,7 @@ from requests_cache import CachedSession
 
 from pyfirehose.config.parser import Config
 
-def date_to_block_num(date: datetime, jwt: Optional[str] = None) -> int:
+def date_to_block_num(date: datetime, jwt: str | None = None) -> int:
     """
     Query the `graphql_endpoint` specified in the main config file for the block number associated with a given date time.
 
