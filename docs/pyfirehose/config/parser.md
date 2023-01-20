@@ -70,7 +70,7 @@ A boolean indicating if the stub config file has also been loaded.
 #### Signature
 
 ```python
-def load_config(file: str, grpc_entry_id: Optional[str] = None) -> bool:
+def load_config(file: str, grpc_entry_id: str | None = None) -> bool:
     ...
 ```
 

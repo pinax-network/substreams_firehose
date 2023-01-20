@@ -539,6 +539,20 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#arguments_1" class="md-nav__link">
+    Arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yields_1" class="md-nav__link">
+    Yields
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#signature_1" class="md-nav__link">
     Signature
   </a>
@@ -559,14 +573,14 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#arguments_1" class="md-nav__link">
+  <a href="#arguments_2" class="md-nav__link">
     Arguments
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#yields_1" class="md-nav__link">
+  <a href="#yields_2" class="md-nav__link">
     Yields
   </a>
   
@@ -1043,6 +1057,20 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#arguments_1" class="md-nav__link">
+    Arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yields_1" class="md-nav__link">
+    Yields
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#signature_1" class="md-nav__link">
     Signature
   </a>
@@ -1063,14 +1091,14 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#arguments_1" class="md-nav__link">
+  <a href="#arguments_2" class="md-nav__link">
     Arguments
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#yields_1" class="md-nav__link">
+  <a href="#yields_2" class="md-nav__link">
     Yields
   </a>
   
@@ -1130,7 +1158,7 @@ Processors</p>
 <li><a href="#filtered_block_processor">filtered_block_processor</a></li>
 </ul>
 <h2 id="default_processor">default_processor</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L190">Show source in processors.py:190</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L119">Show source in processors.py:119</a></p>
 <p>Yield the filtered output of a gRPC response.</p>
 <h4 id="arguments">Arguments</h4>
 <ul>
@@ -1143,20 +1171,27 @@ Processors</p>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="o">...</span>
 </code></pre></div>
 <h2 id="default_substream_processor">default_substream_processor</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L202">Show source in processors.py:202</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L131">Show source in processors.py:131</a></p>
+<p>Yield filtered output data from a Substream-enabled gRPC endpoint.</p>
+<h4 id="arguments_1">Arguments</h4>
+<ul>
+<li><code>data</code> - The output message from the Substream.</li>
+</ul>
+<h4 id="yields_1">Yields</h4>
+<p>The filtered data according to the output modules present.</p>
 <h4 id="signature_1">Signature</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">def</span> <span class="nf">default_substream_processor</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Message</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="o">...</span>
 </code></pre></div>
 <h2 id="filtered_block_processor">filtered_block_processor</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L17">Show source in processors.py:17</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L144">Show source in processors.py:144</a></p>
 <p>Yield all transactions from a Firehose V1 gRPC filtered block, returning a subset of relevant properties.</p>
 <p>See the <code>README.md</code> file for more information on building filtered stream.</p>
-<h4 id="arguments_1">Arguments</h4>
+<h4 id="arguments_2">Arguments</h4>
 <ul>
 <li><code>raw_block</code> - Raw block received from the gRPC stream.</li>
 </ul>
-<h4 id="yields_1">Yields</h4>
+<h4 id="yields_2">Yields</h4>
 <p>A dictionary containing the filtered block data.</p>
 <h4 id="examples">Examples</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>

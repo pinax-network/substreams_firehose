@@ -1265,7 +1265,7 @@ Utils</p>
 <li><a href="#import_all_from_module">import_all_from_module</a></li>
 </ul>
 <h2 id="date_to_block_num">date_to_block_num</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L26">Show source in utils.py:26</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L24">Show source in utils.py:24</a></p>
 <p>Query the <code>graphql_endpoint</code> specified in the main config file for the block number associated with a given date time.</p>
 <p>Cache the results for the duration specified in the main config file (<code>graphql_cache</code>, default is 30 days).</p>
 <h4 id="arguments">Arguments</h4>
@@ -1276,11 +1276,11 @@ Utils</p>
 <h4 id="returns">Returns</h4>
 <p>The block number associated with the given date time.</p>
 <h4 id="signature">Signature</h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">date_to_block_num</span><span class="p">(</span><span class="n">date</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">jwt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">date_to_block_num</span><span class="p">(</span><span class="n">date</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">jwt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="o">...</span>
 </code></pre></div>
 <h2 id="generate_proto_messages_classes">generate_proto_messages_classes</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L82">Show source in utils.py:82</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L80">Show source in utils.py:80</a></p>
 <p>Generate a mapping of services and messages full name to their class object and populates the default descriptor pool
 with the loaded <code>.proto</code> definitions.</p>
 <p>Should only be called once for different descriptor sets.</p>
@@ -1308,7 +1308,7 @@ with the loaded <code>.proto</code> definitions.</p>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="o">...</span>
 </code></pre></div>
 <h2 id="get_auth_token">get_auth_token</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L161">Show source in utils.py:161</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L159">Show source in utils.py:159</a></p>
 <p>Fetch a JWT authorization token from the authentication endpoints defined in the main config file.</p>
 <p>Cache the token for 24-hour use.</p>
 <h4 id="arguments_2">Arguments</h4>
@@ -1322,14 +1322,14 @@ with the loaded <code>.proto</code> definitions.</p>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="o">...</span>
 </code></pre></div>
 <h2 id="get_current_task_name">get_current_task_name</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L197">Show source in utils.py:197</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L195">Show source in utils.py:195</a></p>
 <p>Helper function for generating a unique task id from an asyncio task.</p>
 <h4 id="signature_3">Signature</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">def</span> <span class="nf">get_current_task_name</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="o">...</span>
 </code></pre></div>
 <h2 id="import_all_from_module">import_all_from_module</h2>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L206">Show source in utils.py:206</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L204">Show source in utils.py:204</a></p>
 <p>Dynamically import all python files located in the specified module's folder.</p>
 <h4 id="arguments_3">Arguments</h4>
 <ul>

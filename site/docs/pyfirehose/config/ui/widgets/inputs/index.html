@@ -1678,7 +1678,7 @@ It exists to allow generic input creation (see <code>StubConfigInputsForm.create
 <h4 id="signature_8">Signature</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">class</span> <span class="nc">InputRepeated</span><span class="p">(</span><span class="n">InputValidator</span><span class="p">,</span> <span class="n">OptionMultiFreeList</span><span class="p">):</span>
 <a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">value_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">choices</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">value_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">choices</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="p">):</span>
 <a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>        <span class="o">...</span>
 </code></pre></div>
@@ -1687,7 +1687,7 @@ It exists to allow generic input creation (see <code>StubConfigInputsForm.create
 <li><a href="#inputvalidator">InputValidator</a></li>
 </ul>
 <h3 id="inputrepeatedset">InputRepeated().set</h3>
-<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L137">Show source in inputs.py:137</a></p>
+<p><a href="https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L140">Show source in inputs.py:140</a></p>
 <h4 id="signature_9">Signature</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="o">...</span>

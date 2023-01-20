@@ -73,6 +73,8 @@ def whenPressed(self):
 
 [Show source in generic.py:64](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/generic.py#L64)
 
+Combine `ActionFormV2` buttons with `SplitForm` horizontal line display.
+
 #### Signature
 
 ```python
@@ -82,12 +84,12 @@ class SplitActionForm(ActionFormV2, SplitForm):
 
 ### SplitActionForm().get_half_way
 
-[Show source in generic.py:65](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/generic.py#L65)
+[Show source in generic.py:68](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/generic.py#L68)
 
 #### Signature
 
 ```python
-def get_half_way(self, draw_line_at=None):
+def get_half_way(self, draw_line_at: int | None = None) -> int:
     ...
 ```
 
