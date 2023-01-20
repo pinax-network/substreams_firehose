@@ -1,5 +1,7 @@
 """
 SPDX-License-Identifier: MIT
+
+Generic forms used as base class for other widget-holding forms.
 """
 
 from npyscreen import ActionFormV2, MiniButtonPress, SplitForm

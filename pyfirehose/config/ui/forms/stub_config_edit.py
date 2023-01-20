@@ -1,5 +1,7 @@
 """
 SPDX-License-Identifier: MIT
+
+Forms specifying the workflow for editing stub config files.
 """
 
 import logging

@@ -1,5 +1,7 @@
 """
 SPDX-License-Identifier: MIT
+
+`Option` widget subclasses for input validation and display.
 """
 
 import logging

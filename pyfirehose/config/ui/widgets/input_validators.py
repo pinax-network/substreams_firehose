@@ -1,5 +1,7 @@
 """
 SPDX-License-Identifier: MIT
+
+Contains functions used for validating input types for forms. 
 """
 
 from collections.abc import Sequence
