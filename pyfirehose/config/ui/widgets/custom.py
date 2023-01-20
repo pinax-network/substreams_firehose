@@ -24,7 +24,6 @@ THIS SOFTWARE.
 from typing import Optional
 
 import curses
-from google.protobuf.descriptor import Descriptor
 from npyscreen import MultiLineAction, Pager, SelectOne, Textfield, TitlePager, TitleSelectOne
 from npyscreen import MLTreeMultiSelectAnnotated, TreeData, TreeLineSelectableAnnotated
 from pygments import highlight
@@ -135,16 +134,29 @@ class EnumTitleSelectOneOrNone(TitleSelectOne):
     _entry_type = EnumSelectOneOrNone
 
 class OutputSelectionTreeData(TreeData):
+    """
+    A `TreeData` node representing an output field from a `Message` output type.
+
+    Attributes:
+        annotate: Text annotation to display next to the node content.
+        annotate_color: Color of the text annotation (see [reference](https://npyscreen.readthedocs.io/color.html) for a list of valid values).
+    """
     def __init__(self, *args, annotate: Optional[str] = '?', annotate_color: Optional[str] = 'CONTROL', **kwargs):
         super().__init__(*args, **kwargs)
         self.annotate = f' {annotate} '
         self.annotate_color = annotate_color
 
 class OutputSelectionTreeLineSelectableAnnotated(TreeLineSelectableAnnotated):
+    """
+    Custom tree line selectable widget implementing the annotation behavior.
+    """
     def getAnnotationAndColor(self):
         return (self._tree_real_value.annotate, self._tree_real_value.annotate_color)
 
 class OutputSelectionMLTreeMultiSelectAnnotated(MLTreeMultiSelectAnnotated):
+    """
+    Custom multi-selection tree widget using `OutputSelectionTreeLineSelectableAnnotated` as line display.
+    """
     _contained_widgets = OutputSelectionTreeLineSelectableAnnotated
 
 class OutputTypesSelectOne(SelectOne, MultiLineAction):

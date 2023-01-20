@@ -138,9 +138,8 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel,
                         )
 
                 if response_data:
-                    for blob in block_processor(response_data):
-                        if blob:
-                            data.append(blob)
+                    for blob in [b for b in block_processor(response_data) if b]:
+                        data.append(blob)
         else:
             async for response in service_method(req):
                 logging.debug('[%s] Getting block number #%i (%i blocks remaining)...',

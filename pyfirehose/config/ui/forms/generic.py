@@ -2,6 +2,8 @@
 SPDX-License-Identifier: MIT
 """
 
+from typing import Optional
+
 from npyscreen import ActionFormV2, MiniButtonPress, SplitForm
 
 class ActionFormDiscard(ActionFormV2):
@@ -61,8 +63,11 @@ class ActionFormDiscard(ActionFormV2):
         """
         return False
 
-class SplitActionForm(ActionFormV2, SplitForm):
-    def get_half_way(self, draw_line_at=None):
+class SplitActionForm(ActionFormV2, SplitForm): #pylint: disable=too-many-ancestors
+    """
+    Combine `ActionFormV2` buttons with `SplitForm` horizontal line display.
+    """
+    def get_half_way(self, draw_line_at: Optional[int] = None) -> int:
         if not hasattr(self, 'draw_line_at'):
             self.draw_line_at = draw_line_at if draw_line_at else self.curses_pad.getmaxyx()[0] // 2
 

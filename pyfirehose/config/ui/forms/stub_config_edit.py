@@ -382,9 +382,17 @@ class StubConfigInputsForm(ActionFormV2):
     def on_cancel(self):
         self.parentApp.setNextFormPrevious()
 
-class StubConfigOutputsForm(SplitActionForm):
+class StubConfigOutputsForm(SplitActionForm): #pylint: disable=too-many-ancestors
     """
-    ...
+    Select and filter fields that will be received from the gRPC stream.
+
+    The top selection widget presents a list of compatible output types while the bottom tree widget list the
+    available fields that can be selected to be kept from the response.
+
+    Attributes:
+        is_substream: Identifies if the service is using Substreams.
+        output_descriptors: List of available `Descriptor` for the corresponding method.
+        saved_output_selection: Stores the state of a selection tree to be restored when switching output types.
     """
     def beforeEditing(self): #pylint: disable=invalid-name
         """
@@ -424,21 +432,21 @@ class StubConfigOutputsForm(SplitActionForm):
                 hjson.dumps(output_modules, indent=4)
             )
 
-            self.outputs_descriptor = []
+            self.output_descriptors = []
             output_types = []
             for module in output_modules:
                 if 'output' in module:
-                    self.outputs_descriptor.append(
+                    self.output_descriptors.append(
                         Config.PROTO_MESSAGES_CLASSES[module['output']['type'].rsplit(':', 1)[1]].DESCRIPTOR
                     )
-                    output_types.append(f'{module["name"]} ({self.outputs_descriptor[-1].full_name})')
+                    output_types.append(f'{module["name"]} ({self.output_descriptors[-1].full_name})')
         else:
-            self.outputs_descriptor = [
+            self.output_descriptors = [
                 # TODO: Remove 'Block' naming convention assumption ?
                 m_class.DESCRIPTOR for m_name, m_class in Config.PROTO_MESSAGES_CLASSES.items()
                 if m_name.rsplit('.', 1)[1].lower() == 'block'
             ]
-            output_types = [desc.full_name for desc in self.outputs_descriptor]
+            output_types = [desc.full_name for desc in self.output_descriptors]
 
         self.ml_output_types = self.add(
             OutputTypesTitleSelectOne,
@@ -459,14 +467,32 @@ class StubConfigOutputsForm(SplitActionForm):
             rely=self.get_half_way() + 1
         )
 
-    def create_output_selection(self, previous_selected: Optional[dict[tuple[int, str], tuple[int, int]]] = None
-    ) -> OutputSelectionTreeData:
+    def create_output_selection(self, previous_selected: Optional[dict[tuple[int, str], tuple[int, int]]] = None) -> OutputSelectionTreeData:
+        """
+        Create the output field selection tree from the selected output type. If `previous_selected` is supplied,
+        the state of the node in the tree (`selected` and `expanded`) will be set according to its description.
+
+        Args:
+            previous_selected: A dictionnary with a node's (depth, content) as key and its state (selected, expanded) as value.
+
+        Returns:
+            The root node of the selection tree.
+        """
         def _make_tree_node(
                 node: OutputSelectionTreeData,
                 descriptor: Descriptor,
                 previous_desc: Optional[Descriptor] = None,
                 previous_selected: Optional[dict[tuple[int, str], tuple[int, int]]] = None
-            ):
+            ) -> None:
+            """
+            Recursively append nodes from the `descriptor` fields to create the selection tree.
+
+            Args:
+                node: The current node in the tree.
+                descriptor: The next descriptor if the field is a `Message` type.
+                previous_desc: Parent descriptor to prevent infinite inclusion of `Message` types.
+                previous_selected: See `create_output_selection()` documentation.
+            """
             for field in descriptor.fields:
                 child = node.new_child(content=field.name)
                 child.expanded = False
@@ -487,7 +513,7 @@ class StubConfigOutputsForm(SplitActionForm):
             annotate_color='STANDOUT'
         )
 
-        _make_tree_node(root_element, self.outputs_descriptor[self.ml_output_types.value[0]], previous_selected=previous_selected)
+        _make_tree_node(root_element, self.output_descriptors[self.ml_output_types.value[0]], previous_selected=previous_selected)
 
         return output_tree
 

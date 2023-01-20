@@ -15,7 +15,6 @@ from datetime import datetime, timedelta
 from types import ModuleType
 from typing import Optional
 
-from google.protobuf.descriptor_database import DescriptorDatabase
 from google.protobuf.descriptor_pool import Default
 from google.protobuf.descriptor_pb2 import FileDescriptorSet #pylint: disable=no-name-in-module
 from google.protobuf.message_factory import GetMessages

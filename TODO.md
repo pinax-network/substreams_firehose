@@ -2,13 +2,11 @@
 
 ## Config tool
 
-- .spkg, list of output modules for substreams
 - Better stub config handling
   + Possibility to create new stub from template
 
 ## Pyfirehose
 
-- Rework block processing for imports
 - Clean-up and fix multi-channel extractor
 - Add more examples to README.md
 - Support for external block processing
