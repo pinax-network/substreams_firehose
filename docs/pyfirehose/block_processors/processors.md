@@ -14,7 +14,7 @@ Processors
 
 ## default_processor
 
-[Show source in processors.py:119](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L119)
+[Show source in processors.py:32](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L32)
 
 Yield the filtered output of a gRPC response.
 
@@ -37,7 +37,7 @@ def default_processor(data: Message) -> dict:
 
 ## default_substream_processor
 
-[Show source in processors.py:131](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L131)
+[Show source in processors.py:44](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L44)
 
 Yield filtered output data from a Substream-enabled gRPC endpoint.
 
@@ -60,7 +60,7 @@ def default_substream_processor(data: Message) -> dict:
 
 ## filtered_block_processor
 
-[Show source in processors.py:144](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L144)
+[Show source in processors.py:57](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_processors/processors.py#L57)
 
 Yield all transactions from a Firehose V1 gRPC filtered block, returning a subset of relevant properties.
 
