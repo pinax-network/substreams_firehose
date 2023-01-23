@@ -2,9 +2,7 @@
 
 > Extract bulk and targeted historical blockchain data (powered by [**Firehose**](https://firehose.streamingfast.io/) and [**Substreams**](https://substreams.streamingfast.io))
 
-[![Pylint](https://github.com/Krow10/pyfirehose/actions/workflows/pylint.yml/badge.svg)](https://github.com/Krow10/pyfirehose/actions/workflows/pylint.yml)
-
-[![Deploy Website](https://github.com/Krow10/pyfirehose/actions/workflows/static.yml/badge.svg)](https://github.com/Krow10/pyfirehose/actions/workflows/static.yml)
+[![Pylint](https://github.com/pinax-network/pyfirehose/actions/workflows/pylint.yml/badge.svg)](https://github.com/pinax-network/pyfirehose/actions/workflows/pylint.yml) [![Deploy Website](https://github.com/pinax-network/pyfirehose/actions/workflows/static.yml/badge.svg)](https://github.com/pinax-network/pyfirehose/actions/workflows/static.yml)
 
 ## Overview
 
@@ -17,14 +15,14 @@ Using a flexible approach, you can review and select which information to extrac
 **Requires Python >= 3.10**
 
 ```console
-foo@bar:~$ git clone git@github.com:pinax-network/pyfirehose.git
-foo@bar:~$ cd pyfirehose
-foo@bar:~/pyfirehose$ vim pyfirehose/sample.config.hjson # Edit sample config file with editor of your choice to add your API keys
-foo@bar:~/pyfirehose$ mv pyfirehose/sample.config.hjson pyfirehose/config.hjson # Rename to config.hjson
-foo@bar:~/pyfirehose$ python3 -m venv .venv # Create virtual environnement
-foo@bar:~/pyfirehose$ source .venv/bin/activate # Activate virtual environnement
-(.venv) foo@bar:~/pyfirehose$ pip install -r requirements.txt # Install dependencies
-(.venv) foo@bar:~/pyfirehose$ python -m pyfirehose -h
+$ git clone git@github.com:pinax-network/pyfirehose.git
+$ cd pyfirehose
+$ vim pyfirehose/sample.config.hjson # Edit sample config file with editor of your choice to add your API keys
+$ mv pyfirehose/sample.config.hjson pyfirehose/config.hjson # Rename to config.hjson
+$ python3 -m venv .venv # Create virtual environnement
+$ source .venv/bin/activate # Activate virtual environnement
+(.venv) $ pip install -r requirements.txt # Install dependencies
+(.venv) $ python -m pyfirehose -h
 usage: __main__.py [-h] [-c CONFIG] [-s STUB] [-o OUT_FILE] [-l [LOG]] [-q] [-g GRPC_ENTRY] [-e {optimized,single,multi}] [-p CUSTOM_PROCESSOR]
                    [--no-json-output] [--overwrite-log] [--request-parameters ...]
                    start end
@@ -71,15 +69,15 @@ Auto-generated documentation can be browsed [here](https://krow10.github.io/pyfi
 
 The settings values are stored in a `config.hjson` file located in the [`pyfirehose/`](pyfirehose/) folder. A sample file is provided as [`sample.config.hjson`](pyfirehose/sample.config.hjson) that you can rename after adding your API keys.
 
-For using [EOSNation](https://eosnation.io) based endpoints, go to https://dfuse.eosnation.io/ and create a free account for registering an API key.
+For using [Pinax](https://pinax.network) based endpoints, go to https://pinax.network/ and create a free account for registering an API key.
 For using [StreamingFast](https://streamingfast.io) based endpoints, go to https://app.streamingfast.io/ and create a free account for registering an API key.
 
 Replace the placeholder values with the optained API keys in the config file:
 ```json
 "auth": {
-  "eosnation": {
+  "pinax": {
     "api_key": "<YOUR_API_KEY>",
-    "endpoint": "https://auth.eosnation.io/v1/auth/issue"
+    "endpoint": "https://auth.pinax.network/v1/auth/issue"
   },
   "streamingfast": {
     "api_key": "<YOUR_API_KEY>",
@@ -119,7 +117,7 @@ If the gRPC endpoint uses different protobuf definitions than the ones already p
 To communicate with the gRPC endpoint, Python objects are generated using `.proto` template files that describes the kind of data the client and server are going to manipulate. Those Python objects are already provided in the [`proto/generated/`](pyfirehose/proto/generated/) folder, however if you want to generate them yourself for adding new `.proto` definitions, use the provided script [`build_proto.sh`](pyfirehose/proto/build_proto.sh):
 
 ```console
-foo@bar:~/pyfirehose$ cd proto/ # Must cd in directory
+$ cd proto/ # Must cd in directory
 foo@bar:~/pyfirehose/proto$ ./build_proto.sh
 ```
 
@@ -131,35 +129,14 @@ foo@bar:~/pyfirehose/proto$ ./build_proto.sh
 
 Below is a list of the gRPC endpoints which have a default ready-to-use [stub config](pyfirehose/config/) and [processor](pyfirehose/block_processors) available for extracting blocks. All data available in the gRPC block response (as defined in their respective [`.proto` files](pyfirehose/proto/)) will be available upon completion.
 
-| Auth provider | Blockchain          | Block protobuf       | gRPC endpoint                             |
-|---------------|---------------------|----------------------|-------------------------------------------|
-| eosnation     | EOS                 | sf.antelope.type.v1  | [eos.firehose.eosnation.io:9001](http://eos.firehose.eosnation.io:9001)      |
-| eosnation     | EOS                 | dfuse.eosio.codec.v1 | [eos.firehose.eosnation.io:9000](http://eos.firehose.eosnation.io:9000)      |
-| eosnation     | WAX                 | dfuse.eosio.codec.v1 | [wax.firehose.eosnation.io:9000](http://wax.firehose.eosnation.io:9000)      |
-| eosnation     | Kylin               | dfuse.eosio.codec.v1 | [kylin.firehose.eosnation.io:9000](http://kylin.firehose.eosnation.io:9000)    |
-| eosnation     | Jungle4             | dfuse.eosio.codec.v1 | [jungle4.firehose.eosnation.io:9000](http://jungle4.firehose.eosnation.io:9000)  |
-
-#### Pending implementation
-
-| Auth provider | Blockchain          | Block protobuf      | gRPC endpoint                              |
-|---------------|---------------------|---------------------|--------------------------------------------|
-| streamingfast | Ethereum Mainnet    | sf.ethereum.type.v2 | [mainnet.eth.streamingfast.io:443](http://mainnet.eth.streamingfast.io:443)     |
-| streamingfast | Görli               | sf.ethereum.type.v2 | [goerli.eth.streamingfast.io:443](http://goerli.eth.streamingfast.io:443)      |
-| streamingfast | Polygon Mainnet     | sf.ethereum.type.v2 | [polygon.streamingfast.io:443](http://polygon.streamingfast.io:443)         |
-| streamingfast | BNB                 | sf.ethereum.type.v2 | [bnb.streamingfast.io:443](http://bnb.streamingfast.io:443)             |
-| streamingfast | Near Mainnet        | sf.near.type.v1     | [mainnet.near.streamingfast.io:443](http://mainnet.near.streamingfast.io:443)    |
-| streamingfast | Near Testnet        | sf.near.type.v1     | [testnet.near.streamingfast.io:443](http://testnet.near.streamingfast.io:443)    |
-| streamingfast | Solana Mainnet-beta | sf.solana.type.v1   | [mainnet.sol.streamingfast.io:443](http://mainnet.sol.streamingfast.io:443)     |
-| streamingfast | Arweave Mainnet     | sf.arweave.type.v1  | [mainnet.arweave.streamingfast.io:443](http://mainnet.arweave.streamingfast.io:443) |
-| streamingfast | Aptos Testnet       | aptos.extractor.v1  | [testnet.aptos.streamingfast.io:443](http://testnet.aptos.streamingfast.io:443)   |
-
 ### Using the config UI tool to edit config files
 
 An early version of a GUI tool for editing configuration files is available to make it easier to manage, add, edit and delete gRPC endpoints and their stub configurations.
 
 Simply run in the console :
+
 ```console
-(.venv) foo@bar:~/pyfirehose$ python -m pyfirehose.config
+(.venv) $ python -m pyfirehose.config
 ```
 
 In the first screen you will be able to see you main config file with all the listed endpoints. Use `Ctrl-X` to bring up a menu allowing edition of stub configuration files (*main config edit still WIP*). Go through the screens customizing which endpoint, service and method you want to use and specify at the end the request input parameters.
@@ -178,6 +155,7 @@ In order to write custom block processing functions, some conditions must be res
 - The **first parameter** of the function should take the raw block extracted from the gRPC stream.
 
 Since the function is getting the raw block, you should unpack it according to the `.proto` file definition the gRPC stream is using. For example, if you use Firehose v2 gRPC on Antelope chain, the block response is defined in the [`type.proto`](pyfirehose/proto/sf/antelope/type/v1/type.proto) file and you would unpack the raw data like the following:
+
 ```python
 from proto.generated.sf.antelope.type.v1 import type_pb2
 
@@ -218,14 +196,6 @@ An example for extracting *transfer* information related to certain accounts is 
 For full documentation about the syntax and variables available in the filter expressions, see the [Firehose documentation](https://github.com/streamingfast/playground-firehose-eosio-go#query-language).
 
 *Note: the Firehose v1 is getting deprecated and will soon be replaced by the [Firehose v2](https://github.com/streamingfast/proto/blob/develop/sf/firehose/v2/firehose.proto) version.*
-
-## Examples
-
-### Config UI tool demo for substreams
-
-[![Config UI demo](demo.svg)](demo.svg)
-
-*Note: a small rendering glitch from [`termtosvg`](https://nbedos.github.io/termtosvg) causes the borders to be replaced with alphabetic characters. Actual borders are rendered with [box drawing](https://en.wikipedia.org/wiki/Box-drawing_character#Box_Drawing) characters.*
 
 ### Input
 
@@ -278,7 +248,7 @@ For full documentation about the syntax and variables available in the filter ex
 #### Command-line
 
 ```console
-(.venv) foo@bar:~/pyfirehose$ python pyfirehose 272368521 272369521 --quiet --log logs/eosio_pay.log --out jsonl/out.jsonl
+(.venv) $ python pyfirehose 272368521 272369521 --quiet --log logs/eosio_pay.log --out jsonl/out.jsonl
 ```
 
 ### Output (jsonl/out.jsonl)
