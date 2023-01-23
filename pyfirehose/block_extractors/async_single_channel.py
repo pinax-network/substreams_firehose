@@ -9,7 +9,7 @@ The 'spawner' task will first max out the number of workers for a *single* chann
 to hold for every execution of the program) and only spawn new workers if the number falls below the established maximum
 (and the block pool isn't already empty).
 
-Diagram: see 'asynchronous_optimized_block_streaming.jpg'
+Diagram: see ['asynchronous_optimized_block_streaming.jpg'](block_extractors_explained/asynchronous_optimized_block_streaming.jpg).
 """
 
 import asyncio

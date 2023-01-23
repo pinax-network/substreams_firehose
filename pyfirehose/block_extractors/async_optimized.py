@@ -9,7 +9,7 @@ It uses asynchronous directives to divide the work into a *fixed* amount of work
 argument. If a task fails, it waits for all the other tasks to finish before restarting the failed task again for
 the missing blocks.
 
-Diagram: see 'asynchronous_optimized_block_streaming.jpg'
+Diagram: see ['asynchronous_optimized_block_streaming.jpg'](block_extractors_explained/asynchronous_optimized_block_streaming.jpg).
 """
 
 import asyncio

@@ -1,6 +1,6 @@
 {
 	// Id for default grpc endpoint taken from the "grpc" array-object
-	"default": "eos_firehose_v2",
+	"default": "antelope_firehose_v2",
 
 	// Maximum block size (in KB) allowed for streaming block in the gRPC channel
 	"max_block_size": 67108864, // 64MB
@@ -30,9 +30,9 @@
 	"grpc": [
 		// See https://docs.dfuse.eosnation.io/eosio/public-apis/reference/network-endpoints/
 		{
-			"id": "eos_firehose_v1",
+			"id": "antelope_firehose_v1",
 			"auth": "eosnation", // One of the entry in the "auth" object
-			"chain": "EOS",
+			"chain": "Antelope",
 			"stub": "pyfirehose/config/dfuse/producerpay.hjson", // Path to default stub reference
 			"url": "eos.firehose.eosnation.io:9000",
 		},
@@ -56,9 +56,9 @@
 		},
 		// Substream-enabled Firehose
 		{
-			"id": "eos_firehose_v2",
+			"id": "antelope_firehose_v2",
 			"auth": "eosnation",
-			"chain": "EOS",
+			"chain": "Antelope",
 			"compression": "gzip", // Must be one of 'gzip' or 'deflate' if specified (no compression by default)
 			"stub": "pyfirehose/config/substreams/default.hjson",
 			"url": "eos.firehose.eosnation.io:9001"

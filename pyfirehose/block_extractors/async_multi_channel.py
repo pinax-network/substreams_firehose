@@ -10,7 +10,7 @@ This concept, while theoretically possible, isn't fully supported right now by t
 by the servers and new channels fails to create any new workers. Prefer to use `async_single_channel` or
 `async_optimized` for block extraction.
 
-Diagram: see 'asynchronous_dream_block_streaming.jpg'
+Diagram: see ['asynchronous_dream_block_streaming.jpg'](block_extractors_explained/asynchronous_dream_block_streaming.jpg)
 """
 
 import asyncio

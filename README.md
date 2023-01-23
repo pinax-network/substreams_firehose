@@ -1,12 +1,20 @@
-# EOSNation - PyFirehose
+# Pinax - PyFirehose
 
-> Extract historical blockchain data and outputs results in JSONL format (powered by [**Firehose**](https://eos.firehose.eosnation.io/) and [**Substreams**](https://substreams.streamingfast.io))
+> Extract bulk and targeted historical blockchain data (powered by [**Firehose**](https://firehose.streamingfast.io/) and [**Substreams**](https://substreams.streamingfast.io))
 
 [![Pylint](https://github.com/Krow10/pyfirehose/actions/workflows/pylint.yml/badge.svg)](https://github.com/Krow10/pyfirehose/actions/workflows/pylint.yml)
 
 [![Deploy Website](https://github.com/Krow10/pyfirehose/actions/workflows/static.yml/badge.svg)](https://github.com/Krow10/pyfirehose/actions/workflows/static.yml)
 
+## Overview
+
+*PyFirehose* is a data extraction tool leveraging the power of [**Firehose**](https://firehose.streamingfast.io/) and [**Substreams**](https://substreams.streamingfast.io) innovative technologies for accessing any blockchain-related data. It acts as an easy-to-use interface to communicate with gRPC endpoints, simplifying the process of extracting data that matters to *you*. 
+
+Using a flexible approach, you can review and select which information to extract in the final output (JSONL is the default but it's entierly up to you how the data looks like at the end). You can then use this data to power other applications (see [`index.ipynb`](index.ipynb) for an example of building a chart of account transfers) or for your own purpose.  
+
 ## Quickstart
+
+**Requires Python >= 3.10**
 
 ```console
 foo@bar:~$ git clone git@github.com:Krow10/pyfirehose.git
@@ -215,7 +223,7 @@ For full documentation about the syntax and variables available in the filter ex
 
 ### Config UI tool demo for substreams
 
-[![asciicast](demo.svg)](https://asciinema.org/a/vJiV1yUQ6vOFZmKFTplh2PxiN?theme=monokai)
+[![Config UI demo](demo.svg)](demo.svg)
 
 *Note: a small rendering glitch from [`termtosvg`](https://nbedos.github.io/termtosvg) causes the borders to be replaced with alphabetic characters. Actual borders are rendered with [box drawing](https://en.wikipedia.org/wiki/Box-drawing_character#Box_Drawing) characters.*
 

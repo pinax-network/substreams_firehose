@@ -1,7 +1,7 @@
 docs_dir: "docs"
-repo_url: "https://github.com/Krow10/eos-blockchain-data"
+repo_url: "https://github.com/Krow10/pyfirehose"
 site_dir: "site/docs/"
-site_name: "Eos-blockchain-data"
+site_name: "PyFirehose docs"
 
 markdown_extensions:
   - pymdownx.highlight:
