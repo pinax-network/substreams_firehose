@@ -4,8 +4,6 @@
 
 [![Pylint](https://github.com/Krow10/pyfirehose/actions/workflows/pylint.yml/badge.svg)](https://github.com/Krow10/pyfirehose/actions/workflows/pylint.yml)
 
-[![Extract Firehose](https://github.com/Krow10/pyfirehose/actions/workflows/firehose_daily_extraction.yml/badge.svg)](https://github.com/Krow10/pyfirehose/actions/workflows/firehose_daily_extraction.yml)
-[![Update Index](https://github.com/Krow10/pyfirehose/actions/workflows/update_index_notebook.yml/badge.svg)](https://github.com/Krow10/pyfirehose/actions/workflows/update_index_notebook.yml)
 [![Deploy Website](https://github.com/Krow10/pyfirehose/actions/workflows/static.yml/badge.svg)](https://github.com/Krow10/pyfirehose/actions/workflows/static.yml)
 
 ## Quickstart
@@ -220,14 +218,6 @@ For full documentation about the syntax and variables available in the filter ex
 [![asciicast](demo.svg)](https://asciinema.org/a/vJiV1yUQ6vOFZmKFTplh2PxiN?theme=monokai)
 
 *Note: a small rendering glitch from [`termtosvg`](https://nbedos.github.io/termtosvg) causes the borders to be replaced with alphabetic characters. Actual borders are rendered with [box drawing](https://en.wikipedia.org/wiki/Box-drawing_character#Box_Drawing) characters.*
-
-### Github Actions workflow
-
-This repo uses Github actions to automatically fetch transactions related to EOS block producer's (BP) addresses payments, parse them and generate a [Sankey chart](https://en.wikipedia.org/wiki/Sankey_diagram) for visualizing the flow of funds. Below is a flow diagram showing what the actual pipeline looks like:
-
-![Github actions workflow pipeline](github_actions_workflow.png)
-
-You can see the rendered chart [here](https://krow10.github.io/pyfirehose/static/) at the bottom of the page.
 
 ### Input
 
