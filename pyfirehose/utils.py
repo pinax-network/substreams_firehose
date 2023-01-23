@@ -13,11 +13,11 @@ import os
 from collections.abc import Mapping, Sequence
 from contextlib import nullcontext
 from datetime import datetime, timedelta
-from types import ModuleType
+from types import MethodType, ModuleType
 
 from google.protobuf.descriptor_pool import Default
 from google.protobuf.descriptor_pb2 import FileDescriptorSet #pylint: disable=no-name-in-module
-from google.protobuf.message_factory import GetMessages
+from google.protobuf.message_factory import _FACTORY, GetMessages
 from requests_cache import CachedSession
 
 from pyfirehose.config.parser import Config
@@ -308,3 +308,54 @@ def import_all_from_module(module_name: str) -> list[ModuleType]:
             imported.append(importlib.import_module(f'{module_name}.{file.rsplit(".", 1)[0]}'))
 
     return imported
+
+def patch_get_messages(self, files):
+    """Gets all the messages from a specified file.
+
+    This will find and resolve dependencies, failing if the descriptor
+    pool cannot satisfy them.
+
+    Args:
+    files: The file names to extract messages from.
+
+    Returns:
+    A dictionary mapping proto names to the message classes. This will include
+    any dependent messages as well as any messages defined in the same file as
+    a specified message.
+    """
+    result = {}
+    for file_name in files:
+        file_desc = self.pool.FindFileByName(file_name)
+        for desc in file_desc.message_types_by_name.values():
+            result[desc.full_name] = self.GetPrototype(desc)
+
+    # While the extension FieldDescriptors are created by the descriptor pool,
+    # the python classes created in the factory need them to be registered
+    # explicitly, which is done below.
+    #
+    # The call to RegisterExtension will specifically check if the
+    # extension was already registered on the object and either
+    # ignore the registration if the original was the same, or raise
+    # an error if they were different.
+
+    for extension in file_desc.extensions_by_name.values():
+        if extension.containing_type not in self._classes: #pylint: disable=protected-access
+            self.GetPrototype(extension.containing_type)
+        extended_class = self._classes[extension.containing_type] #pylint: disable=protected-access
+
+        # === Patch starts here ===
+
+        # Catch the exception from `RegisterExtension` to prevent `NotImplementedError` breaking the *whole* loop.
+        try:
+            extended_class.RegisterExtension(extension)
+        except NotImplementedError:
+            pass
+
+        # === Patch ends here ===
+
+        if extension.message_type:
+            self.GetPrototype(extension.message_type)
+    return result
+
+# Monkey-patching the `GetMessages` function to prevent `NotImplementedError` exceptions
+_FACTORY.GetMessages = MethodType(patch_get_messages, _FACTORY)
