@@ -6,13 +6,13 @@ Provides block processors to parse information from the extracted blocks of a gR
 
 import json
 import logging
-from collections.abc import Mapping, Sequence
 from datetime import datetime
 
 from google.protobuf.json_format import MessageToJson
 from google.protobuf.message import Message
 
 from pyfirehose.config.parser import StubConfig
+from pyfirehose.utils import filter_keys
 
 def _filter_data(data: Message, _filter: dict) -> dict:
     """
@@ -25,96 +25,9 @@ def _filter_data(data: Message, _filter: dict) -> dict:
     Returns:
         A dictionary representing the filtered output data as JSON.
     """
-    def __filter_keys(input_: dict, keys_filter: dict) -> dict:
-        """
-        Recursively filters the `input_` dictionary based on the keys present in `keys_filter`.
-
-        Args:
-            input_: The input nested dictionary to filter.
-            keys_filter: The nested dictionary filter matching subset of keys present in the `input_`.
-
-        Returns:
-            The filtered `input_` as a new dict.
-
-        Examples:
-        #### Input
-        ```json
-        {
-            'a': 'value',
-            'b': {
-                'b1': 'important stuff',
-                'b2': {
-                    'x': 'stop nesting stuff',
-                    'y': 'keep me !'
-                }
-            },
-            'c': {
-                'c1': [1, 2, 3],
-                'c2': 'Hello'
-            },
-            'd': [
-                {'d1': 1},
-                {'d1': 2, 'd2': 3}
-            ]
-        }
-        ```
-        #### Filter
-        ```json
-        {
-            'a': True,
-            'b': {
-                'b1': True,
-                'b2': {
-                    'y': True
-                }
-            },
-            'c': {
-                'c1': True
-            },
-            'd': {
-                'd1': True,
-            }
-        }
-        ```
-        #### Output
-        ```json
-        {
-            'a': 'value',
-            'b': {
-                'b1': 'important stuff',
-                'b2': {
-                    'y': 'keep me !'
-                }
-            },
-            'c': {
-                'c1': [1, 2, 3],
-            },
-            'd': [
-                {'d1': 1},
-                {'d1': 2}
-            ]
-        }
-        ```
-        """
-        output = {}
-        for key, value in input_.items():
-            if keys_filter == "True":
-                output[key] = value
-            elif key in keys_filter:
-                if isinstance(value, Sequence):
-                    if value and isinstance(value[0], dict):
-                        output[key] = [__filter_keys(element, keys_filter[key]) for element in value]
-                    else:
-                        output[key] = value
-                elif isinstance(value, Mapping):
-                    output[key] = __filter_keys(value, keys_filter[key])
-                else:
-                    output[key] = value
-
-        return output
 
     json_data = json.loads(MessageToJson(data, preserving_proto_field_name=True))
-    return __filter_keys(json_data, _filter) if _filter else json_data
+    return filter_keys(json_data, _filter) if _filter else json_data
 
 def default_processor(data: Message) -> dict:
     """

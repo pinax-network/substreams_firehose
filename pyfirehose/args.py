@@ -11,13 +11,13 @@ from pyfirehose.utils import date_to_block_num
 
 def check_period(arg_period: str) -> int:
     """
-    Convert the specified period argument, from a integer or a date, to a block number.
+    Convert the specified period argument, from an integer or a date, to a block number.
 
     Args:
         arg_period: A period argument from the ArgumentParser.
 
     Returns:
-        A integer representing the corresponding block number.
+        An integer representing the corresponding block number.
 
     Raises:
         ArgumentTypeError: If the period cannot be parsed.

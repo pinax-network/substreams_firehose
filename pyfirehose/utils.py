@@ -10,6 +10,7 @@ import importlib
 import json
 import logging
 import os
+from collections.abc import Mapping, Sequence
 from contextlib import nullcontext
 from datetime import datetime, timedelta
 from types import ModuleType
@@ -77,6 +78,93 @@ def date_to_block_num(date: datetime, jwt: str | None = None) -> int:
     logging.warning('Could not fetch block number data: [%s] %s', response.status_code, response.json())
     return 0
 
+def filter_keys(input_: dict, keys_filter: dict) -> dict:
+    """
+    Recursively filters the `input_` dictionary based on the keys present in `keys_filter`.
+
+    Args:
+        input_: The input nested dictionary to filter.
+        keys_filter: The nested dictionary filter matching subset of keys present in the `input_`.
+
+    Returns:
+        The filtered `input_` as a new dict.
+
+    Examples:
+    #### Input
+    ```json
+    {
+        'a': 'value',
+        'b': {
+            'b1': 'important stuff',
+            'b2': {
+                'x': 'stop nesting stuff',
+                'y': 'keep me !'
+            }
+        },
+        'c': {
+            'c1': [1, 2, 3],
+            'c2': 'Hello'
+        },
+        'd': [
+            {'d1': 1},
+            {'d1': 2, 'd2': 3}
+        ]
+    }
+    ```
+    #### Filter
+    ```json
+    {
+        'a': True,
+        'b': {
+            'b1': True,
+            'b2': {
+                'y': True
+            }
+        },
+        'c': True,
+        'd': {
+            'd1': True,
+        }
+    }
+    ```
+    #### Output
+    ```json
+    {
+        'a': 'value',
+        'b': {
+            'b1': 'important stuff',
+            'b2': {
+                'y': 'keep me !'
+            }
+        },
+        'c': {
+            'c1': [1, 2, 3],
+            'c2': 'Hello'
+        },
+        'd': [
+            {'d1': 1},
+            {'d1': 2}
+        ]
+    }
+    ```
+    """
+    output = {}
+    for key, value in input_.items():
+        if keys_filter == "True":
+            output[key] = value
+        elif key in keys_filter:
+            if isinstance(value, Sequence):
+                if value and isinstance(value[0], dict):
+                    output[key] = [filter_keys(element, keys_filter[key]) for element in value]
+                else:
+                    output[key] = value
+            elif isinstance(value, Mapping):
+                output[key] = filter_keys(value, keys_filter[key])
+            else:
+                output[key] = value
+
+    return output
+
 def generate_proto_messages_classes(path: str = 'pyfirehose/proto/generated/protos.desc'):
     """
     Generate a mapping of services and messages full name to their class object and populates the default descriptor pool
@@ -91,7 +179,7 @@ def generate_proto_messages_classes(path: str = 'pyfirehose/proto/generated/prot
         A dictionary with pairs of message full name and the Python class object associated with it.
 
     Example:
-    ```json
+    ```python
     {
         'dfuse.bstream.v1.BlockStream': <class 'pyfirehose.proto.generated.dfuse.bstream.v1.bstream_pb2_grpc.BlockStreamStub'>,
         'dfuse.bstream.v1.BlockStreamV2': <class 'pyfirehose.proto.generated.dfuse.bstream.v1.bstream_pb2_grpc.BlockStreamV2Stub'>,

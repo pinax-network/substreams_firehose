@@ -37,10 +37,10 @@
 			"url": "eos.firehose.eosnation.io:9000",
 		},
 		{
-			"id": "wax_firehose_v2",
+			"id": "wax_firehose_v1",
 			"auth": "eosnation",
 			"chain": "WAX",
-			"url": "waxtest.firehose.eosnation.io:9001"
+			"url": "wax.firehose.eosnation.io:9000"
 		},
 		{
 			"id": "kylin_firehose_v1",
@@ -62,6 +62,12 @@
 			"compression": "gzip", // Must be one of 'gzip' or 'deflate' if specified (no compression by default)
 			"stub": "pyfirehose/config/substreams/default.hjson",
 			"url": "eos.firehose.eosnation.io:9001"
+		},
+		{
+			"id": "wax_firehose_v2",
+			"auth": "eosnation",
+			"chain": "WAX",
+			"url": "waxtest.firehose.eosnation.io:9001"
 		},
 		// See https://substreams.streamingfast.io/reference-and-specs/chains-and-endpoints
 		{
