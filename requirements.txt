@@ -5,5 +5,6 @@ npyscreen==4.10.5
 protobuf==4.21.12
 protoletariat==2.0.0
 pygments==2.14.0
+pylint==2.15.10
 python-dotenv==0.21.0
 requests_cache==0.9.7
