@@ -5,7 +5,7 @@
 [Config](../index.md#config) /
 Ui
 
-> Auto-generated documentation for [pyfirehose.config.ui](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/__init__.py) module.
+> Auto-generated documentation for [pyfirehose.config.ui](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/__init__.py) module.
 
 - [Ui](#ui)
   - [Modules](#modules)

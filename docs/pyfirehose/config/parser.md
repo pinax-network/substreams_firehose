@@ -5,7 +5,7 @@
 [Config](./index.md#config) /
 Parser
 
-> Auto-generated documentation for [pyfirehose.config.parser](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/parser.py) module.
+> Auto-generated documentation for [pyfirehose.config.parser](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/parser.py) module.
 
 - [Parser](#parser)
   - [Config](#config)
@@ -16,7 +16,7 @@ Parser
 
 ## Config
 
-[Show source in parser.py:34](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/parser.py#L34)
+[Show source in parser.py:34](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/parser.py#L34)
 
 Holds the main config.
 
@@ -31,7 +31,7 @@ class Config:
 
 ## StubConfig
 
-[Show source in parser.py:22](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/parser.py#L22)
+[Show source in parser.py:22](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/parser.py#L22)
 
 Holds the stub config.
 
@@ -46,7 +46,7 @@ class StubConfig:
 
 ## load_config
 
-[Show source in parser.py:49](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/parser.py#L49)
+[Show source in parser.py:49](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/parser.py#L49)
 
 Load the main config from the specified file. If a gRPC entry id is specified, it overwrites the default specified
 in the config.
@@ -78,7 +78,7 @@ def load_config(file: str, grpc_entry_id: str | None = None) -> bool:
 
 ## load_stub_config
 
-[Show source in parser.py:137](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/parser.py#L137)
+[Show source in parser.py:137](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/parser.py#L137)
 
 Load the stub config from a file (str) or directly from a key-value dictionary.
 
@@ -103,7 +103,7 @@ def load_stub_config(stub: str | dict) -> None:
 
 ## load_substreams_modules_from_package
 
-[Show source in parser.py:121](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/parser.py#L121)
+[Show source in parser.py:121](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/parser.py#L121)
 
 Parses substreams modules from an `.spkg` file.
 

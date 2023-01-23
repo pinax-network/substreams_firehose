@@ -7,7 +7,7 @@
 [Widgets](./index.md#widgets) /
 Inputs
 
-> Auto-generated documentation for [pyfirehose.config.ui.widgets.inputs](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py) module.
+> Auto-generated documentation for [pyfirehose.config.ui.widgets.inputs](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py) module.
 
 - [Inputs](#inputs)
   - [InputBool](#inputbool)
@@ -28,7 +28,7 @@ Inputs
 
 ## InputBool
 
-[Show source in inputs.py:99](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L99)
+[Show source in inputs.py:99](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L99)
 
 Custom option boolean input to convert string values to bool.
 
@@ -41,7 +41,7 @@ class InputBool(OptionBoolean):
 
 ### InputBool().when_set
 
-[Show source in inputs.py:103](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L103)
+[Show source in inputs.py:103](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L103)
 
 #### Signature
 
@@ -54,7 +54,7 @@ def when_set(self):
 
 ## InputEnum
 
-[Show source in inputs.py:107](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L107)
+[Show source in inputs.py:107](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L107)
 
 Custom option single choice input to allow selecting enum values (or none).
 
@@ -69,7 +69,7 @@ class InputEnum(OptionSingleChoice):
 
 ## InputFloat
 
-[Show source in inputs.py:82](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L82)
+[Show source in inputs.py:82](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L82)
 
 Custom option input to only allow floating point input.
 
@@ -86,7 +86,7 @@ class InputFloat(InputValidator, OptionFreeText):
 
 ### InputFloat().set
 
-[Show source in inputs.py:86](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L86)
+[Show source in inputs.py:86](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L86)
 
 #### Signature
 
@@ -99,7 +99,7 @@ def set(self, value):
 
 ## InputInteger
 
-[Show source in inputs.py:66](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L66)
+[Show source in inputs.py:66](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L66)
 
 Custom option input to only allow integer input.
 
@@ -116,7 +116,7 @@ class InputInteger(InputValidator, OptionFreeText):
 
 ### InputInteger().set
 
-[Show source in inputs.py:70](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L70)
+[Show source in inputs.py:70](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L70)
 
 #### Signature
 
@@ -129,7 +129,7 @@ def set(self, value):
 
 ## InputMessage
 
-[Show source in inputs.py:121](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L121)
+[Show source in inputs.py:121](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L121)
 
 Custom option input for complex `Message` object input.
 
@@ -147,7 +147,7 @@ class InputMessage(OptionFreeText):
 
 ## InputRepeated
 
-[Show source in inputs.py:129](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L129)
+[Show source in inputs.py:129](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L129)
 
 Custom option input for repeated input fields with type validation.
 
@@ -167,7 +167,7 @@ class InputRepeated(InputValidator, OptionMultiFreeList):
 
 ### InputRepeated().set
 
-[Show source in inputs.py:142](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L142)
+[Show source in inputs.py:142](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L142)
 
 #### Signature
 
@@ -180,7 +180,7 @@ def set(self, values):
 
 ## InputString
 
-[Show source in inputs.py:113](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L113)
+[Show source in inputs.py:113](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L113)
 
 Custom option input for string input.
 
@@ -198,7 +198,7 @@ class InputString(OptionFreeText):
 
 ## InputValidator
 
-[Show source in inputs.py:29](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L29)
+[Show source in inputs.py:29](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L29)
 
 Generic class for validating an option input with the return value of the `set` method.
 
@@ -214,7 +214,7 @@ class InputValidator(Option):
 
 ### InputValidator().set_from_widget_value
 
-[Show source in inputs.py:40](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L40)
+[Show source in inputs.py:40](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L40)
 
 Method override allowing to quit or continue the option editing depending on the return value.
 
@@ -231,7 +231,7 @@ def set_from_widget_value(self, vl):
 
 ## InputsListDisplay
 
-[Show source in inputs.py:18](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L18)
+[Show source in inputs.py:18](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L18)
 
 Custom option list display for increased option title width.
 
@@ -250,7 +250,7 @@ class InputsListDisplay(OptionListDisplay):
 
 ## on_ok_input_validation_hook
 
-[Show source in inputs.py:57](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L57)
+[Show source in inputs.py:57](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/inputs.py#L57)
 
 Hook to replace the `on_ok` event handler for validating an option input.
 

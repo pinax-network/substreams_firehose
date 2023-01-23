@@ -4,7 +4,7 @@
 [Pyfirehose](../index.md#pyfirehose) /
 Block Extractors
 
-> Auto-generated documentation for [pyfirehose.block_extractors](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_extractors/__init__.py) module.
+> Auto-generated documentation for [pyfirehose.block_extractors](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/block_extractors/__init__.py) module.
 
 - [Block Extractors](#block-extractors)
   - [Modules](#modules)

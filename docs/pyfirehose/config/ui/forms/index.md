@@ -6,7 +6,7 @@
 [Ui](../index.md#ui) /
 Forms
 
-> Auto-generated documentation for [pyfirehose.config.ui.forms](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/__init__.py) module.
+> Auto-generated documentation for [pyfirehose.config.ui.forms](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/__init__.py) module.
 
 - [Forms](#forms)
   - [Modules](#modules)

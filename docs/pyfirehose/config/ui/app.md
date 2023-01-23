@@ -6,7 +6,7 @@
 [Ui](./index.md#ui) /
 App
 
-> Auto-generated documentation for [pyfirehose.config.ui.app](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/app.py) module.
+> Auto-generated documentation for [pyfirehose.config.ui.app](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/app.py) module.
 
 - [App](#app)
   - [ConfigApp](#configapp)
@@ -14,7 +14,7 @@ App
 
 ## ConfigApp
 
-[Show source in app.py:17](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/app.py#L17)
+[Show source in app.py:17](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/app.py#L17)
 
 Main app containing the forms for the config GUI.
 
@@ -34,7 +34,7 @@ class ConfigApp(NPSAppManaged):
 
 ### ConfigApp().onStart
 
-[Show source in app.py:48](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/app.py#L48)
+[Show source in app.py:48](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/app.py#L48)
 
 #### Signature
 

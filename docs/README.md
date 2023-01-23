@@ -2,7 +2,7 @@
 
 > Auto-generated documentation index.
 
-A full list of [Pyfirehose](https://github.com/Krow10/pyfirehose) project modules.
+A full list of [Pyfirehose](https://github.com/pinax-network/pyfirehose) project modules.
 
 - [Pyfirehose](pyfirehose/index.md#pyfirehose)
     - [Module](pyfirehose/module.md#module)

@@ -7,7 +7,7 @@
 [Forms](./index.md#forms) /
 Generic
 
-> Auto-generated documentation for [pyfirehose.config.ui.forms.generic](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/generic.py) module.
+> Auto-generated documentation for [pyfirehose.config.ui.forms.generic](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/generic.py) module.
 
 - [Generic](#generic)
   - [ActionFormDiscard](#actionformdiscard)
@@ -19,7 +19,7 @@ Generic
 
 ## ActionFormDiscard
 
-[Show source in generic.py:9](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/generic.py#L9)
+[Show source in generic.py:9](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/generic.py#L9)
 
 Generic class for an action form with an additional *Discard* button.
 
@@ -34,7 +34,7 @@ class ActionFormDiscard(ActionFormV2, MiniButtonPress):
 
 ### ActionFormDiscard().create_control_buttons
 
-[Show source in generic.py:35](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/generic.py#L35)
+[Show source in generic.py:35](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/generic.py#L35)
 
 #### Signature
 
@@ -45,7 +45,7 @@ def create_control_buttons(self):
 
 ### ActionFormDiscard().on_discard
 
-[Show source in generic.py:60](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/generic.py#L60)
+[Show source in generic.py:60](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/generic.py#L60)
 
 *Discard* button hook to overload for customizing the behavior of the button.
 
@@ -58,7 +58,7 @@ def on_discard(self):
 
 ### ActionFormDiscard().whenPressed
 
-[Show source in generic.py:19](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/generic.py#L19)
+[Show source in generic.py:19](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/generic.py#L19)
 
 #### Signature
 
@@ -71,7 +71,7 @@ def whenPressed(self):
 
 ## SplitActionForm
 
-[Show source in generic.py:66](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/generic.py#L66)
+[Show source in generic.py:66](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/generic.py#L66)
 
 Combine `ActionFormV2` buttons with `SplitForm` horizontal line display.
 
@@ -84,7 +84,7 @@ class SplitActionForm(ActionFormV2, SplitForm):
 
 ### SplitActionForm().get_half_way
 
-[Show source in generic.py:70](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/forms/generic.py#L70)
+[Show source in generic.py:70](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/generic.py#L70)
 
 #### Signature
 

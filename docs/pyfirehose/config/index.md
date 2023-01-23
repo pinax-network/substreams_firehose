@@ -4,7 +4,7 @@
 [Pyfirehose](../index.md#pyfirehose) /
 Config
 
-> Auto-generated documentation for [pyfirehose.config](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/__init__.py) module.
+> Auto-generated documentation for [pyfirehose.config](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/__init__.py) module.
 
 - [Config](#config)
   - [Modules](#modules)

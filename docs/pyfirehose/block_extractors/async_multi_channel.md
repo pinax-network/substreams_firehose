@@ -5,14 +5,14 @@
 [Block Extractors](./index.md#block-extractors) /
 Async Multi Channel
 
-> Auto-generated documentation for [pyfirehose.block_extractors.async_multi_channel](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_extractors/async_multi_channel.py) module.
+> Auto-generated documentation for [pyfirehose.block_extractors.async_multi_channel](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/block_extractors/async_multi_channel.py) module.
 
 - [Async Multi Channel](#async-multi-channel)
   - [asyncio_main](#asyncio_main)
 
 ## asyncio_main
 
-[Show source in async_multi_channel.py:32](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_extractors/async_multi_channel.py#L32)
+[Show source in async_multi_channel.py:32](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/block_extractors/async_multi_channel.py#L32)
 
 Extract blocks from a gRPC channel as raw blocks for later processing.
 

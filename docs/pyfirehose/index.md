@@ -3,7 +3,7 @@
 [Pyfirehose Index](../README.md#pyfirehose-index) /
 Pyfirehose
 
-> Auto-generated documentation for [pyfirehose](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/__init__.py) module.
+> Auto-generated documentation for [pyfirehose](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/__init__.py) module.
 
 - [Pyfirehose](#pyfirehose)
   - [Modules](#modules)

@@ -5,14 +5,14 @@
 [Block Extractors](./index.md#block-extractors) /
 Async Optimized
 
-> Auto-generated documentation for [pyfirehose.block_extractors.async_optimized](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_extractors/async_optimized.py) module.
+> Auto-generated documentation for [pyfirehose.block_extractors.async_optimized](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/block_extractors/async_optimized.py) module.
 
 - [Async Optimized](#async-optimized)
   - [asyncio_main](#asyncio_main)
 
 ## asyncio_main
 
-[Show source in async_optimized.py:25](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_extractors/async_optimized.py#L25)
+[Show source in async_optimized.py:25](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/block_extractors/async_optimized.py#L25)
 
 Extract blocks from a gRPC channel as raw blocks for later processing.
 

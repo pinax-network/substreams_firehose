@@ -4,7 +4,7 @@
 [Pyfirehose](./index.md#pyfirehose) /
 Utils
 
-> Auto-generated documentation for [pyfirehose.utils](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py) module.
+> Auto-generated documentation for [pyfirehose.utils](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/utils.py) module.
 
 - [Utils](#utils)
   - [date_to_block_num](#date_to_block_num)
@@ -16,7 +16,7 @@ Utils
 
 ## date_to_block_num
 
-[Show source in utils.py:25](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L25)
+[Show source in utils.py:25](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/utils.py#L25)
 
 Query the `graphql_endpoint` specified in the main config file for the block number associated with a given date time.
 
@@ -42,7 +42,7 @@ def date_to_block_num(date: datetime, jwt: str | None = None) -> int:
 
 ## filter_keys
 
-[Show source in utils.py:81](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L81)
+[Show source in utils.py:81](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/utils.py#L81)
 
 Recursively filters the `input_` dictionary based on the keys present in `keys_filter`.
 
@@ -131,7 +131,7 @@ def filter_keys(input_: dict, keys_filter: dict) -> dict:
 
 ## generate_proto_messages_classes
 
-[Show source in utils.py:168](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L168)
+[Show source in utils.py:168](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/utils.py#L168)
 
 Generate a mapping of services and messages full name to their class object and populates the default descriptor pool
 with the loaded `.proto` definitions.
@@ -173,7 +173,7 @@ def generate_proto_messages_classes(
 
 ## get_auth_token
 
-[Show source in utils.py:247](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L247)
+[Show source in utils.py:247](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/utils.py#L247)
 
 Fetch a JWT authorization token from the authentication endpoints defined in the main config file.
 
@@ -198,7 +198,7 @@ def get_auth_token(use_cache: bool = True) -> str:
 
 ## get_current_task_name
 
-[Show source in utils.py:283](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L283)
+[Show source in utils.py:283](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/utils.py#L283)
 
 Helper function for generating a unique task id from an asyncio task.
 
@@ -213,7 +213,7 @@ def get_current_task_name() -> str:
 
 ## import_all_from_module
 
-[Show source in utils.py:292](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/utils.py#L292)
+[Show source in utils.py:292](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/utils.py#L292)
 
 Dynamically import all python files located in the specified module's folder.
 

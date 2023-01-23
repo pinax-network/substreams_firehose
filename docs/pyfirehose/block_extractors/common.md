@@ -5,7 +5,7 @@
 [Block Extractors](./index.md#block-extractors) /
 Common
 
-> Auto-generated documentation for [pyfirehose.block_extractors.common](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_extractors/common.py) module.
+> Auto-generated documentation for [pyfirehose.block_extractors.common](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/block_extractors/common.py) module.
 
 - [Common](#common)
   - [get_secure_channel](#get_secure_channel)
@@ -14,7 +14,7 @@ Common
 
 ## get_secure_channel
 
-[Show source in common.py:20](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_extractors/common.py#L20)
+[Show source in common.py:20](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/block_extractors/common.py#L20)
 
 Instantiate a secure gRPC channel as an asynchronous context manager for use by block extractors.
 
@@ -34,7 +34,7 @@ async def get_secure_channel() -> Generator[grpc.aio.Channel, None, None]:
 
 ## process_blocks
 
-[Show source in common.py:45](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_extractors/common.py#L45)
+[Show source in common.py:45](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/block_extractors/common.py#L45)
 
 Parse data using the given block processor, feeding it previously extracted raw blocks from a gRPC stream.
 
@@ -60,7 +60,7 @@ def process_blocks(
 
 ## stream_blocks
 
-[Show source in common.py:65](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/block_extractors/common.py#L65)
+[Show source in common.py:65](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/block_extractors/common.py#L65)
 
 Return raw blocks (or parsed data) for the subset period between `start` and `end`.
 

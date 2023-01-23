@@ -7,7 +7,7 @@
 [Widgets](./index.md#widgets) /
 Custom
 
-> Auto-generated documentation for [pyfirehose.config.ui.widgets.custom](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py) module.
+> Auto-generated documentation for [pyfirehose.config.ui.widgets.custom](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py) module.
 
 - [Custom](#custom)
   - [CodeHighlightedPager](#codehighlightedpager)
@@ -31,7 +31,7 @@ Custom
 
 ## CodeHighlightedPager
 
-[Show source in custom.py:57](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L57)
+[Show source in custom.py:57](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L57)
 
 Syntax highlight enabled [`Pager`](https://npyscreen.readthedocs.io/widgets-text.html#widgets-displaying-text)
 using [CodeHighlightedTextfield](#codehighlightedtextfield) as line display.
@@ -51,7 +51,7 @@ class CodeHighlightedPager(Pager):
 
 ## CodeHighlightedTextfield
 
-[Show source in custom.py:30](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L30)
+[Show source in custom.py:30](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L30)
 
 Syntax highlight enabled [`Textfield`](https://npyscreen.readthedocs.io/widgets-text.html#widgets-displaying-text)
 for displaying JSON config files.
@@ -71,7 +71,7 @@ class CodeHighlightedTextfield(Textfield):
 
 ### CodeHighlightedTextfield().update_highlighting
 
-[Show source in custom.py:43](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L43)
+[Show source in custom.py:43](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L43)
 
 Called on every call to the internal `_print` function.
 
@@ -90,7 +90,7 @@ def update_highlighting(self, start=None, end=None, clear=False):
 
 ## CodeHighlightedTitlePager
 
-[Show source in custom.py:82](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L82)
+[Show source in custom.py:82](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L82)
 
 Titled version of the [CodeHighlightedPager](#codehighlightedpager) widget.
 
@@ -108,7 +108,7 @@ class CodeHighlightedTitlePager(TitlePager):
 
 ## EndpointsSelectOne
 
-[Show source in custom.py:91](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L91)
+[Show source in custom.py:91](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L91)
 
 Custom single selection widget to display the main config's endpoint data.
 
@@ -124,7 +124,7 @@ class EndpointsSelectOne(SelectOne):
 
 ### EndpointsSelectOne().display_value
 
-[Show source in custom.py:98](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L98)
+[Show source in custom.py:98](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L98)
 
 #### Signature
 
@@ -137,7 +137,7 @@ def display_value(self, vl: dict):
 
 ## EndpointsTitleSelectOne
 
-[Show source in custom.py:104](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L104)
+[Show source in custom.py:104](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L104)
 
 Title version of the [EndpointsSelectOne](#endpointsselectone) widget.
 
@@ -155,7 +155,7 @@ class EndpointsTitleSelectOne(TitleSelectOne):
 
 ## EnumSelectOneOrNone
 
-[Show source in custom.py:113](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L113)
+[Show source in custom.py:113](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L113)
 
 Custom single selection widget to allow selecting one or none of the available values.
 
@@ -170,7 +170,7 @@ class EnumSelectOneOrNone(SelectOne):
 
 ### EnumSelectOneOrNone().h_select
 
-[Show source in custom.py:119](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L119)
+[Show source in custom.py:119](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L119)
 
 #### Signature
 
@@ -183,7 +183,7 @@ def h_select(self, ch):
 
 ## EnumTitleSelectOneOrNone
 
-[Show source in custom.py:125](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L125)
+[Show source in custom.py:125](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L125)
 
 Title version of the [EnumSelectOneOrNone](#enumselectoneornone) widget.
 
@@ -201,7 +201,7 @@ class EnumTitleSelectOneOrNone(TitleSelectOne):
 
 ## OutputSelectionMLTreeMultiSelectAnnotated
 
-[Show source in custom.py:154](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L154)
+[Show source in custom.py:154](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L154)
 
 Custom multi-selection tree widget using [OutputSelectionTreeLineSelectableAnnotated](#outputselectiontreelineselectableannotated) as line display.
 
@@ -216,7 +216,7 @@ class OutputSelectionMLTreeMultiSelectAnnotated(MLTreeMultiSelectAnnotated):
 
 ## OutputSelectionTreeData
 
-[Show source in custom.py:134](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L134)
+[Show source in custom.py:134](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L134)
 
 A `TreeData` node representing an output field from a `Message` output type.
 
@@ -239,7 +239,7 @@ class OutputSelectionTreeData(TreeData):
 
 ## OutputSelectionTreeLineSelectableAnnotated
 
-[Show source in custom.py:147](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L147)
+[Show source in custom.py:147](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L147)
 
 Custom tree line selectable widget implementing the annotation behavior.
 
@@ -252,7 +252,7 @@ class OutputSelectionTreeLineSelectableAnnotated(TreeLineSelectableAnnotated):
 
 ### OutputSelectionTreeLineSelectableAnnotated().getAnnotationAndColor
 
-[Show source in custom.py:151](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L151)
+[Show source in custom.py:151](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L151)
 
 #### Signature
 
@@ -265,7 +265,7 @@ def getAnnotationAndColor(self):
 
 ## OutputTypesSelectOne
 
-[Show source in custom.py:160](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L160)
+[Show source in custom.py:160](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L160)
 
 Custom single selection widget to display gRPC output types and link them to the output field selection widget.
 
@@ -282,7 +282,7 @@ class OutputTypesSelectOne(SelectOne, MultiLineAction):
 
 ### OutputTypesSelectOne().actionHighlighted
 
-[Show source in custom.py:171](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L171)
+[Show source in custom.py:171](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L171)
 
 #### Signature
 
@@ -295,7 +295,7 @@ def actionHighlighted(self, act_on_this, key_press):
 
 ## OutputTypesTitleSelectOne
 
-[Show source in custom.py:188](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L188)
+[Show source in custom.py:188](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L188)
 
 Title version of the [OutputTypesSelectOne](#outputtypesselectone) widget.
 
@@ -313,7 +313,7 @@ class OutputTypesTitleSelectOne(TitleSelectOne):
 
 ## colorize
 
-[Show source in custom.py:197](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L197)
+[Show source in custom.py:197](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/widgets/custom.py#L197)
 
 Convert a string containg ANSI escape codes to `curses` control characters for color display.
 
