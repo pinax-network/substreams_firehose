@@ -562,6 +562,40 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#patch_get_messages" class="md-nav__link">
+    patch_get_messages
+  </a>
+  
+    <nav class="md-nav" aria-label="patch_get_messages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arguments_5" class="md-nav__link">
+    Arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_5" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature_6" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1353,6 +1387,40 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#patch_get_messages" class="md-nav__link">
+    patch_get_messages
+  </a>
+  
+    <nav class="md-nav" aria-label="patch_get_messages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arguments_5" class="md-nav__link">
+    Arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_5" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signature_6" class="md-nav__link">
+    Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1388,6 +1456,7 @@ Utils</p>
 <li><a href="#get_auth_token">get_auth_token</a></li>
 <li><a href="#get_current_task_name">get_current_task_name</a></li>
 <li><a href="#import_all_from_module">import_all_from_module</a></li>
+<li><a href="#patch_get_messages">patch_get_messages</a></li>
 </ul>
 <h2 id="date_to_block_num">date_to_block_num</h2>
 <p><a href="https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/utils.py#L25">Show source in utils.py:25</a></p>
@@ -1534,6 +1603,23 @@ with the loaded <code>.proto</code> definitions.</p>
 <h4 id="signature_5">Signature</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">def</span> <span class="nf">import_all_from_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ModuleType</span><span class="p">]:</span>
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="o">...</span>
+</code></pre></div>
+<h2 id="patch_get_messages">patch_get_messages</h2>
+<p><a href="https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/utils.py#L312">Show source in utils.py:312</a></p>
+<p>Gets all the messages from a specified file.</p>
+<p>This will find and resolve dependencies, failing if the descriptor
+pool cannot satisfy them.</p>
+<h4 id="arguments_5">Arguments</h4>
+<ul>
+<li><code>files</code> - The file names to extract messages from.</li>
+</ul>
+<h4 id="returns_5">Returns</h4>
+<p>A dictionary mapping proto names to the message classes. This will include
+any dependent messages as well as any messages defined in the same file as
+a specified message.</p>
+<h4 id="signature_6">Signature</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">def</span> <span class="nf">patch_get_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="o">...</span>
 </code></pre></div>
 
 
