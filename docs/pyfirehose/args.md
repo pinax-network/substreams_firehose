@@ -14,7 +14,7 @@ Args
 
 [Show source in args.py:12](https://github.com/Krow10/pyfirehose/blob/main/pyfirehose/args.py#L12)
 
-Convert the specified period argument, from a integer or a date, to a block number.
+Convert the specified period argument, from an integer or a date, to a block number.
 
 #### Arguments
 
@@ -22,7 +22,7 @@ Convert the specified period argument, from a integer or a date, to a block numb
 
 #### Returns
 
-A integer representing the corresponding block number.
+An integer representing the corresponding block number.
 
 #### Raises
 
