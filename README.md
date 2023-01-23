@@ -17,7 +17,7 @@ Using a flexible approach, you can review and select which information to extrac
 **Requires Python >= 3.10**
 
 ```console
-foo@bar:~$ git clone git@github.com:Krow10/pyfirehose.git
+foo@bar:~$ git clone git@github.com:pinax-network/pyfirehose.git
 foo@bar:~$ cd pyfirehose
 foo@bar:~/pyfirehose$ vim pyfirehose/sample.config.hjson # Edit sample config file with editor of your choice to add your API keys
 foo@bar:~/pyfirehose$ mv pyfirehose/sample.config.hjson pyfirehose/config.hjson # Rename to config.hjson
