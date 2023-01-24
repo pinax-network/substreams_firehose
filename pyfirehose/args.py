@@ -41,7 +41,7 @@ def parse_arguments() -> argparse.Namespace:
     """
     arg_parser = argparse.ArgumentParser(
         description=('Extract any data from the blockchain. '
-                     'Powered by Firehose (https://eos.firehose.eosnation.io/) and Substreams (https://substreams.streamingfast.io).'),
+                     'Powered by Firehose (https://firehose.streamingfast.io/) and Substreams (https://substreams.streamingfast.io).'),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     arg_parser.add_argument('start', type=str,
