@@ -6,6 +6,9 @@ source ../../.venv/bin/activate
 OUT_DIR="generated"
 PROTOFILES=$(find . -iname *.proto)
 
+# Clear generated folder
+rm -rf $OUT_DIR/*
+
 # Generate python files from `.proto` definitions
 python -m grpc_tools.protoc -I. --python_out=$OUT_DIR --grpc_python_out=$OUT_DIR $PROTOFILES \
 							--descriptor_set_out="$OUT_DIR/protos.desc" --include_imports --include_source_info
