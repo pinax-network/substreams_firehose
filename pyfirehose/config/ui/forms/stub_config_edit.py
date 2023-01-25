@@ -423,6 +423,7 @@ class StubConfigOutputsForm(SplitActionForm): #pylint: disable=too-many-ancestor
                     selected_output_modules += [self.parentApp.stub_config['request']['params']['output_module']]
                 except KeyError:
                     logging.error('No output module(s) specified for substream')
+                    # TODO: Show error message to user and revert to previous form instead of throwing
                     raise
 
             output_modules = [
