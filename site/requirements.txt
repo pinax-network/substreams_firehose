@@ -1,8 +1,0 @@
-altair==4.2.0
-jupyter==1.0.0
-nbconvert==7.2.2
-pandas==1.5.0
-pySankeyBeta==1.4.0
-mkdocs==1.4.2
-mkdocs-material==8.5.11
-handsdown==2.0.0
