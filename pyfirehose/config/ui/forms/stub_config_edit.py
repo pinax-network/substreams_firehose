@@ -167,7 +167,8 @@ class StubConfigServicesForm(ActionFormV2):
                 # TODO: Allow providing a service descriptor (?)
                 notify_confirm(
                     f'The endpoint "{Config.GRPC_ENDPOINT}" doesn\'t provide a gRPC reflection service.\n\n'
-                    f'Please select another one or fill the stub config file manually.'
+                    f'Please select another one or fill the stub config file manually.',
+                    title='Error: no reflection service available'
                 )
                 self.on_ok = lambda *args, **kwargs: self.parentApp.setNextFormPrevious()
 
@@ -294,6 +295,7 @@ class StubConfigInputsForm(ActionFormV2):
         # Reference :
         # https://googleapis.dev/python/protobuf/latest/google/protobuf/descriptor.html#google.protobuf.descriptor.FieldDescriptor.CPPTYPE_BOOL
 
+        # TODO: Detect if using substream and only provide .spkg file path to deduce the rest (?)
         options = OptionList().options
         for input_parameter in [
             f for f in self.parentApp.selected_method.input_type.fields if not f.name in ('start_block_num', 'stop_block_num')
@@ -312,7 +314,7 @@ class StubConfigInputsForm(ActionFormV2):
             option_args = {
                 'documentation': [
                     f'A parameter of type {input_type.upper()} '
-                    f'is expected for "{input_parameter.name}."'
+                    f'is expected for "{input_parameter.name}".'
                 ],
                 'name': input_parameter.name,
                 'value': stub_config_value
@@ -342,7 +344,12 @@ class StubConfigInputsForm(ActionFormV2):
                     choices=enum_choices
                 )
             elif input_parameter.cpp_type == FieldDescriptor.CPPTYPE_MESSAGE:
-                pass # TODO: Add description for 'modules' parameter of substreams
+                if input_parameter.name.lower() == 'modules':
+                    option_args.update(
+                        documentation=option_args['documentation'] + [
+                            'Input the path to a package file (.spkg) associated with the substream you want to use.'
+                        ]
+                    )
 
             # Add the new input instance to the list of options
             options.append(option_type(**option_args))
@@ -385,11 +392,21 @@ class StubConfigInputsForm(ActionFormV2):
 
         logging.info('[%s] Stub config : %s', self.name, self.parentApp.stub_config)
 
-        self.parentApp.addForm(
-            self.parentApp.STUB_CONFIG_OUTPUTS_FORM,
-            StubConfigOutputsForm, name='Stub config editing - Outputs'
-        )
-        self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_OUTPUTS_FORM)
+        self.parentApp.is_substream = 'substream' in self.parentApp.selected_service and \
+                                      'modules' in self.parentApp.stub_config['request']['params']
+
+        if self.parentApp.is_substream and not ('output_modules' in self.parentApp.stub_config['request']['params'] or \
+                                                'output_module' in self.parentApp.stub_config['request']['params']):
+            notify_confirm(
+                'Please provide an output module before continuing.',
+                title='Error: no output module(s) specified for substream'
+            )
+        else:
+            self.parentApp.addForm(
+                self.parentApp.STUB_CONFIG_OUTPUTS_FORM,
+                StubConfigOutputsForm, name='Stub config editing - Outputs'
+            )
+            self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_OUTPUTS_FORM)
 
     def on_cancel(self):
         self.parentApp.setNextFormPrevious()
@@ -402,7 +419,6 @@ class StubConfigOutputsForm(SplitActionForm): #pylint: disable=too-many-ancestor
     available fields that can be selected to be kept from the response.
 
     Attributes:
-        is_substream: Identifies if the service is using Substreams.
         output_descriptors: List of available `Descriptor` for the corresponding method.
         saved_output_selection: Stores the state of a selection tree to be restored when switching output types.
     """
@@ -417,9 +433,7 @@ class StubConfigOutputsForm(SplitActionForm): #pylint: disable=too-many-ancestor
         self.ml_output_types.value = self.previous_value
 
     def create(self):
-        self.is_substream = 'substream' in self.parentApp.selected_service and \
-                            'modules' in self.parentApp.stub_config['request']['params']
-        if self.is_substream:
+        if self.parentApp.is_substream:
             with open(self.parentApp.stub_config['request']['params']['modules'], 'rb') as package_file:
                 pkg = Config.PROTO_MESSAGES_CLASSES[
                     f'{self.parentApp.stub_config["base"]}.Package'
@@ -434,7 +448,6 @@ class StubConfigOutputsForm(SplitActionForm): #pylint: disable=too-many-ancestor
                     selected_output_modules += [self.parentApp.stub_config['request']['params']['output_module']]
                 except KeyError:
                     logging.error('No output module(s) specified for substream')
-                    # TODO: Show error message to user and revert to previous form instead of throwing
                     raise
 
             output_modules = [
@@ -546,7 +559,7 @@ class StubConfigOutputsForm(SplitActionForm): #pylint: disable=too-many-ancestor
         self.previous_value = list(self.ml_output_types.value) #pylint: disable=attribute-defined-outside-init
 
         output_params = {}
-        if self.is_substream:
+        if self.parentApp.is_substream:
             # Simulate switching output types to generate the output parameters for each module
             output_modules = [v.split(' ', 1)[0] for v in self.ml_output_types.values]
             for output_module in output_modules:
