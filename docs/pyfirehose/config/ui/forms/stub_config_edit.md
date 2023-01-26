@@ -48,7 +48,7 @@ Stub Config Edit
 
 ## StubConfigConfirmEditForm
 
-[Show source in stub_config_edit.py:562](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L562)
+[Show source in stub_config_edit.py:563](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L563)
 
 Confirmation screen displaying the final stub config as it will appear in the saved file.
 
@@ -65,7 +65,7 @@ class StubConfigConfirmEditForm(ActionFormDiscard):
 
 ### StubConfigConfirmEditForm().create
 
-[Show source in stub_config_edit.py:566](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L566)
+[Show source in stub_config_edit.py:567](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L567)
 
 #### Signature
 
@@ -76,7 +76,7 @@ def create(self):
 
 ### StubConfigConfirmEditForm().on_cancel
 
-[Show source in stub_config_edit.py:592](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L592)
+[Show source in stub_config_edit.py:593](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L593)
 
 #### Signature
 
@@ -87,7 +87,7 @@ def on_cancel(self):
 
 ### StubConfigConfirmEditForm().on_discard
 
-[Show source in stub_config_edit.py:595](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L595)
+[Show source in stub_config_edit.py:596](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L596)
 
 #### Signature
 
@@ -98,7 +98,7 @@ def on_discard(self):
 
 ### StubConfigConfirmEditForm().on_ok
 
-[Show source in stub_config_edit.py:574](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L574)
+[Show source in stub_config_edit.py:575](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L575)
 
 #### Signature
 
@@ -365,7 +365,7 @@ def create(self):
 
 ### StubConfigOutputsForm().create_output_selection
 
-[Show source in stub_config_edit.py:471](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L471)
+[Show source in stub_config_edit.py:472](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L472)
 
 Create the output field selection tree from the selected output type. If `previous_selected` is supplied,
 the state of the node in the tree (`selected` and `expanded`) will be set according to its description.
@@ -393,7 +393,7 @@ def create_output_selection(
 
 ### StubConfigOutputsForm().on_cancel
 
-[Show source in stub_config_edit.py:558](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L558)
+[Show source in stub_config_edit.py:559](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L559)
 
 #### Signature
 
@@ -404,7 +404,7 @@ def on_cancel(self):
 
 ### StubConfigOutputsForm().on_ok
 
-[Show source in stub_config_edit.py:521](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L521)
+[Show source in stub_config_edit.py:522](https://github.com/pinax-network/pyfirehose/blob/main/pyfirehose/config/ui/forms/stub_config_edit.py#L522)
 
 #### Signature
 

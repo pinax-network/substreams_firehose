@@ -149,7 +149,7 @@ Stub configuration files can be easily managed and edited using the config UI to
 
 This is still a *Work-In-Progress* but right now you can fully add and edit stub configuration files easily using the UI interface to specify all the parameters required.
 
-[![PyFirehose ethereum data extraction demo](thumbnail.jpg)](https://pinax-network.github.io/pyfirehose/static/pyfirehose_eth_config_demo.mp4)
+[![PyFirehose ethereum data extraction demo](https://user-images.githubusercontent.com/550895/214672801-de39738a-ca8e-461b-8552-da7f97eeb816.png)](https://user-images.githubusercontent.com/23462475/214952950-256b73cc-3f2a-469f-911b-aaae00f8629c.mp4)
 
 ## Block processors
 
