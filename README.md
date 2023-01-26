@@ -2,7 +2,7 @@
 
 > Extract bulk and targeted historical blockchain data (powered by [**Firehose**](https://firehose.streamingfast.io/) and [**Substreams**](https://substreams.streamingfast.io))
 
-[![Pylint](https://github.com/pinax-network/pyfirehose/actions/workflows/pylint.yml/badge.svg)](https://github.com/pinax-network/pyfirehose/actions/workflows/pylint.yml) [![Deploy Website](https://github.com/pinax-network/pyfirehose/actions/workflows/static.yml/badge.svg)](https://github.com/pinax-network/pyfirehose/actions/workflows/static.yml)
+[![Pylint](https://github.com/pinax-network/pyfirehose/actions/workflows/pylint.yml/badge.svg)](https://github.com/pinax-network/pyfirehose/actions/workflows/pylint.yml)
 
 ## Overview
 
