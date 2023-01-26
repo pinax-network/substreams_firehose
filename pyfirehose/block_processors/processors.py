@@ -102,7 +102,6 @@ def filtered_block_processor(raw_block: Message) -> dict:
                     )
                     continue
 
-                # TODO: Handle exceptions for missing keys in json_data
                 amount, token = json_data['quantity'].split(' ')
                 date = datetime.strptime(action_trace['block_time'], '%Y-%m-%dT%H:%M:%S.%fZ')
                 data = {
