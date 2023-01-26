@@ -155,7 +155,7 @@ This is still a *Work-In-Progress* but right now you can fully add and edit stub
 
 For even more control over the data extracted, the extraction process uses a modular approach for manipulating response objects coming from a gRPC stream. A block processing function is used for extracting the data that is later stored in the output file at the end of the block extraction process.
 
-Several block processors are available by default:
+Several [block processors](pyfirehose/block_processors/processors.py) are available by default:
 - `default_processor` will output *all* the data (filtered according to the stub config) from the gRPC response.
 - `default_substream_processor` should be used with a substream and will output the data (filtered according to the stub config) from each of the output module in the gRPC response.
 - `filtered_block_processor` will output the data (filtered according to the stub config) using the legacy [FirehoseV1](https://github.com/streamingfast/playground-firehose-eosio-go#query-language) filtering system.
@@ -171,8 +171,8 @@ In order to write custom block processing functions, some conditions must be res
 - The function should act as a **generator** (using the `yield` keyword) to return the data. A dictionary is the preferred format, but it could be any format (specify the `--no-json-output` flag if you don't want to convert the final output to JSON).
 - The **first parameter** of the function should take the raw data extracted from the gRPC stream (Google protobuf [`Message`](https://googleapis.dev/python/protobuf/latest/google/protobuf/message.html#google.protobuf.message.Message) type).
 
-You can use the `_filter_data` function to apply the filters defined in the stub config to the output and process it further from here. Or you can directly get all the content from the response using the `MessageToJson` function. See other block processors in the [`processors.py`](pyfirehose/block_processors/processors.py) file for details and guidance.
+You can use the `_filter_data` function to apply the filters defined in the stub config to the output and process it further from here. Or you can directly get all the content from the response using the `MessageToJson` function. See other block processors in the [`processors.py`](pyfirehose/block_processors/processors.py) file for details and instructions.
 
-You can then use custom block processors through the command-line using the `--custom-processor` (or `-p`) argument and providing the name of the function.
+You can then use a custom block processor through the command-line using the `--custom-processor` (or `-p`) argument and providing the name of the function.
 
 For example, let's say you've implemented a custom function `my_block_processor` in `processors.py`. You would then pass the argument as `--custom-processor my_block_processor`. The script will locate it inside the `processors.py` module and use the `my_block_processor` function to parse block data and extract it to the output file.
