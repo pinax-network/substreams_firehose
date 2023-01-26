@@ -16,7 +16,7 @@ from grpc_reflection.v1alpha.proto_reflection_descriptor_database import ProtoRe
 from npyscreen import ActionFormV2
 from npyscreen import TitleFilenameCombo, TitleSelectOne
 from npyscreen import OptionList
-from npyscreen import notify_yes_no
+from npyscreen import notify_confirm, notify_yes_no
 from pygments.lexers.data import JsonLexer
 
 # This import is used to prevent circular dependency for the `utils` and `config.parser` modules.
@@ -108,8 +108,8 @@ class StubConfigSaveFileForm(ActionFormV2):
             load_stub_config(self.parentApp.stub_save_file)
         except FileNotFoundError:
             if self.stub_loaded:
+                # TODO : Handle stub config templates from here, loading previous stub config values
                 # If user wants to edit new config than the one loaded, reset it
-                # TODO : Ask user if wants to keep previous loaded values for new file (?)
                 StubConfig.REQUEST_PARAMETERS = {}
 
         self.parentApp.stub_config = {}
@@ -159,7 +159,18 @@ class StubConfigServicesForm(ActionFormV2):
         channel = grpc.secure_channel(Config.GRPC_ENDPOINT, creds)
         self.parentApp.reflection_db = ProtoReflectionDescriptorDatabase(channel)
 
-        services = self.parentApp.reflection_db.get_services()
+        try:
+            services = self.parentApp.reflection_db.get_services()
+        except grpc.RpcError as rpc_error:
+            if rpc_error.code() == grpc.StatusCode.UNAVAILABLE: #pylint: disable=no-member
+                services = []
+                # TODO: Allow providing a service descriptor (?)
+                notify_confirm(
+                    f'The endpoint "{Config.GRPC_ENDPOINT}" doesn\'t provide a gRPC reflection service.\n\n'
+                    f'Please select another one or fill the stub config file manually.'
+                )
+                self.on_ok = lambda *args, **kwargs: self.parentApp.setNextFormPrevious()
+
         self.ml_services = self.add(
             TitleSelectOne,
             name='Select a service',

@@ -23,7 +23,7 @@ class StubConfig:
     """
     Holds the stub config.
     """
-    RESPONSE_PARAMETERS: ClassVar[list]
+    RESPONSE_PARAMETERS: ClassVar[dict | list]
     REQUEST_OBJECT: ClassVar[Any]
     REQUEST_PARAMETERS: ClassVar[dict]
     SERVICE_METHOD_FUNCTION: ClassVar[Any]
