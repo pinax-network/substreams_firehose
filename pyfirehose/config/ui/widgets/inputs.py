@@ -31,6 +31,9 @@ class InputValidator(Option):
     Generic class for validating an option input with the return value of the `set` method.
 
     Overload the `set(self, value)` method and return `True` to keep editing, `False` to quit.
+
+    Attributes:
+        multiline: Indicates if the underlying widget is a multiline widget (its value being a `list`) or not.
     """
     def __init__(self, *args, multiline=False, **kwargs):
         super().__init__(*args, **kwargs)
@@ -129,10 +132,14 @@ class InputMessage(OptionFreeText):
 class InputRepeated(InputValidator, OptionMultiFreeList):
     """
     Custom option input for repeated input fields with type validation.
+
+    Attributes:
+        value_type: Type of the repeated field.
+        validate_input: Validator function used to validate input for this field (based on `value_type`).
     """
     def __init__(self, value_type: str, *args, choices: Sequence[str] | None = None, **kwargs):
         self.value_type = value_type
-        # Associate the appropriate type validator function
+        # Get the appropriate type validator function based on the field type
         self.validate_input = lambda value: getattr(validators, f'{value_type.lower()}_validator')(
             value, enum_values=choices if choices else []
         )
