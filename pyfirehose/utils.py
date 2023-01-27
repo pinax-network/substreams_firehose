@@ -74,9 +74,8 @@ def date_to_block_num(date: datetime, jwt: str | None = None) -> int:
 
         return block_num
 
-    # TODO: Raise exception
     logging.warning('Could not fetch block number data: [%s] %s', response.status_code, response.json())
-    return 0
+    return -1
 
 def filter_keys(input_: dict, keys_filter: dict) -> dict:
     """
