@@ -309,7 +309,10 @@ def import_all_from_module(module_name: str) -> list[ModuleType]:
     return imported
 
 def patch_get_messages(self, files):
-    """Gets all the messages from a specified file.
+    """
+    THIS IS A PATCHED FUNCTION FROM THE GOOGLE PROTOBUF LIBRARY. ORIGINAL DOCUMENTATION FOLLOWS.
+
+    Gets all the messages from a specified file.
 
     This will find and resolve dependencies, failing if the descriptor
     pool cannot satisfy them.
