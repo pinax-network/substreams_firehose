@@ -194,7 +194,7 @@ class InputRepeated(InputValidator, OptionMultiFreeList):
         self.value_type = value_type
         # Get the appropriate type validator function based on the field type
         self.validate_input = lambda value: getattr(validators, f'{value_type.lower()}_validator')(
-            value, enum_values=choices if choices else [], # TODO: Add `message_type_field` for repeated `Message`
+            value, enum_values=choices if choices else [], message_field_name=kwargs.get('name', None)
         )
 
         super().__init__(*args, multiline=True, **kwargs)
