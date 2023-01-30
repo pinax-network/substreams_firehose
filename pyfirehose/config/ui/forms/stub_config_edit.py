@@ -334,11 +334,6 @@ class StubConfigInputsForm(ActionFormV2):
                 'value': stub_config_value
             }
 
-            # Used to check if loaded stub config has an output module defined
-            has_previous_output_module = 'request' in self.parentApp.stub_config \
-                and 'params' in self.parentApp.stub_config['request'] \
-                and 'output_module' not in self.parentApp.stub_config['request']['params']
-
             # If its a repeated field, change to `InputRepeated` and pass the original type to the constructor
             if input_parameter.label == FieldDescriptor.LABEL_REPEATED:
                 option_type = InputRepeated
@@ -368,7 +363,7 @@ class StubConfigInputsForm(ActionFormV2):
                         documentation=option_args['documentation'] + [
                             'Input the path to a package file (.spkg) associated with the substream you want to use.'
                         ],
-                        parent=self if not has_previous_output_module else None
+                        parent=self
                     )
             elif input_parameter.cpp_type == FieldDescriptor.CPPTYPE_STRING:
                 if self.parentApp.is_substream:
@@ -388,6 +383,7 @@ class StubConfigInputsForm(ActionFormV2):
                                 f'Valid values are {package_modules}.'
                             ],
                             choices=package_modules,
+                            value=[stub_config_value]
                         )
 
             # Add the new input instance to the list of options

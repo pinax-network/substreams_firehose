@@ -166,6 +166,7 @@ class InputMessage(InputValidator, OptionFreeText):
         return False
 
     def when_set(self):
+        logging.info('[%s] parent = %s', self.name, self.parent())
         if self.parent() and self.name.lower() == 'modules':
             try:
                 output_module_option = next((w for w in self.parent().w_inputs.values if w.name == 'output_module'))
