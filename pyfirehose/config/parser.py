@@ -118,7 +118,7 @@ def load_config(file: str, grpc_entry_id: str | None = None) -> bool:
 
     return True
 
-def load_substreams_modules_from_package(url: str) -> dict:
+def load_substream_package(url: str) -> dict:
     """
     Parses substreams modules from an `.spkg` file.
 
@@ -127,12 +127,17 @@ def load_substreams_modules_from_package(url: str) -> dict:
 
     Returns:
         A dictionary of modules available in the package file.
+
+    Raises:
+        google.protobuf.message.DecodeError: If the Google protobuf library cannot parse the file.
+        FileNotFoundError: If the file specified by `url` doesn't exists.
+        IsADirectoryError: If the file specified by `url` is a directory.
     """
     with open(url, 'rb') as package_file:
         pkg = StubConfig.SUBSTREAMS_PACKAGE_OBJECT()
         pkg.ParseFromString(package_file.read())
 
-    return hjson.loads(MessageToJson(pkg.modules))
+    return hjson.loads(MessageToJson(pkg))
 
 def load_stub_config(stub: str | dict) -> None:
     """
@@ -188,9 +193,9 @@ def load_stub_config(stub: str | dict) -> None:
                 )
                 raise ImportError from error
 
-            stub_config['request']['params']['modules'] = load_substreams_modules_from_package(
+            stub_config['request']['params']['modules'] = load_substream_package(
                 stub_config['request']['params']['modules']
-            )
+            )['modules']
 
         StubConfig.REQUEST_PARAMETERS = stub_config['request']['params']
         StubConfig.RESPONSE_PARAMETERS = stub_config['response']['params']

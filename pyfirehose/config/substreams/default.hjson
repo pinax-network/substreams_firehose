@@ -5,9 +5,7 @@
 	"request": {
 		"object": "Request",
 		"params": {
-			"output_modules": [
-				"map_block",
-			],
+			"output_module": "map_block",
 			"modules" : "pyfirehose/proto/common.spkg"
 		}
 	},

@@ -11,7 +11,6 @@ import grpc
 import hjson
 from google.protobuf.descriptor import Descriptor, FieldDescriptor
 from google.protobuf.descriptor_pool import DescriptorPool
-from google.protobuf.json_format import MessageToJson
 from grpc_reflection.v1alpha.proto_reflection_descriptor_database import ProtoReflectionDescriptorDatabase
 from npyscreen import ActionFormV2
 from npyscreen import TitleFilenameCombo, TitleSelectOne
@@ -25,7 +24,7 @@ from pyfirehose.args import check_period #pylint: disable=unused-import
 import pyfirehose.config.ui.widgets.inputs as input_options
 from pyfirehose.utils import get_auth_token
 from pyfirehose.config.parser import Config, StubConfig
-from pyfirehose.config.parser import load_config, load_stub_config
+from pyfirehose.config.parser import load_config, load_substream_package, load_stub_config
 from pyfirehose.config.ui.forms.generic import ActionFormDiscard, SplitActionForm
 from pyfirehose.config.ui.widgets.custom import CodeHighlightedTitlePager, EndpointsTitleSelectOne, \
                                                 OutputSelectionMLTreeMultiSelectAnnotated, OutputTypesTitleSelectOne, \
@@ -184,6 +183,19 @@ class StubConfigServicesForm(ActionFormV2):
         self.parentApp.selected_service = self.ml_services.values[self.ml_services.value.pop()]
         logging.info('[%s] Selected service : %s', self.name, self.parentApp.selected_service)
 
+        # Currently detects if the endpoint is using substream by checking the name of the service
+        # TODO: Is this robust and reliable enough (?)
+        self.parentApp.is_substream = 'substream' in self.parentApp.selected_service
+
+        self.parentApp.stub_config['base'], self.parentApp.stub_config['service'] = \
+            self.parentApp.selected_service.rsplit('.', 1)
+
+        # Load substream package object for the `load_substream_package` method
+        if self.parentApp.is_substream:
+            StubConfig.SUBSTREAMS_PACKAGE_OBJECT = Config.PROTO_MESSAGES_CLASSES[
+                f'{self.parentApp.stub_config["base"]}.Package'
+            ]
+
         self.parentApp.addForm(
             self.parentApp.STUB_CONFIG_METHODS_FORM,
             StubConfigMethodsForm, name='Stub config editing - Methods'
@@ -231,6 +243,8 @@ class StubConfigMethodsForm(ActionFormV2):
         )
         logging.info('[%s] Selected method : %s', self.name, self.parentApp.selected_method.name)
 
+        self.parentApp.stub_config['method'] = self.parentApp.selected_method.name
+
         self.parentApp.addForm(
             self.parentApp.STUB_CONFIG_INPUTS_FORM,
             StubConfigInputsForm, name='Stub config editing - Inputs'
@@ -274,6 +288,7 @@ class StubConfigInputsForm(ActionFormV2):
             input_widget.display()
 
     def create(self):
+        # Input clearing shortcuts, 'c' shows a warning, 'C' force clear the selected field
         self.add_handlers({
             'c': self.clear_input,
             'C': lambda _: self.clear_input(show_popup=False)
@@ -295,7 +310,6 @@ class StubConfigInputsForm(ActionFormV2):
         # Reference :
         # https://googleapis.dev/python/protobuf/latest/google/protobuf/descriptor.html#google.protobuf.descriptor.FieldDescriptor.CPPTYPE_BOOL
 
-        # TODO: Detect if using substream and only provide .spkg file path to deduce the rest (?)
         options = OptionList().options
         for input_parameter in [
             f for f in self.parentApp.selected_method.input_type.fields if not f.name in ('start_block_num', 'stop_block_num')
@@ -319,6 +333,11 @@ class StubConfigInputsForm(ActionFormV2):
                 'name': input_parameter.name,
                 'value': stub_config_value
             }
+
+            # Used to check if loaded stub config has an output module defined
+            has_previous_output_module = 'request' in self.parentApp.stub_config \
+                and 'params' in self.parentApp.stub_config['request'] \
+                and 'output_module' not in self.parentApp.stub_config['request']['params']
 
             # If its a repeated field, change to `InputRepeated` and pass the original type to the constructor
             if input_parameter.label == FieldDescriptor.LABEL_REPEATED:
@@ -348,8 +367,28 @@ class StubConfigInputsForm(ActionFormV2):
                     option_args.update(
                         documentation=option_args['documentation'] + [
                             'Input the path to a package file (.spkg) associated with the substream you want to use.'
-                        ]
+                        ],
+                        parent=self if not has_previous_output_module else None
                     )
+            elif input_parameter.cpp_type == FieldDescriptor.CPPTYPE_STRING:
+                if self.parentApp.is_substream:
+                    # Skip deprecated `output_modules` input parameter, not allowing multiple output modules
+                    # See: https://github.com/streamingfast/substreams/blob/develop/docs/release-notes/change-log.md#single-module-output
+                    if input_parameter.name.lower() == 'output_modules':
+                        continue
+
+                    if input_parameter.name.lower() == 'output_module':
+                        package_modules = self.get_output_module_choices(
+                            self.parentApp.stub_config.get('request', {}).get('params', {}).get('modules')
+                        )
+                        option_type = input_options.InputEnum
+                        option_args.update(
+                            documentation=[
+                                'A parameter of type ENUM is expected for "output_module".',
+                                f'Valid values are {package_modules}.'
+                            ],
+                            choices=package_modules,
+                        )
 
             # Add the new input instance to the list of options
             options.append(option_type(**option_args))
@@ -362,16 +401,60 @@ class StubConfigInputsForm(ActionFormV2):
             scroll_exit=True
         )
 
-    def on_ok(self):
-        if not self.parentApp.stub_config:
-            self.parentApp.stub_config['base'], self.parentApp.stub_config['service'] = \
-                self.parentApp.selected_service.rsplit('.', 1)
-            self.parentApp.stub_config['method'] = self.parentApp.selected_method.name
+        if self.parentApp.is_substream and not package_modules:
+            self.hide_input_option('output_module')
 
+    def hide_input_option(self, name: str, hide: bool = True) -> None:
+        """
+        Hide or display the designated input option.
+
+        Args:
+            name: Identifier of the input option in the `w_inputs` input list.
+            hide: Boolean indicating to hide or show the specified option.
+
+        Raises:
+            StopIteration: If the input option could not be found.
+        """
+        try:
+            next((w for w in self.w_inputs.values if w.name == name)).hidden = hide
+        except StopIteration:
+            logging.error('[%s] Could not find input widget "%s" in the list of inputs. Valid values are : %s',
+                self.name,
+                name,
+                [w.name for w in self.w_inputs.values]
+            )
+            raise
+
+    def get_output_module_choices(self, package_url: str) -> list:
+        """
+        Return the available output modules from the given package file.
+        Only returns `map` modules according to [Streamingfast specifications](
+            https://github.com/streamingfast/substreams/blob/develop/docs/release-notes/change-log.md#output-module-must-be-of-type-map
+        ).
+
+        Args:
+            package_url: Filepath to a substream package file (`.spkg`).
+
+        Returns:
+            A list of available output modules for the given substream package (or an empty list).
+        """
+        try:
+            return [m['name'] for m in load_substream_package(package_url)['modules']['modules'] if 'map' in m['name']] if package_url else []
+        except KeyError as error:
+            logging.error('[%s] Could not load output modules from package : missing %s', self.name, error)
+            notify_confirm(
+                'Package file doesn\'t seem to contain any output module, check that `map` outputs are available from this substream.',
+                title=f'Warning : no output module found for "{package_url}"'
+            )
+            return []
+
+    def on_ok(self):
+        if 'request' not in self.parentApp.stub_config:
             self.parentApp.stub_config['request'] = {}
             self.parentApp.stub_config['request']['object'] = self.parentApp.selected_method.input_type.name
             self.parentApp.stub_config['request']['params'] = {}
 
+        if 'response' not in self.parentApp.stub_config:
             self.parentApp.stub_config['response'] = {}
             self.parentApp.stub_config['response']['object'] = self.parentApp.selected_method.output_type.name
             self.parentApp.stub_config['response']['params'] = {}
@@ -379,12 +462,16 @@ class StubConfigInputsForm(ActionFormV2):
         for input_option in self.w_inputs.values:
             is_empty_input = False
             try:
+                # Check if input is a sequence
                 iter(input_option.value)
             except TypeError:
+                # Else check if not empty or a boolean
                 is_empty_input = not (input_option.value or isinstance(input_option.value, bool))
             else:
+                # Check the sequence is not empty
                 is_empty_input = not any(input_option.value)
 
+            # Delete any previously set parameter if it's empty or ignore it.
             if input_option.name in self.parentApp.stub_config['request']['params'] and is_empty_input:
                 del self.parentApp.stub_config['request']['params'][input_option.name]
             elif not is_empty_input:
@@ -392,21 +479,24 @@ class StubConfigInputsForm(ActionFormV2):
 
         logging.info('[%s] Stub config : %s', self.name, self.parentApp.stub_config)
 
-        self.parentApp.is_substream = 'substream' in self.parentApp.selected_service and \
-                                      'modules' in self.parentApp.stub_config['request']['params']
-
-        if self.parentApp.is_substream and not ('output_modules' in self.parentApp.stub_config['request']['params'] or \
+        if self.parentApp.is_substream:
+            if not ('output_modules' in self.parentApp.stub_config['request']['params'] or \
                                                 'output_module' in self.parentApp.stub_config['request']['params']):
-            notify_confirm(
-                'Please provide an output module before continuing.',
-                title='Error: no output module(s) specified for substream'
-            )
-        else:
-            self.parentApp.addForm(
-                self.parentApp.STUB_CONFIG_OUTPUTS_FORM,
-                StubConfigOutputsForm, name='Stub config editing - Outputs'
-            )
-            self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_OUTPUTS_FORM)
+                notify_confirm(
+                    'Please provide an output module before continuing.',
+                    title='Error: no output module(s) specified for substream'
+                )
+                return
+
+            # Flatten `output_module` list as it's only a single value parameter
+            self.parentApp.stub_config['request']['params']['output_module'] = \
+                next(iter(self.parentApp.stub_config['request']['params']['output_module']), None)
+
+        self.parentApp.addForm(
+            self.parentApp.STUB_CONFIG_OUTPUTS_FORM,
+            StubConfigOutputsForm, name='Stub config editing - Outputs'
+        )
+        self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_OUTPUTS_FORM)
 
     def on_cancel(self):
         self.parentApp.setNextFormPrevious()
@@ -434,12 +524,7 @@ class StubConfigOutputsForm(SplitActionForm): #pylint: disable=too-many-ancestor
 
     def create(self):
         if self.parentApp.is_substream:
-            with open(self.parentApp.stub_config['request']['params']['modules'], 'rb') as package_file:
-                pkg = Config.PROTO_MESSAGES_CLASSES[
-                    f'{self.parentApp.stub_config["base"]}.Package'
-                ]()
-                pkg.ParseFromString(package_file.read())
-
+            package_modules = load_substream_package(self.parentApp.stub_config['request']['params']['modules'])['modules']['modules']
             selected_output_modules = []
             try:
                 selected_output_modules += self.parentApp.stub_config['request']['params']['output_modules']
@@ -451,9 +536,10 @@ class StubConfigOutputsForm(SplitActionForm): #pylint: disable=too-many-ancestor
                     raise
 
             output_modules = [
-                m for m in hjson.loads(MessageToJson(pkg.modules))['modules'] if m['name'] in selected_output_modules
+                m for m in package_modules if m['name'] in selected_output_modules
             ]
 
+            logging.info('[%s] Selected modules : %s', self.name, selected_output_modules)
             logging.info('[%s] Modules from package : %s', self.name,
                 hjson.dumps(output_modules, indent=4)
             )

@@ -6,6 +6,10 @@ Contains functions used for validating input types for forms.
 
 from collections.abc import Sequence
 
+from google.protobuf.message import DecodeError
+
+from pyfirehose.config.parser import load_substream_package
+
 def integer_validator(value: str, **kwargs) -> bool: #pylint: disable=unused-argument
     """
     Checks that a string is a valid integer representation.
@@ -20,9 +24,9 @@ def integer_validator(value: str, **kwargs) -> bool: #pylint: disable=unused-arg
     try:
         int(value)
     except ValueError:
-        return True
+        return False
 
-    return False
+    return True
 
 def float_validator(value: str, **kwargs) -> bool: #pylint: disable=unused-argument
     """
@@ -38,9 +42,9 @@ def float_validator(value: str, **kwargs) -> bool: #pylint: disable=unused-argum
     try:
         float(value)
     except ValueError:
-        return True
+        return False
 
-    return False
+    return True
 
 def bool_validator(value: str, **kwargs) -> bool: #pylint: disable=unused-argument
     """
@@ -81,15 +85,24 @@ def string_validator(value: str, **kwargs): #pylint: disable=unused-argument
     """
     return True
 
-def message_validator(value: str, **kwargs): #pylint: disable=unused-argument
+def message_validator(value: str, message_field_name: str | None = None, **kwargs): #pylint: disable=unused-argument
     """
-    Placeholder validator for messages.
+    Input validator for messages.
+
+    The behavior of this function is dependent on the `message_field_name` parameter.
 
     Args:
-        value: a string (unused).
+        value: a string.
+        message_field_name: the field name of the message.
         kwargs: additional keyword arguments (unused, allow generic use of validators).
 
     Returns:
-        True
+        A boolean indicating if the value is a valid package file in case the `message_field_name` is equal to `modules` (substream).
     """
+    if message_field_name == 'modules':
+        try:
+            return load_substream_package(value)
+        except (DecodeError, FileNotFoundError, IsADirectoryError):
+            return False
+
     return True

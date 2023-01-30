@@ -7,7 +7,9 @@ SPDX-License-Identifier: MIT
 import logging
 from collections.abc import Sequence
 from types import MethodType
+from weakref import ref
 
+from npyscreen import ActionFormV2
 from npyscreen import OptionBoolean, OptionFreeText, OptionListDisplay, OptionMultiFreeList, OptionSingleChoice
 from npyscreen import notify_confirm
 from npyscreen.apOptions import Option
@@ -25,6 +27,21 @@ class InputsListDisplay(OptionListDisplay):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._contained_widgets.ANNOTATE_WIDTH = 50
+
+    def _set_line_values(self, line, value_indexer):
+        """
+        Overwrite method for taking the `hidden` attribute value of the displayed widget into account.
+        """
+        try:
+            _vl = self.values[value_indexer]
+        except (IndexError, TypeError):
+            self._set_line_blank(line)
+        else:
+            line.value = self.display_value(_vl)
+            try:
+                line.hidden = _vl.hidden
+            except AttributeError:
+                pass
 
 class InputValidator(Option):
     """
@@ -71,7 +88,7 @@ class InputInteger(InputValidator, OptionFreeText):
     Custom option input to only allow integer input.
     """
     def set(self, value):
-        if value and validators.integer_validator(value):
+        if value and not validators.integer_validator(value):
             logging.error('[%s] Trying to set a value that is not an INTEGER : %s', self.name, value)
             notify_confirm('Value entered is not a valid INTEGER', title=f'{self.name} validation error')
 
@@ -87,7 +104,7 @@ class InputFloat(InputValidator, OptionFreeText):
     Custom option input to only allow floating point input.
     """
     def set(self, value):
-        if value and validators.float_validator(value):
+        if value and not validators.float_validator(value):
             logging.error('[%s] Trying to set a value that is not a FLOAT : %s', self.name, value)
             notify_confirm('Value entered is not a valid FLOAT', title=f'{self.name} validation error')
 
@@ -121,13 +138,48 @@ class InputString(OptionFreeText):
     It exists to allow generic input creation (see `StubConfigInputsForm.create` method).
     """
 
-class InputMessage(OptionFreeText):
+class InputMessage(InputValidator, OptionFreeText):
     """
     Custom option input for complex `Message` object input.
 
-    Note that this class is empty as everything is handled by the parent `OptionFreeText`.
-    It exists to allow generic input creation (see `StubConfigInputsForm.create` method).
+    If the edited stub config is related to a substream, the `InputMessage` will check if its name matches the `modules`
+    input field and try to validate the `.spkg` file path provided.
+
+    Attributes:
+        parent: a `weakref` reference to the `InputListDisplay` object containg this input.
     """
+    def __init__(self, *args, parent: ActionFormV2 | None = None, **kwargs):
+        self.parent = ref(parent) if parent else lambda *_, **__: None
+        super().__init__(*args, **kwargs)
+
+    def set(self, value):
+        if value and (not self.parent() or self.parent().parentApp.is_substream) \
+        and self.name.lower() == 'modules' \
+        and not validators.message_validator(value, message_field_name=self.name):
+            logging.error('[%s] Trying to set a value that is not a valid package file : %s', self.name, value)
+            notify_confirm('Value entered is not a valid package file', title=f'{self.name} validation error')
+            return True
+
+        self.value = value
+        self.when_set()
+
+        return False
+
+    def when_set(self):
+        if self.parent() and self.name.lower() == 'modules':
+            try:
+                output_module_option = next((w for w in self.parent().w_inputs.values if w.name == 'output_module'))
+
+                # Update `output_module` input enum choices and value
+                output_module_option.choices = \
+                    self.parent().get_output_module_choices(self.value)
+                output_module_option.value = [next(iter(output_module_option.choices), '')]
+
+                # Hide or unhide input option based on package url value
+                self.parent().hide_input_option('output_module', self.value == '')
+            except AttributeError:
+                # Raised at the creation of the input form before the `InputListDisplay` is fully initialized.
+                pass
 
 class InputRepeated(InputValidator, OptionMultiFreeList):
     """
@@ -141,10 +193,10 @@ class InputRepeated(InputValidator, OptionMultiFreeList):
         self.value_type = value_type
         # Get the appropriate type validator function based on the field type
         self.validate_input = lambda value: getattr(validators, f'{value_type.lower()}_validator')(
-            value, enum_values=choices if choices else []
+            value, enum_values=choices if choices else [], # TODO: Add `message_type_field` for repeated `Message`
         )
 
-        super().__init__(multiline=True, *args, **kwargs)
+        super().__init__(*args, multiline=True, **kwargs)
 
     def set(self, values): #pylint: disable=arguments-renamed
         validated_values = [self.validate_input(v) for v in values]
