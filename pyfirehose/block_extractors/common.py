@@ -98,18 +98,17 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel,
     # Move request parameters to dict to allow CLI keyword arguments to override the stub config
     request_parameters = {
         'start_block_num': start,
-        'stop_block_num': end,
+        'stop_block_num': end + (1 if StubConfig.SUBSTREAMS_PACKAGE_OBJECT else 0),
         **StubConfig.REQUEST_PARAMETERS,
         **kwargs
     }
+    req = ParseDict(request_parameters, StubConfig.REQUEST_OBJECT())
 
     logging.debug('[%s] Starting streaming blocks from #%i to #%i...',
         get_current_task_name(),
         start,
         end,
     )
-
-    req = ParseDict(request_parameters, StubConfig.REQUEST_OBJECT())
 
     try:
         # Duplicate code for moving invariant out of loop, preventing condition check on every block streamed

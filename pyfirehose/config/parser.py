@@ -109,8 +109,6 @@ def load_config(file: str, grpc_entry_id: str | None = None) -> bool:
 
     Config.PROTO_MESSAGES_CLASSES = utils.generate_proto_messages_classes()
 
-    logging.debug('Loaded main config: %s [SUCCESS]', vars(Config))
-
     if default_stub:
         load_stub_config(default_stub)
     else:
@@ -196,6 +194,8 @@ def load_stub_config(stub: str | dict) -> None:
             stub_config['request']['params']['modules'] = load_substream_package(
                 stub_config['request']['params']['modules']
             )['modules']
+        else:
+            StubConfig.SUBSTREAMS_PACKAGE_OBJECT = None
 
         StubConfig.REQUEST_PARAMETERS = stub_config['request']['params']
         StubConfig.RESPONSE_PARAMETERS = stub_config['response']['params']
@@ -209,5 +209,3 @@ def load_stub_config(stub: str | dict) -> None:
     except KeyError as error:
         logging.exception('Error parsing stub config (%s): %s', stub_config, error)
         raise
-
-    logging.debug('Loaded stub config: %s [SUCCESS]', vars(StubConfig))
