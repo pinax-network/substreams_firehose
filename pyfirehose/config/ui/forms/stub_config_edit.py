@@ -176,6 +176,7 @@ class StubConfigServicesForm(ActionFormV2):
             name='Select a service',
             values=services,
             scroll_exit=True
+            # TODO: Load service default value from stub config file if exists
         )
 
     def on_ok(self):
@@ -232,7 +233,8 @@ class StubConfigMethodsForm(ActionFormV2):
             TitleSelectOne,
             name='Select a method',
             values=[m.name for m in self.methods],
-            scroll_exit=True
+            scroll_exit=True,
+            # TODO: Load method default value from stub config file if exists
         )
 
     def on_ok(self):
@@ -336,6 +338,7 @@ class StubConfigInputsForm(ActionFormV2):
 
             # If its a repeated field, change to `InputRepeated` and pass the original type to the constructor
             if input_parameter.label == FieldDescriptor.LABEL_REPEATED:
+                # TODO: Make repeated enum fields use multi-choice checkboxes
                 option_type = InputRepeated
                 option_args.update(
                     # Allow the `InputRepeated` to pick the right validator (e.g. `bool_validator`)

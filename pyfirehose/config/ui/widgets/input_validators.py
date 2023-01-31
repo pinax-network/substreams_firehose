@@ -59,7 +59,7 @@ def bool_validator(value: str, **kwargs) -> bool: #pylint: disable=unused-argume
     """
     return value.lower() in ['true', 'false']
 
-def enum_validator(value: str, enum_values: Sequence[str], **kwargs):
+def enum_validator(value: str, enum_values: Sequence[str], **kwargs): #pylint: disable=unused-argument
     """
     Checks that a string is a valid enum value from a given sequence of enum values.
 
