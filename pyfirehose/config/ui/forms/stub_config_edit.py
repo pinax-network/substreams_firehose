@@ -176,7 +176,6 @@ class StubConfigServicesForm(ActionFormV2):
             name='Select a service',
             values=services,
             scroll_exit=True
-            # TODO: Load service default value from stub config file if exists
         )
 
     def on_ok(self):
@@ -234,7 +233,6 @@ class StubConfigMethodsForm(ActionFormV2):
             name='Select a method',
             values=[m.name for m in self.methods],
             scroll_exit=True,
-            # TODO: Load method default value from stub config file if exists
         )
 
     def on_ok(self):
