@@ -63,7 +63,7 @@ def process_blocks(raw_blocks: Sequence[Message], block_processor: Callable[[Mes
     return data
 
 async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel,
-                        block_processor: Callable[[Message], dict] | None = None, **kwargs) -> list[Message | dict]:
+                        block_processor: Callable[[Message], dict] = lambda block: [block], **kwargs) -> list[Message | dict]:
     """
     Return raw blocks (or parsed data) for the subset period between `start` and `end`.
 
@@ -111,59 +111,29 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel,
     )
 
     try:
-        # Duplicate code for moving invariant out of loop, preventing condition check on every block streamed
-        if block_processor:
-            async for response in service_method(req):
-                response_data = None
+        async for response in service_method(req):
+            response_data = None
+            try:
+                response_data = response.block
+            except AttributeError:
                 try:
-                    response_data = response.block
+                    if response.data.outputs:
+                        response_data = response.data
                 except AttributeError:
-                    try:
-                        if response.data.outputs:
-                            response_data = response.data
-                    except AttributeError:
-                        logging.warning('[%s] No valid output message found in response : %s',
-                            get_current_task_name(),
-                            response
-                        )
-
-                if response_data:
-                    logging.debug('[%s] Getting block number #%i (%i blocks remaining)...',
+                    logging.warning('[%s] No valid output message found in response : %s',
                         get_current_task_name(),
-                        current_block_number,
-                        end - current_block_number
-                    )
-                    current_block_number += 1
-
-                    for blob in [b for b in block_processor(response_data) if b]:
-                        data.append(blob)
-        else:
-            async for response in service_method(req):
-                try:
-                    data.append(response.block)
-                    logging.debug('[%s] Getting block number #%i (%i blocks remaining)...',
-                        get_current_task_name(),
-                        current_block_number,
-                        end - current_block_number
+                        response
                     )
 
-                    current_block_number += 1
-                except AttributeError:
-                    try:
-                        if response.data.outputs:
-                            data.append(response.data)
-                            logging.debug('[%s] Getting block number #%i (%i blocks remaining)...',
-                                get_current_task_name(),
-                                current_block_number,
-                                end - current_block_number
-                            )
+            if response_data:
+                logging.debug('[%s] Getting block number #%i (%i blocks remaining)...',
+                    get_current_task_name(),
+                    current_block_number,
+                    end - current_block_number
+                )
+                current_block_number += 1
 
-                            current_block_number += 1
-                    except AttributeError:
-                        logging.warning('[%s] No valid output message found in response : %s',
-                            get_current_task_name(),
-                            response
-                        )
+                data.extend([b for b in block_processor(response_data) if b])
 
     except grpc.aio.AioRpcError as error:
         logging.error('[%s] Failed to process block number #%i: %s',
