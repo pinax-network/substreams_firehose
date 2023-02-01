@@ -639,7 +639,7 @@ class StubConfigOutputsForm(SplitActionForm): #pylint: disable=too-many-ancestor
                 if child.selected:
                     out[child.get_content()] = _build_output_params(child)
 
-            return out if out else "True"
+            return out if out and len(out) != len(list(node.get_children())) else "True"
 
         self.previous_value = list(self.ml_output_types.value) #pylint: disable=attribute-defined-outside-init
 
