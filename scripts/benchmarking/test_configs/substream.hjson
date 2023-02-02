@@ -1,0 +1,19 @@
+{
+    "base": "sf.substreams.v1",
+    "service": "Stream",
+    "method": "Blocks",
+    "request": {
+        "object": "Request",
+        "params": {
+            "production_mode": false,
+            "modules": "pyfirehose/proto/common.spkg",
+            "output_module": "map_block"
+        }
+    },
+    "response": {
+        "object": "Response",
+        "params": {
+            "map_block": "True"
+        }
+    }
+}

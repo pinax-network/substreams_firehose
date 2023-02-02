@@ -1,0 +1,17 @@
+{
+    "base": "dfuse.bstream.v1",
+    "service": "BlockStreamV2",
+    "method": "Blocks",
+    "request": {
+        "object": "BlocksRequestV2",
+        "params": {
+            "fork_steps": [
+                "STEP_IRREVERSIBLE"
+            ]
+        }
+    },
+    "response": {
+        "object": "BlockResponseV2",
+        "params": "True"
+    }
+}

@@ -1,0 +1,47 @@
+[?25l[38;5;212m> [0m[38;5;212mLarge[0m
+  Burst
+  Random access
+  All
+[0D[1A[1A[1A[2K[1A[0D[2K  Large
+[38;5;212m> [0m[38;5;212mBurst[0m
+[1B[1B[0D[1A[1A[2K[1A[2K[1A[0D[2K  Large
+  Burst
+[38;5;212m> [0m[38;5;212mRandom access[0m
+[1B[0D[1A[2K[1A[2K[1A[1A[0D[2K  Large
+[1B  Random access
+[38;5;212m> [0m[38;5;212mAll[0m
+[0D[2K[1A[2K[1A[2K[1A[2K[1A[0D[2K [0D[2K[?25h[?1002l[?1003lRunning large range block test from #222000000 to #222002500 (2500 blocks) on Antelope chain...
+=== DFUSE ===
+Benchmark 1: run_large_dfuse
+  Time (mean ± σ):     44.740 s ±  8.616 s    [User: 28.070 s, System: 1.336 s]
+  Range (min … max):   38.648 s … 50.832 s    2 runs
+ 
+=== FIREHOSE ===
+Benchmark 1: run_large_firehose
+  Time (mean ± σ):     34.846 s ±  2.721 s    [User: 28.119 s, System: 1.148 s]
+  Range (min … max):   32.922 s … 36.770 s    2 runs
+ 
+=== SUBSTREAMS ===
+Benchmark 1: run_large_substream
+  Time (mean ± σ):     43.713 s ±  7.428 s    [User: 28.697 s, System: 1.220 s]
+  Range (min … max):   38.461 s … 48.966 s    2 runs
+ 
+Running burst range block test from #230000000 to #230002500 (25 blocks for 100 iterations) on Antelope chain...
+=== DFUSE ===
+Benchmark 1: run_burst_dfuse
+  Time (mean ± σ):     401.212 s ± 31.302 s    [User: 55.329 s, System: 4.917 s]
+  Range (min … max):   379.078 s … 423.346 s    2 runs
+ 
+=== FIREHOSE ===
+Benchmark 1: run_burst_firehose
+  Time (mean ± σ):     298.528 s ± 11.851 s    [User: 82.143 s, System: 4.883 s]
+  Range (min … max):   290.148 s … 306.908 s    2 runs
+ 
+=== SUBSTREAMS ===
+Benchmark 1: run_burst_substream
+  Time (mean ± σ):     341.230 s ± 28.071 s    [User: 110.786 s, System: 5.023 s]
+  Range (min … max):   321.381 s … 361.079 s    2 runs
+ 
+Running random access block range test between #240000000 and #250000000 (100 blocks chosen randomly for 25 iterations) on Antelope chain...
+=== DFUSE ===
+Benchmark 1: run_random_access_dfuse

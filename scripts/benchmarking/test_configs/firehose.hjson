@@ -1,0 +1,15 @@
+{
+    "base": "sf.firehose.v2",
+    "service": "Stream",
+    "method": "Blocks",
+    "request": {
+        "object": "Request",
+        "params": {
+            "final_blocks_only": false
+        }
+    },
+    "response": {
+        "object": "Response",
+        "params": "True"
+    }
+}

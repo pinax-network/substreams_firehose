@@ -1,0 +1,20 @@
+[?25l[38;5;212m> [0m[38;5;212mLarge[0m
+  Burst
+  Random access
+  All
+[0D[2K[1A[2K[1A[2K[1A[2K[1A[0D[2K [0D[2K[?25h[?1002l[?1003lRunning large range block test from #222000000 to #222002500 (2500 blocks) on Antelope chain...
+=== DFUSE ===
+Benchmark 1: run_large_dfuse
+  Time (mean ± σ):     41.313 s ±  3.633 s    [User: 26.739 s, System: 1.222 s]
+  Range (min … max):   38.744 s … 43.882 s    2 runs
+ 
+=== FIREHOSE ===
+Benchmark 1: run_large_firehose
+  Time (mean ± σ):     31.709 s ±  1.968 s    [User: 27.187 s, System: 1.113 s]
+  Range (min … max):   30.318 s … 33.101 s    2 runs
+ 
+=== SUBSTREAMS ===
+Benchmark 1: run_large_substream
+  Time (mean ± σ):     44.049 s ±  0.987 s    [User: 31.106 s, System: 1.300 s]
+  Range (min … max):   43.352 s … 44.747 s    2 runs
+ 

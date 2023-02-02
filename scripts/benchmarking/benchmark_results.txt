@@ -1,0 +1,13 @@
+Running large range block test from #222000000 to #222002500 (2500 blocks) on Antelope chain...
+--- DFUSE ---
+Benchmark 1: run_large_dfuse
+  Time (mean ± σ):     49.463 s ± 12.220 s    [User: 27.700 s, System: 1.389 s]
+  Range (min … max):   40.823 s … 58.104 s    2 runs
+ 
+--- FIREHOSE ---
+Benchmark 1: run_large_firehose
+  Time (mean ± σ):     89.781 s ± 70.028 s    [User: 33.417 s, System: 1.434 s]
+  Range (min … max):   40.264 s … 139.298 s    2 runs
+ 
+--- SUBSTREAMS ---
+Benchmark 1: run_large_substream
