@@ -158,14 +158,28 @@ run_random_access_test(){
 	hyperfine --shell=bash run_random_access_substream --runs 2
 }
 
+# =========================
+# === Dependency checks ===
+# =========================
+
+echo 'Checking dependencies...'
+if command -v hyperfine >/dev/null 2>&1 ; then
+	echo "$(hyperfine --version)"
+else
+	echo "hyperfine not found : please see https://github.com/sharkdp/hyperfine#installation"
+	exit
+fi
+
+if command -v gum >/dev/null 2>&1 ; then
+	echo "$(gum --version)"
+else
+	echo "gum not found : please see https://github.com/charmbracelet/gum#installation"
+	exit
+fi
+
 # ============
 # === Main ===
 # ============
-
-# Gum alias function
-gum(){
-	scripts/benchmarking/bin/gum "$@"
-}
 
 # Activate python environnement
 source .venv/bin/activate
@@ -175,6 +189,7 @@ source .venv/bin/activate
 exec > >(tee -i scripts/benchmarking/results/tmp)
 exec 2>&1
 
+echo -e "\nChoose a test suite to run :"
 TEST_MODE=$(gum choose "Large" "Burst" "Random access" "All")
 
 case $TEST_MODE in
@@ -190,11 +205,15 @@ case $TEST_MODE in
 		run_random_access_test
 		;;
 
-	*)
+	All)
 		run_large_test
 		run_burst_test
 		run_random_access_test
 		;;
+
+	*)
+		echo "No test suite selected, exiting..."
+		exit
 esac
 
 # Move temporary output to named file in `results/` folder
