@@ -118,13 +118,13 @@ def load_config(file: str, grpc_entry_id: str | None = None) -> bool:
 
 def load_substream_package(url: str) -> dict:
     """
-    Parses substreams modules from an `.spkg` file.
+    Parse a substream package from an `.spkg` file.
 
     Args:
         url: Local path to `.spkg` file.
 
     Returns:
-        A dictionary of modules available in the package file.
+        A dictionary containing fields available in the package file.
 
     Raises:
         google.protobuf.message.DecodeError: If the Google protobuf library cannot parse the file.
@@ -179,7 +179,7 @@ def load_stub_config(stub: str | dict) -> None:
             )
             raise ImportError from error
 
-        # If is using substreams
+        # If is using substreams load the package object used to decode package files
         if 'modules' in stub_config['request']['params'] and '.spkg' in stub_config['request']['params']['modules']:
             try:
                 StubConfig.SUBSTREAMS_PACKAGE_OBJECT = Config.PROTO_MESSAGES_CLASSES[
