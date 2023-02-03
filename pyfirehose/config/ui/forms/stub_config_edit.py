@@ -360,7 +360,7 @@ class StubConfigInputsForm(ActionFormV2):
                 )
             elif input_parameter.cpp_type == FieldDescriptor.CPPTYPE_MESSAGE:
                 if input_parameter.name.lower() == 'modules':
-                    option_args.update(
+                    option_args.update( # TODO: Replace with file selection widget
                         documentation=option_args['documentation'] + [
                             'Input the path to a package file (.spkg) associated with the substream you want to use.'
                         ],
@@ -637,7 +637,10 @@ class StubConfigOutputsForm(SplitActionForm): #pylint: disable=too-many-ancestor
                 if child.selected:
                     out[child.get_content()] = _build_output_params(child)
 
-            return out if out and len(out) != len(list(node.get_children())) else "True"
+            return out if out and not all(
+                # If all the field's children have been marked as "True" then we mark the whole field as "True" to simplify output filtering
+                out.get(content, None) == "True" for content in [c.get_content() for c in list(node.get_children())]
+            ) else "True"
 
         self.previous_value = list(self.ml_output_types.value) #pylint: disable=attribute-defined-outside-init
 
