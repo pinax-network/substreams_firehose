@@ -11,7 +11,7 @@ import importlib
 import json
 import logging
 import os
-from argparse import ArgumentTypeError
+from argparse import ArgumentError, ArgumentTypeError
 from datetime import datetime
 from pprint import pformat
 
@@ -25,7 +25,7 @@ from pyfirehose.utils import get_auth_token
 
 CONSOLE_HANDLER = logging.StreamHandler()
 
-def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-many-locals, too-many-return-statements
+def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-many-locals
     """
     Main function for parsing arguments, setting up logging and running asyncio main loop.
     """
@@ -79,7 +79,7 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
             raise
     elif not stub_loaded:
         logging.critical('Stub config should be supplied either in the main config file or through the CLI option.')
-        return 1
+        raise ArgumentError
 
     logging.debug('Main config: %s', pformat(vars(Config)))
     logging.debug('Stub config: %s', pformat(vars(StubConfig)))
@@ -89,19 +89,16 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
     jwt = get_auth_token()
     if not jwt:
         logging.critical('Could not get authentication token from endpoint (%s), aborting...', Config.AUTH_ENDPOINT)
-        return 1
+        raise RuntimeError
 
     # === Arguments checking ===
 
-    try:
-        args.start = check_period(args.start)
-        args.end = check_period(args.end)
-    except ArgumentTypeError:
-        return 1
+    args.start = check_period(args.start)
+    args.end = check_period(args.end)
 
     if args.end < args.start:
         logging.critical('Period start must be less than or equal to period end')
-        return 1
+        raise ArgumentError
 
     out_file = f'jsonl/{Config.CHAIN}_{args.start}_to_{args.end}.jsonl'
     if args.out_file != 'jsonl/{chain}_{start}_to_{end}.jsonl':
