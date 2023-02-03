@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
-# Must be started from inside the `proto/` directory
-source ../../.venv/bin/activate
+# Activate python environnement
+source .venv/bin/activate
+
+PROTO_DIR="pyfirehose/proto"
+cd $PROTO_DIR
 
 OUT_DIR="generated"
 PROTOFILES=$(find . -iname *.proto)
