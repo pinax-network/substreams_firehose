@@ -1,3 +1,6 @@
+/*
+	Extract whole block data using the [`Antelope common`](https://github.com/pinax-network/substreams/tree/develop/common) substream.
+*/
 {
 	"base": "sf.substreams.v1",
 	"service": "Stream",

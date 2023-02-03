@@ -1,3 +1,6 @@
+/*
+    Extract action traces from Antelope chain for the accounts 'eosio.bpay' and 'eosio.vpay'.
+*/
 {
     "base": "dfuse.bstream.v1",
     "service": "BlockStreamV2",
