@@ -1,4 +1,4 @@
-Output demo.mp4
+Output scripts/demo/demo.mp4
 
 Set FontFamily "Space Mono"
 Set Theme {
@@ -23,7 +23,7 @@ Type "source .venv/bin/activate"
 Enter
 Show
 
-# === Entering Config UI ===
+# === Entering config UI ===
 Type "python -m pyfirehose.config"
 Sleep 1.5s
 Enter
@@ -215,7 +215,7 @@ Tab@150ms 2
 Sleep 1s
 Enter
 
-# === Help page ===
+# === Show help page ===
 Sleep 1s
 Type "python -m pyfirehose -h"
 Sleep 1.5s
