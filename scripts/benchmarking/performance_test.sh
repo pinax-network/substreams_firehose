@@ -137,7 +137,7 @@ run_burst_test(){
 }
 
 run_random_access_test(){
-	START=240000000
+	START=200000000
 	NUM_BLOCKS=100
 	ITERATIONS=25
 	END=250000000
