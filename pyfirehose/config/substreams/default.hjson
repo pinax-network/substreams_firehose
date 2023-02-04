@@ -1,19 +1,38 @@
 /*
-	Extract whole block data using the [`Antelope common`](https://github.com/pinax-network/substreams/tree/develop/common) substream.
+    Extract action traces data using the [`Antelope common`](https://github.com/pinax-network/substreams/tree/develop/common) substream.
 */
 {
-	"base": "sf.substreams.v1",
-	"service": "Stream",
-	"method": "Blocks",
-	"request": {
-		"object": "Request",
-		"params": {
-			"output_module": "map_block",
-			"modules" : "pyfirehose/proto/common.spkg"
-		}
-	},
-	"response": {
-		"object": "Response",
-		"params": {}
-	}
+    "base": "sf.substreams.v1",
+    "service": "Stream",
+    "method": "Blocks",
+    "request": {
+        "object": "Request",
+        "params": {
+            "output_module": "map_action_traces",
+            "modules": "pyfirehose/proto/packages/common.spkg",
+            "fork_steps": [
+                "STEP_IRREVERSIBLE"
+            ],
+            "production_mode": false
+        }
+    },
+    "response": {
+        "object": "Response",
+        "params": {
+            "map_action_traces": {
+                "action_traces": {
+                    "receiver": "True",
+                    "action": {
+                        "account": "True",
+                        "name": "True",
+                        "json_data": "True"
+                    },
+                    "transaction_id": "True",
+                    "block_num": "True",
+                    "block_time": "True",
+                    "action_ordinal": "True"
+                }
+            }
+        }
+    }
 }
