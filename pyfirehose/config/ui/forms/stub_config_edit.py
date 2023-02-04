@@ -711,5 +711,3 @@ class StubConfigConfirmEditForm(ActionFormDiscard):
 
         if discard_confirm:
             self.parentApp.switchForm('MAIN')
-        else:
-            pass
