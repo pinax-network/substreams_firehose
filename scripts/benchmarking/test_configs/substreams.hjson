@@ -5,15 +5,18 @@
     "request": {
         "object": "Request",
         "params": {
+            "fork_steps": [
+                "STEP_IRREVERSIBLE"
+            ],
             "production_mode": false,
-            "modules": "pyfirehose/proto/common.spkg",
-            "output_module": "map_block"
+            "modules": "pyfirehose/proto/packages/common.spkg",
+            "output_module": "map_transaction_traces"
         }
     },
     "response": {
         "object": "Response",
         "params": {
-            "map_block": "True"
+            "map_transaction_traces": "True"
         }
     }
 }

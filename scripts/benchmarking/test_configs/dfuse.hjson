@@ -12,6 +12,8 @@
     },
     "response": {
         "object": "BlockResponseV2",
-        "params": "True"
+        "params": {
+            "unfiltered_transaction_traces": "True"
+        }
     }
 }

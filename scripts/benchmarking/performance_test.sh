@@ -35,7 +35,7 @@ run_large_firehose(){
 export -f run_large_firehose
 
 run_large_substream(){
-	run_test $START $END antelope_firehose_v2 substream -p default_substream_processor
+	run_test $START $END antelope_firehose_v2 substreams -p default_substream_processor
 }
 export -f run_large_substream
 
@@ -59,7 +59,7 @@ export -f run_burst_firehose
 
 run_burst_substream(){
 	for s in $(seq $START $NUM_BLOCKS $END); do
-		run_test $s $(($s + $NUM_BLOCKS)) antelope_firehose_v2 substream -p default_substream_processor
+		run_test $s $(($s + $NUM_BLOCKS)) antelope_firehose_v2 substreams -p default_substream_processor
 	done
 }
 export -f run_burst_substream
@@ -87,7 +87,7 @@ export -f run_random_access_firehose
 run_random_access_substream(){
 	for i in $(seq 1 $ITERATIONS); do
 		RANDOM_START=`shuf -i $START-$END -n 1`
-		run_test $RANDOM_START $(($RANDOM_START + $NUM_BLOCKS)) antelope_firehose_v2 substream -p default_substream_processor
+		run_test $RANDOM_START $(($RANDOM_START + $NUM_BLOCKS)) antelope_firehose_v2 substreams -p default_substream_processor
 	done
 }
 export -f run_random_access_substream

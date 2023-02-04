@@ -10,6 +10,8 @@
     },
     "response": {
         "object": "Response",
-        "params": "True"
+        "params": {
+            "unfiltered_transaction_traces": "True"
+        }
     }
 }
