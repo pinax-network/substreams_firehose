@@ -1,7 +1,7 @@
 """
 SPDX-License-Identifier: MIT
 
-Forms used by the main config GUI app to display and edit configuration files.
+Forms used by the main config TUI app to display and edit configuration files.
 """
 
 import hjson

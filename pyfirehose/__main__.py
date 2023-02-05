@@ -157,7 +157,7 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
                     json.dump(entry, out) # TODO: Add exception handling
                 out.write('\n')
     except OSError as error:
-        logging.warning('Could not write out file to "%s": %s', out_file, error)
+        logging.error('Could not write out file to "%s": %s', out_file, error)
 
     logging.info('Wrote %i rows of data to %s [SUCCESS]', len(data), out_file)
     return 0

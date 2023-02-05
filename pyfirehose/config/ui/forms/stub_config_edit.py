@@ -22,7 +22,7 @@ from pygments.lexers.data import JsonLexer
 from pyfirehose.args import check_period #pylint: disable=unused-import
 
 import pyfirehose.config.ui.widgets.inputs as input_options
-from pyfirehose.utils import get_auth_token
+from pyfirehose.utils import get_auth_token, open_file_from_package
 from pyfirehose.config.parser import Config, StubConfig
 from pyfirehose.config.parser import load_config, load_substream_package, load_stub_config
 from pyfirehose.config.ui.forms.generic import ActionFormDiscard, SplitActionForm
@@ -112,13 +112,15 @@ class StubConfigSaveFileForm(ActionFormV2):
                 StubConfig.REQUEST_PARAMETERS = {}
 
         self.parentApp.stub_config = {}
-        if os.path.isfile(self.parentApp.stub_save_file):
-            with open(self.parentApp.stub_save_file, 'r', encoding='utf8') as config_file:
+        try:
+            with open_file_from_package(self.parentApp.stub_save_file, 'r') as config_file:
                 try:
                     self.parentApp.stub_config = hjson.load(config_file)
                 except hjson.HjsonDecodeError as error:
                     logging.exception('Error decoding stub config file (%s): %s', self.parentApp.stub_save_file, error)
                     raise
+        except (FileNotFoundError, IsADirectoryError):
+            pass
 
         self.parentApp.addForm(
             self.parentApp.STUB_CONFIG_SERVICES_FORM,
@@ -692,8 +694,17 @@ class StubConfigConfirmEditForm(ActionFormDiscard):
             if not overwrite_confirm:
                 return True
 
-        with open(self.parentApp.stub_save_file, 'w+', encoding='utf8') as config_file:
-            hjson.dumpJSON(self.parentApp.stub_config, config_file, indent=4)
+        try:
+            os.makedirs(os.path.dirname(self.parentApp.stub_save_file), exist_ok=True)
+            with open(self.parentApp.stub_save_file, 'w+', encoding='utf8') as config_file:
+                hjson.dumpJSON(self.parentApp.stub_config, config_file, indent=4)
+        except OSError as error:
+            logging.error('Could not write out file to "%s": %s', self.parentApp.stub_save_file, error)
+            notify_confirm(
+                f'Could not write output file to "{self.parentApp.stub_save_file}" : check that you have permission to write to this location.',
+                title=f'Error: {error}'
+            )
+            return True
 
         self.parentApp.display_main_popup = f'Stub file successfully saved at :\n{self.parentApp.stub_save_file}'
         self.parentApp.setNextForm('MAIN')

@@ -13,7 +13,9 @@ import os
 from collections.abc import Mapping, Sequence
 from contextlib import nullcontext
 from datetime import datetime, timedelta
+from importlib.resources import is_resource, open_binary, open_text
 from types import MethodType, ModuleType
+from typing import BinaryIO, TextIO
 
 from google.protobuf.descriptor_pool import Default
 from google.protobuf.descriptor_pb2 import FileDescriptorSet #pylint: disable=no-name-in-module
@@ -195,7 +197,7 @@ def generate_proto_messages_classes(path: str = 'pyfirehose/proto/generated/prot
         generate_proto_messages_classes.saved_mappings = {}
 
     if path not in generate_proto_messages_classes.saved_mappings:
-        with open(path, 'rb') as proto_desc:
+        with open_file_from_package(path, 'rb') as proto_desc:
             descriptor_set = FileDescriptorSet.FromString(proto_desc.read())
 
         results = {}
@@ -307,6 +309,37 @@ def import_all_from_module(module_name: str) -> list[ModuleType]:
             imported.append(importlib.import_module(f'{module_name}.{file.rsplit(".", 1)[0]}'))
 
     return imported
+
+def open_file_from_package(path: str, mode: str = 'r') -> BinaryIO | TextIO:
+    """
+    Open a file (read-only) located in the installed package directory using its relative path.
+    If the file is not a valid resource, try to open it in the current directory.
+
+    Args:
+        path: Relative path of the resource inside the installed package directory or local path.
+        mode: One of `r` (text) or `rb` (binary).
+
+    Returns:
+        A text or binary stream to use in a `with` statement.
+
+    Raises:
+        FileNotFoundError: If the file specified by `path` doesn't exists.
+        IsADirectoryError: If the file specified by `path` is a directory.
+        ValueError: If the `mode` argument is not one of `r` or `rb`.
+    """
+    if mode not in ['r', 'rb']:
+        raise ValueError('`mode` argument must be one of `r` (text) or `rb` (binary).')
+
+    package, resource = path.rsplit('/', 1)
+    package = package.replace('/', '.')
+
+    try:
+        if is_resource(package, resource):
+            return open_text(package, resource, encoding='utf8') if mode == 'r' else open_binary(package, resource)
+    except TypeError:
+        pass
+
+    return open(path, mode, encoding='utf8')
 
 def patch_get_messages(self, files):
     """
