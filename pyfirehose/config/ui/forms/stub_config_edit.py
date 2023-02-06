@@ -692,7 +692,7 @@ class StubConfigConfirmEditForm(ActionFormDiscard):
             )
 
             if not overwrite_confirm:
-                return True
+                return
 
         try:
             os.makedirs(os.path.dirname(self.parentApp.stub_save_file), exist_ok=True)
@@ -704,12 +704,10 @@ class StubConfigConfirmEditForm(ActionFormDiscard):
                 f'Could not write output file to "{self.parentApp.stub_save_file}" : check that you have permission to write to this location.',
                 title=f'Error: {error}'
             )
-            return True
+            return
 
         self.parentApp.display_main_popup = f'Stub file successfully saved at :\n{self.parentApp.stub_save_file}'
         self.parentApp.setNextForm('MAIN')
-
-        return False
 
     def on_cancel(self):
         self.parentApp.setNextFormPrevious()

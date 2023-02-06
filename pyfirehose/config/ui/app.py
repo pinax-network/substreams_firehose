@@ -14,6 +14,7 @@ from npyscreen.npysThemes import DefaultTheme
 
 from pyfirehose.utils import open_file_from_package
 from pyfirehose.config.ui.forms.main import MainForm
+from pyfirehose.config.ui.forms.main_config_edit import MainConfigApiKeysForm
 from pyfirehose.config.ui.forms.stub_config_edit import StubConfigEndpointsForm
 
 class ConfigApp(NPSAppManaged):
@@ -31,7 +32,8 @@ class ConfigApp(NPSAppManaged):
         main_config: Dictionary representing the loaded main configuration file.
         main_config_file: The filepath to the main configuration file.
     """
-    MAIN_CONFIG_EDIT_FORM = 'MAIN_CONFIG_EDIT_FORM'
+    # Main configuration editing forms
+    MAIN_CONFIG_API_KEYS_FORM = 'MAIN_CONFIG_API_KEYS_FORM'
 
     # Stub configuration editing forms, in order of the workflow
     STUB_CONFIG_ENPOINTS_FORM = 'STUB_CONFIG_ENDPOINTS_FORM'
@@ -47,6 +49,7 @@ class ConfigApp(NPSAppManaged):
 
         self.display_main_popup = None
         self.main_config = None
+        # TODO: Allow changing the default path of the main config file
         self.main_config_file = 'pyfirehose/config.hjson'
 
     def onStart(self):
@@ -71,4 +74,4 @@ class ConfigApp(NPSAppManaged):
 
         self.addForm('MAIN', MainForm, name='PyFirehose config')
         self.addForm(self.STUB_CONFIG_ENPOINTS_FORM, StubConfigEndpointsForm, name='Stub config editing - Endpoints')
-        # self.addForm(self.MAIN_CONFIG_EDIT_FORM, mainEditForm, name='PyFirehose config')
+        self.addForm(self.MAIN_CONFIG_API_KEYS_FORM, MainConfigApiKeysForm, name='Main config editing - API keys')

@@ -37,9 +37,7 @@ def date_to_block_num(date: datetime, jwt: str | None = None) -> int:
     Returns:
         The block number associated with the given date time.
     """
-    if not jwt:
-        jwt = get_auth_token() # TODO: Catch exception
-
+    jwt = get_auth_token()
     headers = {'Authorization': f'Bearer {jwt}'}
     session = CachedSession(
         'graphql_rest',
@@ -247,7 +245,7 @@ def generate_proto_messages_classes(path: str = 'pyfirehose/proto/generated/prot
 
 def get_auth_token(use_cache: bool = True) -> str:
     """
-    Fetch a JWT authorization token from the authentication endpoints defined in the main config file.
+    Fetch a JWT authorization token from a selected authentication endpoint defined in the main config file.
 
     Cache the token for 24-hour use.
 
@@ -255,7 +253,10 @@ def get_auth_token(use_cache: bool = True) -> str:
         use_cache: A boolean enabling/disabling fetching the cache for the JWT token request.
 
     Returns:
-        The JWT token or an empty string if the request failed.
+        The JWT token.
+
+    Raises:
+        RuntimeError: If the JWT token could not be acquired from the endpoint.
     """
     session = CachedSession(
         'jwt_token',
@@ -268,7 +269,6 @@ def get_auth_token(use_cache: bool = True) -> str:
 
     logging.info('Getting JWT token...')
 
-    jwt = ''
     with session.cache_disabled() if not use_cache else nullcontext():
         response = session.post(Config.AUTH_ENDPOINT, headers=headers, data=data)
 
@@ -277,7 +277,8 @@ def get_auth_token(use_cache: bool = True) -> str:
         jwt = response.json()['token']
         logging.info('Got JWT token (%s) [SUCCESS]', "cached" if response.from_cache else "new")
     else:
-        logging.error('Could not load JWT token: %s', response.text) # TODO: Raise exception
+        logging.error('Could not load JWT token: %s', response.text)
+        raise RuntimeError(f'Could not load JWT token: {json.dumps(json.loads(response.text), indent=4)}')
 
     return jwt
 

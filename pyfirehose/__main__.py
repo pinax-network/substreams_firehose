@@ -86,10 +86,11 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
 
     # === JWT token validation ===
 
-    jwt = get_auth_token()
-    if not jwt:
-        logging.critical('Could not get authentication token from endpoint (%s), aborting...', Config.AUTH_ENDPOINT)
-        raise RuntimeError
+    try:
+        get_auth_token()
+    except RuntimeError:
+        logging.critical('Could not get authentication token from endpoint "%s", aborting...', Config.AUTH_ENDPOINT)
+        raise
 
     # === Arguments checking ===
 

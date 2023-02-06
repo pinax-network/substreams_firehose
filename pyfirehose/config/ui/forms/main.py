@@ -16,7 +16,6 @@ class MainForm(FormWithMenus):
     Main form presenting the main config file with a menu for accessing the edit functions.
 
     Attributes:
-        main_menu: holds the menu entries.
         next_form: describe the next form to be loaded after exiting the main form (`None` exits the application).
         stored_highlights: dictionary containing the highlighted text content for the `CodeHighlightedTitlePager` widget.
     """
@@ -39,16 +38,19 @@ class MainForm(FormWithMenus):
             self.parentApp.display_main_popup = None
 
     def create(self):
-        self.main_menu = self.new_menu(name='Main menu')
-        self.main_menu.addItem(
-            text='Edit main config',
-            onSelect=self.switch_form,
-            arguments=[self.parentApp.MAIN_CONFIG_EDIT_FORM]
-        )
-        self.main_menu.addItem(
+        main_menu = self.new_menu(name='Main menu')
+        main_config_submenu = main_menu.addNewSubmenu(name='Edit main config')
+
+        main_menu.addItem(
             text='Edit stub config',
             onSelect=self.switch_form,
             arguments=[self.parentApp.STUB_CONFIG_ENPOINTS_FORM]
+        )
+
+        main_config_submenu.addItem(
+            text='Edit API keys',
+            onSelect=self.switch_form,
+            arguments=[self.parentApp.MAIN_CONFIG_API_KEYS_FORM]
         )
 
         self.add(
