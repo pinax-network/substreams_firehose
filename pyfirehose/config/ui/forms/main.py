@@ -4,11 +4,15 @@ SPDX-License-Identifier: MIT
 Forms used by the main config TUI app to display and edit configuration files.
 """
 
+from typing import Any
+
 import hjson
 from npyscreen import FormWithMenus
 from npyscreen import notify_confirm
 from pygments.lexers.data import JsonLexer
 
+from pyfirehose.config.ui.forms.main_config_edit import MainConfigApiKeysForm
+from pyfirehose.config.ui.forms.stub_config_edit import StubConfigEndpointsForm
 from pyfirehose.config.ui.widgets.custom import CodeHighlightedTitlePager
 
 class MainForm(FormWithMenus):
@@ -47,13 +51,13 @@ class MainForm(FormWithMenus):
         main_menu.addItem(
             text='Edit stub config',
             onSelect=self.switch_form,
-            arguments=[self.parentApp.STUB_CONFIG_ENPOINTS_FORM]
+            arguments=[self.parentApp.STUB_CONFIG_ENPOINTS_FORM, StubConfigEndpointsForm, 'Stub config editing - Endpoints']
         )
 
         main_config_submenu.addItem(
             text='Edit API keys',
             onSelect=self.switch_form,
-            arguments=[self.parentApp.MAIN_CONFIG_API_KEYS_FORM]
+            arguments=[self.parentApp.MAIN_CONFIG_API_KEYS_FORM, MainConfigApiKeysForm, 'Main config editing - API keys']
         )
 
         self.ml_main_config_view = self.add(
@@ -63,12 +67,15 @@ class MainForm(FormWithMenus):
             lexer=JsonLexer()
         )
 
-    def switch_form(self, form: str) -> None:
+    def switch_form(self, form: str, form_class: Any, form_display_name: str) -> None:
         """
         Helper function to set the next appropriate form when using the menu.
 
         Args:
-            form: the form name.
+            form: The form name identifier.
+            form_class: The form class.
+            form_display_name: `name` attribute of the form displayed at the top.
         """
         self.next_form = form #pylint: disable=attribute-defined-outside-init
+        self.parentApp.addForm(form, form_class, name=form_display_name)
         self.parentApp.switchForm(form)

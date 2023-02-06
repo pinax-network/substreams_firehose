@@ -15,8 +15,6 @@ from npyscreen.npysThemes import DefaultTheme
 
 from pyfirehose.utils import open_file_from_package
 from pyfirehose.config.ui.forms.main import MainForm
-from pyfirehose.config.ui.forms.main_config_edit import MainConfigApiKeysForm
-from pyfirehose.config.ui.forms.stub_config_edit import StubConfigEndpointsForm
 
 class ConfigApp(NPSAppManaged):
     """
@@ -76,8 +74,6 @@ class ConfigApp(NPSAppManaged):
                 self.main_config_file = selectFile(must_exist=True, confirm_if_exists=False)
 
         self.addForm('MAIN', MainForm, name='PyFirehose config')
-        self.addForm(self.STUB_CONFIG_ENPOINTS_FORM, StubConfigEndpointsForm, name='Stub config editing - Endpoints')
-        self.addForm(self.MAIN_CONFIG_API_KEYS_FORM, MainConfigApiKeysForm, name='Main config editing - API keys')
 
     def onCleanExit(self):
         if self.main_config_updated:
