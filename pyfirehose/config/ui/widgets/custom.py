@@ -24,8 +24,96 @@ THIS SOFTWARE.
 import curses
 from npyscreen import MultiLineAction, Pager, SelectOne, Textfield, TitlePager, TitleSelectOne
 from npyscreen import MLTreeMultiSelectAnnotated, TreeData, TreeLineSelectableAnnotated
+from npyscreen.fmPopup import ActionPopupWide
+from npyscreen.utilNotify import YesNoPopup, _prepare_message, _wrap_message_lines
 from pygments import highlight
 from pygments.formatters import TerminalFormatter #pylint: disable=no-name-in-module
+
+def colorize(default_color: int, string: str) -> list[tuple[int, int]]:
+    """
+    Convert a string containg ANSI escape codes to `curses` control characters for color display.
+
+    Used by the `CodeHighlightedPager` to syntax highlight its content.
+
+    Code is adapted from Cansi library (https://github.com/tslight/cansi). Some of the original comments kept in the code.
+
+    Args:
+        default_color: passed to the `mkcolors` function (see documentation for reference).
+        string: a string containing ANSI escape codes for color.
+
+    Returns:
+        A list of pairs of `curses`' control character and their applicable length.
+
+    Example:
+        `[(2097152, 10)]` will color 10 characters bold (`curses.A_BOLD = 2097152`).
+    """
+
+    def _mkcolor(default_color: int, offset: int = 49) -> dict[str, int]:
+        """
+        Initialize `curses` colors and mapping of ANSI escape codes.
+
+        Adapted from Cansi library (https://github.com/tslight/cansi). Original comments kept in code.
+
+        See [Wikipedia](https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters)
+        for ANSI escape codes reference.
+
+        Args:
+            default_color: color pair used for the default background and foreground ANSI escape codes (`39;49;00`).
+            offset: offset for the `curses.init_pair` function to avoid overwriting predefined colors of `npyscreen`'s theme.
+
+        Returns:
+            A dictionary mapping of ANSI escape sequences to `curses`' control characters.
+        """
+        color = {}
+
+        curses.use_default_colors()  # https://stackoverflow.com/a/44015131
+        for i in range(1, 8):
+            curses.init_pair(i + offset, i, -1)  # color fg on black bg
+            curses.init_pair(i + offset + 7, curses.COLOR_WHITE, i)  # white fg on color bg
+            curses.init_pair(i + offset + 14, curses.COLOR_BLACK, i)  # black fg on color bg
+            color[str(i + 30)] = curses.color_pair(i + offset)
+            color[str(i + 40)] = curses.color_pair(i + offset + 7)
+            color["0;" + str(i + 30)] = curses.color_pair(i + offset)
+            color["0;" + str(i + 40)] = curses.color_pair(i + offset + 7)
+            color[str(i + 30) + ";0"] = curses.color_pair(i + offset)
+            color[str(i + 40) + ";0"] = curses.color_pair(i + offset + 7)
+            color[str(i + 90)] = curses.color_pair(i + offset) | curses.A_BOLD
+            color["1;" + str(i + 30)] = curses.color_pair(i + offset) | curses.A_BOLD
+            color["1;" + str(i + 40)] = curses.color_pair(i + offset + 7) | curses.A_BOLD
+            color[str(i + 30) + ";1"] = curses.color_pair(i + offset) | curses.A_BOLD
+            color[str(i + 40) + ";1"] = curses.color_pair(i + offset + 7) | curses.A_BOLD
+
+            color["39;49;00"] = default_color
+
+        return color
+
+    ansi_split = string.split("\x1b[")
+    color_pair = curses.color_pair(0)
+
+    color = _mkcolor(default_color)
+    attr = {
+        "1": curses.A_BOLD,
+        "4": curses.A_UNDERLINE,
+        "5": curses.A_BLINK,
+        "7": curses.A_REVERSE,
+    }
+    colors = []
+
+    for substring in ansi_split[1:]:
+        if substring.startswith("0K"):
+            return colors # 0K = clrtoeol so we are done with this line
+
+        ansi_code = substring.split("m")[0]
+        substring = substring[len(ansi_code) + 1 :]
+        if ansi_code in ["1", "4", "5", "7", "8"]:
+            color_pair = color_pair | attr[ansi_code]
+        elif ansi_code not in ["0", "0;"]:
+            color_pair = color[ansi_code]
+
+        if substring:
+            colors.append((color_pair, len(substring)))
+
+    return colors
 
 class CodeHighlightedTextfield(Textfield):
     """
@@ -194,86 +282,58 @@ class OutputTypesTitleSelectOne(TitleSelectOne):
     """
     _entry_type = OutputTypesSelectOne
 
-def colorize(default_color: int, string: str) -> list[tuple[int, int]]:
+class YesNoPopupWide(ActionPopupWide):
     """
-    Convert a string containg ANSI escape codes to `curses` control characters for color display.
+    Custom YES/NO popup class with wide display.
 
-    Adapted from Cansi library (https://github.com/tslight/cansi). Some of the original comments kept in the code.
+    Used to emulate the same behavior as other [`notify` functions](
+        https://github.com/npcole/npyscreen/blob/8ce31204e1de1fbd2939ffe2d8c3b3120e93a4d0/npyscreen/utilNotify.py#L46
+    ) from the `npyscreen` library, supporting wide display for YES/NO popups as well.
+    """
+    OK_BUTTON_TEXT = "Yes"
+    CANCEL_BUTTON_TEXT = "No"
+    DEFAULT_LINES = 16
+
+    def on_ok(self):
+        self.value = True #pylint: disable=attribute-defined-outside-init
+
+    def on_cancel(self):
+        self.value = False #pylint: disable=attribute-defined-outside-init
+
+def notify_yes_no( #pylint: disable=too-many-arguments
+    message: str,
+    title: str = 'Message',
+    form_color: str = 'STANDOUT',
+    wrap: bool = True,
+    wide: bool = False
+) -> bool:
+    """
+    Display a YES/NO popup prompting for a choice.
+
+    Adapted from the [`npyscreen` library](
+        https://github.com/npcole/npyscreen/blob/8ce31204e1de1fbd2939ffe2d8c3b3120e93a4d0/npyscreen/utilNotify.py#L83
+    ) to support wide popup display (see `YesNoPopupWide`).
 
     Args:
-        default_color: passed to the `mkcolors` function (see documentation for reference).
-        string: a string containing ANSI escape codes for color.
-
-    Returns:
-        A list of pairs of `curses`' control character and their applicable length.
-
-    Example:
-        `[(2097152, 10)]` will color 10 characters bold (`curses.A_BOLD = 2097152`).
+        message: The text content of the popup.
+        title: The title of the popup window.
+        form_color: Color of the popup content text (see https://npyscreen.readthedocs.io/color.html).
+        wrap: If true, wrap the text content to the window border.
+        wide: If true, use the wide display version of the popup.
     """
+    message = _prepare_message(message)
+    if wide:
+        popup_form = YesNoPopupWide(name=title, color=form_color)
+    else:
+        popup_form = YesNoPopup(name=title, color=form_color)
+    popup_form.preserve_selected_widget = True
 
-    def _mkcolor(default_color: int, offset: int = 49) -> dict[str, int]:
-        """
-        Initialize `curses` colors and mapping of ANSI escape codes.
+    mlw = popup_form.add(Pager)
+    if wrap:
+        message = _wrap_message_lines(message, mlw.width - 1)
+    mlw.values = message
 
-        Adapted from Cansi library (https://github.com/tslight/cansi). Original comments kept in code.
+    popup_form.editw = 0 #pylint: disable=attribute-defined-outside-init
+    popup_form.edit()
 
-        See [Wikipedia](https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters)
-        for ANSI escape codes reference.
-
-        Args:
-            default_color: color pair used for the default background and foreground ANSI escape codes (`39;49;00`).
-            offset: offset for the `curses.init_pair` function to avoid overwriting predefined colors of `npyscreen`'s theme.
-
-        Returns:
-            A dictionary mapping of ANSI escape sequences to `curses`' control characters.
-        """
-        color = {}
-
-        curses.use_default_colors()  # https://stackoverflow.com/a/44015131
-        for i in range(1, 8):
-            curses.init_pair(i + offset, i, -1)  # color fg on black bg
-            curses.init_pair(i + offset + 7, curses.COLOR_WHITE, i)  # white fg on color bg
-            curses.init_pair(i + offset + 14, curses.COLOR_BLACK, i)  # black fg on color bg
-            color[str(i + 30)] = curses.color_pair(i + offset)
-            color[str(i + 40)] = curses.color_pair(i + offset + 7)
-            color["0;" + str(i + 30)] = curses.color_pair(i + offset)
-            color["0;" + str(i + 40)] = curses.color_pair(i + offset + 7)
-            color[str(i + 30) + ";0"] = curses.color_pair(i + offset)
-            color[str(i + 40) + ";0"] = curses.color_pair(i + offset + 7)
-            color[str(i + 90)] = curses.color_pair(i + offset) | curses.A_BOLD
-            color["1;" + str(i + 30)] = curses.color_pair(i + offset) | curses.A_BOLD
-            color["1;" + str(i + 40)] = curses.color_pair(i + offset + 7) | curses.A_BOLD
-            color[str(i + 30) + ";1"] = curses.color_pair(i + offset) | curses.A_BOLD
-            color[str(i + 40) + ";1"] = curses.color_pair(i + offset + 7) | curses.A_BOLD
-
-            color["39;49;00"] = default_color
-
-        return color
-
-    ansi_split = string.split("\x1b[")
-    color_pair = curses.color_pair(0)
-
-    color = _mkcolor(default_color)
-    attr = {
-        "1": curses.A_BOLD,
-        "4": curses.A_UNDERLINE,
-        "5": curses.A_BLINK,
-        "7": curses.A_REVERSE,
-    }
-    colors = []
-
-    for substring in ansi_split[1:]:
-        if substring.startswith("0K"):
-            return colors # 0K = clrtoeol so we are done with this line
-
-        ansi_code = substring.split("m")[0]
-        substring = substring[len(ansi_code) + 1 :]
-        if ansi_code in ["1", "4", "5", "7", "8"]:
-            color_pair = color_pair | attr[ansi_code]
-        elif ansi_code not in ["0", "0;"]:
-            color_pair = color[ansi_code]
-
-        if substring:
-            colors.append((color_pair, len(substring)))
-
-    return colors
+    return popup_form.value
