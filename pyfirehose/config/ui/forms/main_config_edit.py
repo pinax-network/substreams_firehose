@@ -8,6 +8,7 @@ import logging
 
 from npyscreen import ActionFormV2
 from npyscreen import OptionList
+from npyscreen import notify
 
 from pyfirehose.utils import get_auth_token
 from pyfirehose.config.parser import Config
@@ -16,7 +17,9 @@ from pyfirehose.config.ui.widgets.inputs import InputsListDisplay, InputString
 
 class MainConfigApiKeysForm(ActionFormV2):
     """
-    Bla
+    Edit API keys for the authentication endpoints present in the main configuration file.
+
+    Checks that keys are valid by trying to fetch a JWT token from the endpoint. Any errors can be ignored if wanted.
     """
     def create(self):
         options = OptionList().options
@@ -45,6 +48,7 @@ class MainConfigApiKeysForm(ActionFormV2):
                 Config.AUTH_ENDPOINT = self.parentApp.main_config['auth'][auth_option.name]['endpoint']
                 Config.API_KEY = auth_option.value
 
+                notify(f'Testing JWT authentication token fetch from "{Config.AUTH_ENDPOINT}"...', title='Please wait')
                 try:
                     get_auth_token()
                 except RuntimeError as error:
