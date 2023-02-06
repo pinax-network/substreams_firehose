@@ -96,8 +96,8 @@ class ConfigApp(NPSAppManaged):
             except OSError as error:
                 logging.error('Could not write out file to "%s": %s', self.main_config_file, error)
                 notify_confirm(
-                    f'Could not write output file to "{self.main_config_file}" : check that you have permission to write to this location.',
-                    title=f'Error: {error}'
+                    f'Could not write output file to "{self.main_config_file}" : {error}',
+                    title='Error'
                 )
                 return
             else:
