@@ -38,8 +38,8 @@ def colorize(default_color: int, string: str) -> list[tuple[int, int]]:
     Code is adapted from Cansi library (https://github.com/tslight/cansi). Some of the original comments kept in the code.
 
     Args:
-        default_color: passed to the `mkcolors` function (see documentation for reference).
-        string: a string containing ANSI escape codes for color.
+        default_color: See `_mkcolor()` documentation for reference.
+        string: A string containing ANSI escape codes.
 
     Returns:
         A list of pairs of `curses`' control character and their applicable length.
@@ -58,8 +58,8 @@ def colorize(default_color: int, string: str) -> list[tuple[int, int]]:
         for ANSI escape codes reference.
 
         Args:
-            default_color: color pair used for the default background and foreground ANSI escape codes (`39;49;00`).
-            offset: offset for the `curses.init_pair` function to avoid overwriting predefined colors of `npyscreen`'s theme.
+            default_color: A `curses` color pair index used for the default background and foreground ANSI escape codes (`39;49;00`).
+            offset: An offset for the `curses.init_pair` function to avoid overwriting predefined colors of `npyscreen`'s theme.
 
         Returns:
             A dictionary mapping of ANSI escape sequences to `curses`' control characters.
@@ -121,8 +121,8 @@ class CodeHighlightedTextfield(Textfield):
     for displaying JSON config files.
 
     Attributes:
-        _highlightingdata: internal array specifying special control characters for curses to display colors.
-        syntax_highlighting: enable syntax highlight for npyscreen to call the `update_highlight` method on redraw.
+        _highlightingdata: A list specifying special control characters for curses to display colors (created from the `colorize()` method).
+        syntax_highlighting: A boolean enabling syntax highlight, telling npyscreen to call the `update_highlight` method on redraw.
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -224,8 +224,10 @@ class OutputSelectionTreeData(TreeData):
     A `TreeData` node representing an output field from a `Message` output type.
 
     Attributes:
-        annotate: Text annotation to display next to the node content.
-        annotate_color: Color of the text annotation (see [reference](https://npyscreen.readthedocs.io/color.html) for a list of valid values).
+        annotate: The text annotation to display next to the node content.
+        annotate_color: The color of the text annotation (see the [documentation](
+            https://npyscreen.readthedocs.io/color.html
+        ) for a list of valid values).
     """
     def __init__(self, *args, annotate: str = '?', annotate_color: str = 'CONTROL', **kwargs):
         super().__init__(*args, **kwargs)
@@ -317,9 +319,12 @@ def notify_yes_no( #pylint: disable=too-many-arguments
     Args:
         message: The text content of the popup.
         title: The title of the popup window.
-        form_color: Color of the popup content text (see https://npyscreen.readthedocs.io/color.html).
+        form_color: The color of the popup content text (see https://npyscreen.readthedocs.io/color.html).
         wrap: If true, wrap the text content to the window border.
         wide: If true, use the wide display version of the popup.
+
+    Returns:
+        A boolean indicating the choice of the user (`YES = True`).
     """
     message = _prepare_message(message)
     if wide:

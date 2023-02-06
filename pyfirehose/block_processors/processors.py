@@ -61,7 +61,7 @@ def filtered_block_processor(raw_block: Message) -> dict:
     See the `README.md` file for more information on building filtered stream.
 
     Args:
-        raw_block: Raw block received from the gRPC stream.
+        raw_block: A raw block received from the gRPC stream.
 
     Yields:
         A dictionary containing the filtered block data.

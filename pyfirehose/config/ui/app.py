@@ -27,10 +27,10 @@ class ConfigApp(NPSAppManaged):
     for reference.
 
     Attributes:
-        display_main_popup: Indicates if the main form should display a information message when loaded (holds the message itself in that case).
-        main_config: Dictionary representing the loaded main configuration file.
+        display_main_popup: A string that the main form displays as an information message when created, if not empty.
+        main_config: A dictionary representing the loaded main configuration file.
         main_config_file: The filepath to the main configuration file.
-        main_config_updated: Boolean indicating if the main config file has changed during the session.
+        main_config_updated: A boolean indicating if the main config file has changed during the session.
     """
     # Main configuration editing forms
     MAIN_CONFIG_API_KEYS_FORM = 'MAIN_CONFIG_API_KEYS_FORM'

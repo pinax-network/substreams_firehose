@@ -18,9 +18,6 @@ from npyscreen import OptionList
 from npyscreen import notify_confirm, notify_yes_no
 from pygments.lexers.data import JsonLexer
 
-# This import is used to prevent circular dependency for the `utils` and `config.parser` modules.
-from pyfirehose.args import check_period #pylint: disable=unused-import
-
 import pyfirehose.config.ui.widgets.inputs as input_options
 from pyfirehose.utils import get_auth_token, open_file_from_package
 from pyfirehose.config.parser import Config, StubConfig
@@ -35,7 +32,7 @@ class StubConfigEndpointsForm(ActionFormV2):
     Choose an endpoint to edit or create a new stub config for.
 
     Attributes:
-        ml_endpoints: an `EndpointsTitleSelectOne` widget to select an endpoint.
+        ml_endpoints: An `EndpointsTitleSelectOne` widget to select an endpoint.
     """
     def beforeEditing(self): #pylint: disable=invalid-name
         """
@@ -75,8 +72,8 @@ class StubConfigSaveFileForm(ActionFormV2):
     Choose the save file location for the stub config.
 
     Attributes:
-        stub_loaded: indicates if the stub has been loaded from the specified file.
-        tfc_stub_save_file: a `TitleFilenameCombo` widget to select the stub save file.
+        stub_loaded: Indicates if the stub has been loaded from the selected file.
+        tfc_stub_save_file: A `TitleFilenameCombo` widget to select the stub save file.
     """
     def create(self):
         try:
@@ -137,7 +134,7 @@ class StubConfigServicesForm(ActionFormV2):
     The endpoint **has** to provide a reflection service in order to determine the available services.
 
     Attributes:
-        ml_services: a `TitleSelectOne` widget to select which service the stub will use.
+        ml_services: A `TitleSelectOne` widget to select which service the stub will use.
     """
     def beforeEditing(self): #pylint: disable=invalid-name
         """
@@ -212,8 +209,8 @@ class StubConfigMethodsForm(ActionFormV2):
     Choose a gRPC method from the specified service.
 
     Attributes:
-        methods: available methods provided by the reflection service.
-        ml_methods: a `TitleSelectOne` widget to select which method the stub will use.
+        methods: A list of available methods provided by the reflection service.
+        ml_methods: A `TitleSelectOne` widget to select which method the stub will use.
     """
     def beforeEditing(self): #pylint: disable=invalid-name
         """
@@ -263,7 +260,7 @@ class StubConfigInputsForm(ActionFormV2):
     Input options will be created according to their expected types (bool -> `InputBoolean`, etc.).
 
     Attributes:
-        w_inputs: an `InputsListDisplay` widget to present the list of input options.
+        w_inputs: An `InputsListDisplay` widget to present the list of input options.
     """
     def clear_input(self, show_popup: bool = True) -> None:
         """
@@ -272,7 +269,7 @@ class StubConfigInputsForm(ActionFormV2):
         Pressing 'c' will ask for confirmation before clearing, 'C' will not.
 
         Args:
-            show_popup: if True, asks the user for confirmation before clearing the input.
+            show_popup: If True, asks the user for confirmation before clearing the input.
         """
         input_widget = self.get_widget('inputs')
         cleared_option = input_widget.values[input_widget.cursor_line]
@@ -408,8 +405,8 @@ class StubConfigInputsForm(ActionFormV2):
         Hide or display the designated input option.
 
         Args:
-            name: Identifier of the input option in the `w_inputs` input list.
-            hide: Boolean indicating to hide or show the specified option.
+            name: An identifier of the input option in the `w_inputs` input list.
+            hide: A boolean indicating to hide or show the designated option.
 
         Raises:
             StopIteration: If the input option could not be found.
@@ -432,7 +429,7 @@ class StubConfigInputsForm(ActionFormV2):
         ).
 
         Args:
-            package_url: Filepath to a substream package file (`.spkg`).
+            package_url: A local path to a substream package file (`.spkg`).
 
         Returns:
             A list of available output modules for the given substream package (or an empty list).
@@ -508,8 +505,8 @@ class StubConfigOutputsForm(SplitActionForm): #pylint: disable=too-many-ancestor
     available fields that can be selected to be kept from the response.
 
     Attributes:
-        output_descriptors: List of available `Descriptor` for the corresponding method.
-        saved_output_selection: Stores the state of a selection tree to be restored when switching output types.
+        output_descriptors: A list of available `Descriptor` for the corresponding method.
+        saved_output_selection: A dictionary reprensenting the state of a selection tree to be restored when switching output types.
     """
     def beforeEditing(self): #pylint: disable=invalid-name
         """
@@ -601,7 +598,7 @@ class StubConfigOutputsForm(SplitActionForm): #pylint: disable=too-many-ancestor
             Args:
                 node: The current node in the tree.
                 descriptor: The next descriptor if the field is a `Message` type.
-                previous_desc: Parent descriptor to prevent infinite inclusion of `Message` types.
+                previous_desc: The parent descriptor of the current one, used to prevent infinite inclusion of `Message` types.
                 previous_selected: See `create_output_selection()` documentation.
             """
             for field in descriptor.fields:

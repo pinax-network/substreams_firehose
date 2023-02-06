@@ -37,7 +37,7 @@ def parse_arguments() -> argparse.Namespace:
     Setup the command line interface and return the parsed arguments.
 
     Returns:
-        A Namespace object containing the parsed arguments.
+        A `Namespace` object containing the parsed arguments.
     """
     arg_parser = argparse.ArgumentParser(
         description=('Extract any data from the blockchain. '

@@ -52,17 +52,17 @@ def load_config(file: str, grpc_entry_id: str | None = None) -> bool:
     in the config.
 
     Args:
-        file: Filepath to the main config file.
-        grpc_entry_id: Id of a gRPC entry present in the "grpc" array of the main config file.
+        file: A local path to the main configuration file.
+        grpc_entry_id: A string identifier of a gRPC entry present in the "grpc" array of the main configuration file.
 
     Returns:
-        A boolean indicating if the stub config file has also been loaded.
+        A boolean indicating if the stub configuration file has also been loaded.
 
     Raises:
-        ArgumentTypeError: If an entry is not recognized within the config file.
-        HjsonDecodeError: If the hjson module fails to parse the config file.
-        ImportError: If the stub config files fails to import the specified modules.
-        KeyError: If a required key is missing from the config file.
+        ArgumentTypeError: If an entry is not recognized within the configuration file.
+        HjsonDecodeError: If the `hjson` module fails to parse the configuration file.
+        ImportError: If the stub configuration file fails to import the specified modules.
+        KeyError: If a required key is missing from the configuration file.
     """
     with utils.open_file_from_package(file, 'r') as config_file:
         try:
@@ -121,7 +121,7 @@ def load_substream_package(url: str) -> dict:
     Parse a substream package from an `.spkg` file.
 
     Args:
-        url: Local path to `.spkg` file.
+        url: A local path to `.spkg` file.
 
     Returns:
         A dictionary containing fields available in the package file.
@@ -142,12 +142,12 @@ def load_stub_config(stub: str | dict) -> None:
     Load the stub config from a file (str) or directly from a key-value dictionary.
 
     Args:
-        stub: The stub to load either as a filepath or a dictionary.
+        stub: The stub to load either as a local path or a dictionary.
 
     Raises:
-        HjsonDecodeError: If the hjson module fails to parse the config file.
+        HjsonDecodeError: If the `hjson` module fails to parse the configuration file.
         ImportError: If the specified stub or request object cannot be imported.
-        KeyError: If a required key is missing from the config file.
+        KeyError: If a required key is missing from the configuration file.
     """
     stub_config = stub
     # Load stub config from external file

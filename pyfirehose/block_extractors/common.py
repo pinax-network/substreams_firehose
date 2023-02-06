@@ -71,7 +71,7 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel,
         start: The stream's starting block.
         end: The stream's ending block.
         secure_channel: The gRPC secure channel (SSL/TLS) to extract block from.
-        block_processor: Optional block processor function for directly parsing raw blocks.
+        block_processor: An optional block processing function for directly parsing raw blocks.
         The function will then return the parsed blocks instead.
         Discouraged as it might cause congestion issues for the gRPC channel if the block processing takes too long.
         Parsing the blocks *after* extraction allows for maximum throughput from the gRPC stream.

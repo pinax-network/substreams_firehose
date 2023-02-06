@@ -20,8 +20,8 @@ class MainForm(FormWithMenus):
     Main form presenting the main config file with a menu for accessing the edit functions.
 
     Attributes:
-        next_form: describe the next form to be loaded after exiting the main form (`None` exits the application).
-        stored_highlights: dictionary containing the highlighted text content for the `CodeHighlightedTitlePager` widget.
+        next_form: The next form to be loaded after exiting the main form (`None` exits the application).
+        stored_highlights: A dictionary containing the highlighted text content for the `CodeHighlightedTitlePager` widget.
     """
     OK_BUTTON_TEXT = 'Quit'
 
@@ -74,7 +74,7 @@ class MainForm(FormWithMenus):
         Args:
             form: The form name identifier.
             form_class: The form class.
-            form_display_name: `name` attribute of the form displayed at the top.
+            form_display_name: The `name` attribute of the form that will be displayed at the top of the screen.
         """
         self.next_form = form #pylint: disable=attribute-defined-outside-init
         self.parentApp.addForm(form, form_class, name=form_display_name)

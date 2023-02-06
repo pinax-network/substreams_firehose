@@ -172,7 +172,7 @@ def generate_proto_messages_classes(path: str = 'pyfirehose/proto/generated/prot
     Should only be called once for different descriptor sets.
 
     Args:
-        path: Path to a descriptor set file (generated from `protoc --descriptor_set_out`).
+        path: A path to a descriptor set file (generated from `protoc --descriptor_set_out`).
 
     Returns:
         A dictionary with pairs of message full name and the Python class object associated with it.
@@ -284,7 +284,10 @@ def get_auth_token(use_cache: bool = True) -> str:
 
 def get_current_task_name() -> str:
     """
-    Helper function for generating a unique task id from an asyncio task.
+    Helper function for generating a unique task id from an `asyncio` task.
+
+    Returns:
+        A string uniquely identifying the `asyncio` task.
     """
     prefix, task_id = asyncio.current_task().get_name().rsplit('-')
 
@@ -296,7 +299,7 @@ def import_all_from_module(module_name: str) -> list[ModuleType]:
     Dynamically import all python files located in the specified module's folder.
 
     Args:
-        module_name: Name of the module to import files from.
+        module_name: The name of the module to import files from.
 
     Returns:
         The list of imported modules.
@@ -317,7 +320,7 @@ def open_file_from_package(path: str, mode: str = 'r') -> BinaryIO | TextIO:
     If the file is not found, try to open it from the package install directory as a relative path.
 
     Args:
-        path: File path or relative path of the resource inside the package install directory .
+        path: A file path or relative path of the resource inside the package install directory .
         mode: One of `r` (text) or `rb` (binary).
 
     Returns:
@@ -386,15 +389,16 @@ def patch_get_messages(self, files):
             self.GetPrototype(extension.containing_type)
         extended_class = self._classes[extension.containing_type] #pylint: disable=protected-access
 
-        # === Patch starts here ===
+        # === PATCH STARTS HERE ===
 
-        # Catch the exception from `RegisterExtension` to prevent `NotImplementedError` breaking the *whole* loop.
+        # Catch the exception from `RegisterExtension` to prevent `NotImplementedError`
+        # breaking the *whole* loop in `generate_proto_messages_classes`.
         try:
             extended_class.RegisterExtension(extension)
         except NotImplementedError:
             pass
 
-        # === Patch ends here ===
+        # === PATCH ENDS HERE ===
 
         if extension.message_type:
             self.GetPrototype(extension.message_type)

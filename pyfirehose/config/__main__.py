@@ -11,7 +11,7 @@ from pyfirehose.config.ui.app import ConfigApp
 
 def main() -> int:
     """
-    Main function for starting config UI tool.
+    Main function for starting the config TUI application.
     """
     arg_parser = argparse.ArgumentParser(
         description=('Configuration file manager TUI'),
