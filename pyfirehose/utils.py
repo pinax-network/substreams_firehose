@@ -312,11 +312,11 @@ def import_all_from_module(module_name: str) -> list[ModuleType]:
 
 def open_file_from_package(path: str, mode: str = 'r') -> BinaryIO | TextIO:
     """
-    Open a file (read-only) located in the installed package directory using its relative path.
+    Open a file (read-only) located in the package install directory using its relative path.
     If the file is not a valid resource, try to open it in the current directory.
 
     Args:
-        path: Relative path of the resource inside the installed package directory or local path.
+        path: Relative path of the resource inside the package install directory or local path.
         mode: One of `r` (text) or `rb` (binary).
 
     Returns:
@@ -330,6 +330,9 @@ def open_file_from_package(path: str, mode: str = 'r') -> BinaryIO | TextIO:
     if mode not in ['r', 'rb']:
         raise ValueError('`mode` argument must be one of `r` (text) or `rb` (binary).')
 
+    if not '/' in path:
+        path = f'./{path}'
+
     package, resource = path.rsplit('/', 1)
     package = package.replace('/', '.')
 
@@ -339,7 +342,7 @@ def open_file_from_package(path: str, mode: str = 'r') -> BinaryIO | TextIO:
     except TypeError:
         pass
 
-    return open(path, mode, encoding='utf8')
+    return open(path, mode, encoding='utf8') if mode == 'r' else open(path, mode)
 
 def patch_get_messages(self, files):
     """
