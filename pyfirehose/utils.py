@@ -313,11 +313,11 @@ def import_all_from_module(module_name: str) -> list[ModuleType]:
 
 def open_file_from_package(path: str, mode: str = 'r') -> BinaryIO | TextIO:
     """
-    Open a file (read-only) located in the package install directory using its relative path.
-    If the file is not a valid resource, try to open it in the current directory.
+    Try to open a file (read-only) using the standard `open` function.
+    If the file is not found, try to open it from the package install directory as a relative path.
 
     Args:
-        path: Relative path of the resource inside the package install directory or local path.
+        path: File path or relative path of the resource inside the package install directory .
         mode: One of `r` (text) or `rb` (binary).
 
     Returns:
@@ -326,24 +326,28 @@ def open_file_from_package(path: str, mode: str = 'r') -> BinaryIO | TextIO:
     Raises:
         FileNotFoundError: If the file specified by `path` doesn't exists.
         IsADirectoryError: If the file specified by `path` is a directory.
-        ValueError: If the `mode` argument is not one of `r` or `rb`.
+        ValueError: If the `mode` argument is not one of `r` or `rb` **or** if failing to open the file both as a local or package resource file.
     """
     if mode not in ['r', 'rb']:
         raise ValueError('`mode` argument must be one of `r` (text) or `rb` (binary).')
 
-    if not '/' in path:
-        path = f'./{path}'
-
-    package, resource = path.rsplit('/', 1)
-    package = package.replace('/', '.')
-
     try:
-        if is_resource(package, resource):
-            return open_text(package, resource, encoding='utf8') if mode == 'r' else open_binary(package, resource)
-    except TypeError:
-        pass
+        file = open(path, mode, encoding='utf8') if mode == 'r' else open(path, mode) #pylint: disable=unspecified-encoding,consider-using-with
+    except FileNotFoundError:
+        if not '/' in path:
+            path = f'./{path}'
 
-    return open(path, mode, encoding='utf8') if mode == 'r' else open(path, mode)
+        package, resource = path.rsplit('/', 1)
+        package = package.replace('/', '.')
+
+        try:
+            if is_resource(package, resource):
+                file = open_text(package, resource, encoding='utf8') if mode == 'r' else open_binary(package, resource)
+        except TypeError as error:
+            logging.error('Could not open "%s" as a local file or package resource file.', path)
+            raise ValueError(f'Could not open "{path}" as a local file or package resource file.') from error
+
+    return file
 
 def patch_get_messages(self, files):
     """
