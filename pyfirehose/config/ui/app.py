@@ -5,11 +5,12 @@ Main app for the config TUI application.
 """
 
 import logging
-from importlib.resources import is_resource
+import os
+import os.path
 
 import hjson
 from npyscreen import NPSAppManaged
-from npyscreen import notify_confirm, selectFile, setTheme
+from npyscreen import notify_confirm, notify_yes_no, selectFile, setTheme
 from npyscreen.npysThemes import DefaultTheme
 
 from pyfirehose.utils import open_file_from_package
@@ -31,6 +32,7 @@ class ConfigApp(NPSAppManaged):
         display_main_popup: Indicates if the main form should display a information message when loaded (holds the message itself in that case).
         main_config: Dictionary representing the loaded main configuration file.
         main_config_file: The filepath to the main configuration file.
+        main_config_updated: Boolean indicating if the main config file has changed during the session.
     """
     # Main configuration editing forms
     MAIN_CONFIG_API_KEYS_FORM = 'MAIN_CONFIG_API_KEYS_FORM'
@@ -51,6 +53,7 @@ class ConfigApp(NPSAppManaged):
         self.main_config = None
         # TODO: Allow changing the default path of the main config file
         self.main_config_file = 'pyfirehose/config.hjson'
+        self.main_config_updated = False
 
     def onStart(self):
         setTheme(DefaultTheme)
@@ -75,3 +78,30 @@ class ConfigApp(NPSAppManaged):
         self.addForm('MAIN', MainForm, name='PyFirehose config')
         self.addForm(self.STUB_CONFIG_ENPOINTS_FORM, StubConfigEndpointsForm, name='Stub config editing - Endpoints')
         self.addForm(self.MAIN_CONFIG_API_KEYS_FORM, MainConfigApiKeysForm, name='Main config editing - API keys')
+
+    def onCleanExit(self):
+        if self.main_config_updated:
+            overwrite_confirm = notify_yes_no(
+                'Overwrite main configuration file with the updated values ?',
+                title=f'Changes detected for "{self.main_config_file}"'
+            )
+
+            if not overwrite_confirm:
+                return
+
+            try:
+                os.makedirs(os.path.dirname(self.main_config_file), exist_ok=True)
+                with open(self.main_config_file, 'w+', encoding='utf8') as config_file:
+                    hjson.dumpJSON(self.main_config, config_file, indent=4)
+            except OSError as error:
+                logging.error('Could not write out file to "%s": %s', self.main_config_file, error)
+                notify_confirm(
+                    f'Could not write output file to "{self.main_config_file}" : check that you have permission to write to this location.',
+                    title=f'Error: {error}'
+                )
+                return
+            else:
+                notify_confirm(
+                    f'Main configuration file successfully saved at :\n{self.main_config_file}',
+                    title='Success'
+                )

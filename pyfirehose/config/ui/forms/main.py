@@ -37,6 +37,9 @@ class MainForm(FormWithMenus):
             notify_confirm(self.parentApp.display_main_popup, title='Information')
             self.parentApp.display_main_popup = None
 
+        if self.parentApp.main_config_updated:
+            self.ml_main_config_view.values = hjson.dumpsJSON(self.parentApp.main_config, indent=4).split('\n')
+
     def create(self):
         main_menu = self.new_menu(name='Main menu')
         main_config_submenu = main_menu.addNewSubmenu(name='Edit main config')
@@ -53,7 +56,7 @@ class MainForm(FormWithMenus):
             arguments=[self.parentApp.MAIN_CONFIG_API_KEYS_FORM]
         )
 
-        self.add(
+        self.ml_main_config_view = self.add(
             CodeHighlightedTitlePager,
             name=f'Main config (view only) - {self.parentApp.main_config_file}',
             values=hjson.dumpsJSON(self.parentApp.main_config, indent=4).split('\n'),

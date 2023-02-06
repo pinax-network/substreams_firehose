@@ -41,21 +41,22 @@ class MainConfigApiKeysForm(ActionFormV2):
 
     def on_ok(self):
         for auth_option in self.w_inputs.values:
-            logging.info('[%s] %s = %s', self.name, auth_option.name, auth_option.value)
-            Config.AUTH_ENDPOINT = self.parentApp.main_config['auth'][auth_option.name]['endpoint']
-            Config.API_KEY = auth_option.value
+            if self.parentApp.main_config['auth'][auth_option.name]['api_key'] != auth_option.value:
+                Config.AUTH_ENDPOINT = self.parentApp.main_config['auth'][auth_option.name]['endpoint']
+                Config.API_KEY = auth_option.value
 
-            try:
-                get_auth_token()
-            except RuntimeError as error:
-                if not notify_yes_no(
-                    f'There was an error fetching the authentication token from the endpoint :\n{error}\n'
-                    f'{"-"*39}\nIgnore the error and save the API key ?',
-                    title=f'Error: could not fetch JWT token from "{Config.AUTH_ENDPOINT}"',
-                    wide=True
-                ):
-                    return
-            self.parentApp.main_config['auth'][auth_option.name]['api_key'] = auth_option.value
+                try:
+                    get_auth_token()
+                except RuntimeError as error:
+                    if not notify_yes_no(
+                        f'There was an error fetching the authentication token from the endpoint :\n{error}\n'
+                        f'{"-"*39}\nIgnore the error and save the API key ?',
+                        title=f'Error: could not fetch JWT token from "{Config.AUTH_ENDPOINT}"',
+                        wide=True
+                    ):
+                        return
+                self.parentApp.main_config['auth'][auth_option.name]['api_key'] = auth_option.value
+                self.parentApp.main_config_updated = True
 
         self.parentApp.setNextFormPrevious()
 
