@@ -10,7 +10,7 @@ from types import MethodType
 from weakref import ref
 
 from npyscreen import ActionFormV2
-from npyscreen import OptionBoolean, OptionFreeText, OptionListDisplay, OptionMultiFreeList, OptionSingleChoice
+from npyscreen import OptionBoolean, OptionFilename, OptionFreeText, OptionListDisplay, OptionMultiFreeList, OptionSingleChoice
 from npyscreen import notify_confirm
 from npyscreen.apOptions import Option
 
@@ -140,24 +140,25 @@ class InputString(OptionFreeText):
 
 class InputMessage(InputValidator, OptionFreeText):
     """
-    Custom option input for complex `Message` object input.
+    Custom option input for generic `Message` object.
 
-    If the edited stub config is related to a substream, the `InputMessage` will check if its name matches the `modules`
-    input field and try to validate the `.spkg` file path provided.
-
-    Attributes:
-        parent: a `weakref` reference to the `InputListDisplay` object containg this input.
+    Note that this class is empty as everything is handled by the parent `OptionFreeText`.
+    It exists to allow generic input creation (see `StubConfigInputsForm.create` method).
     """
-    def __init__(self, *args, parent: ActionFormV2 | None = None, **kwargs):
-        self.parent = ref(parent) if parent else lambda *_, **__: None
+
+class InputPackage(InputValidator, OptionFilename):
+    """
+    Custom option input for a substream package file (.spkg).
+    """
+    def __init__(self, parent: ActionFormV2, *args, **kwargs):
+        self.parent = ref(parent)
         super().__init__(*args, **kwargs)
 
     def set(self, value):
-        if value and (not self.parent() or self.parent().parentApp.is_substream) \
-        and self.name.lower() == 'modules' \
-        and not validators.message_validator(value, message_field_name=self.name):
+        if value and not validators.package_validator(value):
             logging.error('[%s] Trying to set a value that is not a valid package file : %s', self.name, value)
             notify_confirm('Value entered is not a valid package file', title=f'{self.name} validation error')
+
             return True
 
         self.value = value
@@ -166,20 +167,19 @@ class InputMessage(InputValidator, OptionFreeText):
         return False
 
     def when_set(self):
-        if self.parent() and self.name.lower() == 'modules':
-            try:
-                output_module_option = next((w for w in self.parent().w_inputs.values if w.name == 'output_module'))
+        try:
+            output_module_option = next((w for w in self.parent().w_inputs.values if w.name == 'output_module'))
 
-                # Update `output_module` input enum choices and value
-                output_module_option.choices = \
-                    self.parent().get_output_module_choices(self.value)
-                output_module_option.value = [next(iter(output_module_option.choices), '')]
+            # Update `output_module` input enum choices and value
+            output_module_option.choices = \
+                self.parent().get_output_module_choices(self.value)
+            output_module_option.value = [next(iter(output_module_option.choices), '')]
 
-                # Hide or unhide input option based on package url value
-                self.parent().hide_input_option('output_module', self.value == '')
-            except AttributeError:
-                # Raised at the creation of the input form before the `InputListDisplay` is fully initialized.
-                pass
+            # Hide or unhide input option based on package url value
+            self.parent().hide_input_option('output_module', self.value == '')
+        except AttributeError:
+            # Raised at the creation of the input form before the `InputListDisplay` is fully initialized.
+            pass
 
 class InputRepeated(InputValidator, OptionMultiFreeList):
     """

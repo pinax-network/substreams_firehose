@@ -29,7 +29,6 @@ from pyfirehose.config.ui.forms.generic import ActionFormDiscard, SplitActionFor
 from pyfirehose.config.ui.widgets.custom import CodeHighlightedTitlePager, EndpointsTitleSelectOne, \
                                                 OutputSelectionMLTreeMultiSelectAnnotated, OutputTypesTitleSelectOne, \
                                                 OutputSelectionTreeData
-from pyfirehose.config.ui.widgets.inputs import InputsListDisplay, InputRepeated
 
 class StubConfigEndpointsForm(ActionFormV2):
     """
@@ -339,7 +338,7 @@ class StubConfigInputsForm(ActionFormV2):
             # If its a repeated field, change to `InputRepeated` and pass the original type to the constructor
             if input_parameter.label == FieldDescriptor.LABEL_REPEATED:
                 # TODO: Make repeated enum fields use multi-choice checkboxes
-                option_type = InputRepeated
+                option_type = getattr(input_options, 'InputRepeated')
                 option_args.update(
                     # Allow the `InputRepeated` to pick the right validator (e.g. `bool_validator`)
                     value_type=input_type.lower(),
@@ -362,9 +361,10 @@ class StubConfigInputsForm(ActionFormV2):
                 )
             elif input_parameter.cpp_type == FieldDescriptor.CPPTYPE_MESSAGE:
                 if input_parameter.name.lower() == 'modules':
-                    option_args.update( # TODO: Replace with file selection widget
+                    option_type = getattr(input_options, 'InputPackage')
+                    option_args.update(
                         documentation=option_args['documentation'] + [
-                            'Input the path to a package file (.spkg) associated with the substream you want to use.'
+                            'Select a package file (.spkg) associated with the substream you want to use.'
                         ],
                         parent=self
                     )
@@ -393,7 +393,7 @@ class StubConfigInputsForm(ActionFormV2):
             options.append(option_type(**option_args))
 
         self.w_inputs = self.add(
-            InputsListDisplay,
+            getattr(input_options, 'InputsListDisplay'),
             w_id='inputs',
             name='Edit method inputs',
             values=options,

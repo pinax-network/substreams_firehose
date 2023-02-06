@@ -85,24 +85,33 @@ def string_validator(value: str, **kwargs): #pylint: disable=unused-argument
     """
     return True
 
-def message_validator(value: str, message_field_name: str | None = None, **kwargs): #pylint: disable=unused-argument
+def message_validator(value: str, **kwargs): #pylint: disable=unused-argument
     """
-    Input validator for messages.
-
-    The behavior of this function is dependent on the `message_field_name` parameter.
+    Placeholder validator for generic messages.
 
     Args:
-        value: a string.
-        message_field_name: the field name of the message.
+        value: a string (unused).
         kwargs: additional keyword arguments (unused, allow generic use of validators).
 
     Returns:
-        A boolean indicating if the value is a valid package file in case the `message_field_name` is equal to `modules` (substream).
+        True
     """
-    if message_field_name == 'modules':
-        try:
-            return load_substream_package(value)
-        except (DecodeError, FileNotFoundError, IsADirectoryError):
-            return False
+    return True
+
+def package_validator(value: str, **kwargs): #pylint: disable=unused-argument
+    """
+    Input validator for substream package files (.spkg).
+
+    Args:
+        value: a string.
+        kwargs: additional keyword arguments (unused, allow generic use of validators).
+
+    Returns:
+        A boolean indicating if the value is a valid package file.
+    """
+    try:
+        return load_substream_package(value)
+    except (DecodeError, FileNotFoundError, IsADirectoryError):
+        return False
 
     return True
