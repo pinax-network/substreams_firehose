@@ -24,7 +24,7 @@ from requests_cache import CachedSession
 
 from pyfirehose.config.parser import Config
 
-def date_to_block_num(date: datetime, jwt: str | None = None) -> int:
+def date_to_block_num(date: datetime) -> int:
     """
     Query the `graphql_endpoint` specified in the main config file for the block number associated with a given date time.
 
@@ -32,7 +32,6 @@ def date_to_block_num(date: datetime, jwt: str | None = None) -> int:
 
     Args:
         date: A date to retrieve the associated block number.
-        jwt: A JWT token used for authenticating with the GraphQL API (will be fetched automatically if not specified).
 
     Returns:
         The block number associated with the given date time.
