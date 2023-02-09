@@ -15,7 +15,7 @@ from grpc_reflection.v1alpha.proto_reflection_descriptor_database import ProtoRe
 from npyscreen import ActionFormV2
 from npyscreen import TitleFilenameCombo, TitleSelectOne
 from npyscreen import OptionList
-from npyscreen import notify_confirm, notify_yes_no
+from npyscreen import notify, notify_confirm, notify_yes_no
 from pygments.lexers.data import JsonLexer
 
 import pyfirehose.config.ui.widgets.inputs as input_options
@@ -156,11 +156,12 @@ class StubConfigServicesForm(ActionFormV2):
         channel = grpc.secure_channel(Config.GRPC_ENDPOINT, creds)
         self.parentApp.reflection_db = ProtoReflectionDescriptorDatabase(channel)
 
+        notify(f'Connecting to "{Config.GRPC_ENDPOINT}" reflection service...', title='Please wait')
         try:
             services = self.parentApp.reflection_db.get_services()
         except grpc.RpcError as rpc_error:
             if rpc_error.code() == grpc.StatusCode.UNAVAILABLE: #pylint: disable=no-member
-                services = []
+                services = ['No services available']
                 # TODO: Allow providing a service descriptor (?)
                 notify_confirm(
                     f'The endpoint "{Config.GRPC_ENDPOINT}" doesn\'t provide a gRPC reflection service.\n\n'
