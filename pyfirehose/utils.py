@@ -13,7 +13,7 @@ import os
 from collections.abc import Mapping, Sequence
 from contextlib import nullcontext
 from datetime import datetime, timedelta
-from importlib.resources import is_resource, open_binary, open_text
+from importlib.resources import open_binary, open_text
 from types import MethodType, ModuleType
 from typing import BinaryIO, TextIO
 
@@ -328,7 +328,7 @@ def open_file_from_package(path: str, mode: str = 'r') -> BinaryIO | TextIO:
     Raises:
         FileNotFoundError: If the file specified by `path` doesn't exists.
         IsADirectoryError: If the file specified by `path` is a directory.
-        ValueError: If the `mode` argument is not one of `r` or `rb` **or** if failing to open the file both as a local or package resource file.
+        ValueError: If the `mode` argument is not one of `r` or `rb`.
     """
     if mode not in ['r', 'rb']:
         raise ValueError('`mode` argument must be one of `r` (text) or `rb` (binary).')
@@ -343,11 +343,10 @@ def open_file_from_package(path: str, mode: str = 'r') -> BinaryIO | TextIO:
         package = package.replace('/', '.')
 
         try:
-            if is_resource(package, resource):
-                file = open_text(package, resource, encoding='utf8') if mode == 'r' else open_binary(package, resource)
+            file = open_text(package, resource, encoding='utf8') if mode == 'r' else open_binary(package, resource)
         except TypeError as error:
             logging.error('Could not open "%s" as a local file or package resource file.', path)
-            raise ValueError(f'Could not open "{path}" as a local file or package resource file.') from error
+            raise FileNotFoundError(f'Could not open "{path}" as a local file or package resource file.') from error
 
     return file
 
