@@ -48,7 +48,7 @@ class StubConfigEndpointsForm(ActionFormV2):
         self.ml_endpoints = self.add(
             EndpointsTitleSelectOne,
             name='Select an endpoint',
-            values=sorted(self.parentApp.main_config['grpc'], key=lambda e: e['chain']),
+            values=sorted(self.parentApp.main_config['grpc'], key=lambda e: e.get('chain', '')),
             scroll_exit=True
         )
 
@@ -260,7 +260,7 @@ class StubConfigInputsForm(ActionFormV2):
     Input options will be created according to their expected types (bool -> `InputBoolean`, etc.).
 
     Attributes:
-        w_inputs: An `InputsListDisplay` widget to present the list of input options.
+        w_inputs: An `InputListDisplay` widget to present the list of input options.
     """
     def clear_input(self, show_popup: bool = True) -> None:
         """
@@ -390,7 +390,7 @@ class StubConfigInputsForm(ActionFormV2):
             options.append(option_type(**option_args))
 
         self.w_inputs = self.add(
-            getattr(input_options, 'InputsListDisplay'),
+            getattr(input_options, 'InputListDisplay'),
             w_id='inputs',
             name='Edit method inputs',
             values=options,

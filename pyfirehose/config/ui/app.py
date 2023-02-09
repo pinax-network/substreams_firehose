@@ -29,11 +29,13 @@ class ConfigApp(NPSAppManaged):
     Attributes:
         display_main_popup: A string that the main form displays as an information message when created, if not empty.
         main_config: A dictionary representing the loaded main configuration file.
+        main_config: A dictionary representing the loaded main configuration file at the start of the session.
         main_config_file: The filepath to the main configuration file.
-        main_config_updated: A boolean indicating if the main config file has changed during the session.
     """
     # Main configuration editing forms
     MAIN_CONFIG_API_KEYS_FORM = 'MAIN_CONFIG_API_KEYS_FORM'
+    MAIN_CONFIG_ENDPOINTS_FORM = 'MAIN_CONFIG_ENDPOINTS_FORM'
+    MAIN_CONFIG_ENDPOINT_EDIT_FORM = 'MAIN_CONFIG_ENDPOINT_EDIT_FORM'
 
     # Stub configuration editing forms, in order of the workflow
     STUB_CONFIG_ENPOINTS_FORM = 'STUB_CONFIG_ENDPOINTS_FORM'
@@ -49,9 +51,18 @@ class ConfigApp(NPSAppManaged):
 
         self.display_main_popup = None
         self.main_config = None
+        self.main_config_backup = None
         # TODO: Allow changing the default path of the main config file
         self.main_config_file = 'pyfirehose/config.hjson'
-        self.main_config_updated = False
+
+    def has_main_config_changed(self) -> bool:
+        """
+        Compare the version of the main configuration file at the start of the session to the one currently on display.
+
+        Returns:
+            A boolean indicating if changes where made (field order ignored).
+        """
+        return self.main_config != self.main_config_backup
 
     def onStart(self):
         setTheme(DefaultTheme)
@@ -60,7 +71,12 @@ class ConfigApp(NPSAppManaged):
             try:
                 with open_file_from_package(self.main_config_file) as config_file:
                     try:
-                        self.main_config = hjson.load(config_file)
+                        # Using `dict` instead of default `OrderedDict` as order of fields doesn't matter in the config
+                        self.main_config = hjson.load(config_file, object_pairs_hook=dict)
+
+                        # Go back to start of file to also load backup config
+                        config_file.seek(0)
+                        self.main_config_backup = hjson.load(config_file, object_pairs_hook=dict)
                     except hjson.HjsonDecodeError as error:
                         logging.exception('Error decoding main config file (%s): %s', self.main_config_file, error)
                         raise
@@ -76,7 +92,7 @@ class ConfigApp(NPSAppManaged):
         self.addForm('MAIN', MainForm, name='PyFirehose config')
 
     def onCleanExit(self):
-        if self.main_config_updated:
+        if self.has_main_config_changed():
             overwrite_confirm = notify_yes_no(
                 'Overwrite main configuration file with the updated values ?',
                 title=f'Changes detected for "{self.main_config_file}"'

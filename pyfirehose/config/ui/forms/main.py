@@ -11,7 +11,7 @@ from npyscreen import FormWithMenus
 from npyscreen import notify_confirm
 from pygments.lexers.data import JsonLexer
 
-from pyfirehose.config.ui.forms.main_config_edit import MainConfigApiKeysForm
+from pyfirehose.config.ui.forms.main_config_edit import MainConfigApiKeysForm, MainConfigEndpointsForm
 from pyfirehose.config.ui.forms.stub_config_edit import StubConfigEndpointsForm
 from pyfirehose.config.ui.widgets.custom import CodeHighlightedTitlePager
 
@@ -41,8 +41,9 @@ class MainForm(FormWithMenus):
             notify_confirm(self.parentApp.display_main_popup, title='Information')
             self.parentApp.display_main_popup = None
 
-        if self.parentApp.main_config_updated:
-            self.ml_main_config_view.values = hjson.dumpsJSON(self.parentApp.main_config, indent=4).split('\n')
+        # TODO: Figure out color display bug when updating main config file
+        # Update the main configuration view text
+        self.ml_main_config_view.values = hjson.dumpsJSON(self.parentApp.main_config, indent=4).split('\n')
 
     def create(self):
         main_menu = self.new_menu(name='Main menu')
@@ -58,6 +59,12 @@ class MainForm(FormWithMenus):
             text='Edit API keys',
             onSelect=self.switch_form,
             arguments=[self.parentApp.MAIN_CONFIG_API_KEYS_FORM, MainConfigApiKeysForm, 'Main config editing - API keys']
+        )
+
+        main_config_submenu.addItem(
+            text='Edit endpoints',
+            onSelect=self.switch_form,
+            arguments=[self.parentApp.MAIN_CONFIG_ENDPOINTS_FORM, MainConfigEndpointsForm, 'Main config editing - Endpoints']
         )
 
         self.ml_main_config_view = self.add(

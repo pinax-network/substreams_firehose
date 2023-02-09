@@ -22,12 +22,15 @@ THIS SOFTWARE.
 """
 
 import curses
-from npyscreen import MultiLineAction, Pager, SelectOne, Textfield, TitlePager, TitleSelectOne
+from npyscreen import BoxTitle, MultiLineAction, Pager, SelectOne, Textfield, TitlePager, TitleSelectOne
 from npyscreen import MLTreeMultiSelectAnnotated, TreeData, TreeLineSelectableAnnotated
 from npyscreen.fmPopup import ActionPopupWide
 from npyscreen.utilNotify import YesNoPopup, _prepare_message, _wrap_message_lines
 from pygments import highlight
 from pygments.formatters import TerminalFormatter #pylint: disable=no-name-in-module
+from pygments.lexer import RegexLexer
+
+from pyfirehose.config.ui.forms.generic import ActionButtonPopup
 
 def colorize(default_color: int, string: str) -> list[tuple[int, int]]:
     """
@@ -152,7 +155,7 @@ class CodeHighlightedPager(Pager):
     """
     _contained_widgets = CodeHighlightedTextfield
 
-    def __init__(self, *args, lexer=None, **kwargs):
+    def __init__(self, *args, lexer: RegexLexer, **kwargs):
         super().__init__(*args, **kwargs)
 
         text = '\n'.join(self.values)
@@ -161,7 +164,7 @@ class CodeHighlightedPager(Pager):
         self.parent.stored_highlights = {}
         for i in range(len(highlighted_text_split) - 1):
             self.parent.stored_highlights[self.values[i]] = [
-                c for (color, length) in colorize(
+                c for color, length in colorize(
                     self.parent.theme_manager.findPair(self, 'DEFAULT'),
                     highlighted_text_split[i]
                 ) for c in [color] * length
@@ -176,6 +179,44 @@ class CodeHighlightedTitlePager(TitlePager):
     """
     _entry_type = CodeHighlightedPager
 
+class EndpointsEditMultiLineAction(MultiLineAction):
+    """
+    Custom multiline display popping up a menu on selection for editing or deleting a main configuration endpoint.
+
+    Used by the `EndpointsViewerBoxTitle` widget.
+    """
+    def actionHighlighted(self, act_on_this, key_press):
+        def _remove_endpoint(endpoint: dict):
+            if notify_yes_no(f'Confirm deletion of "{self.display_value(endpoint)}" entry ?', 'Warning'):
+                del self.values[self.cursor_line]
+                self.display()
+
+        action_popup_name = f'Choose an action for "{self.display_value(act_on_this)}"'
+        action_popup = ActionButtonPopup(
+            buttons={
+                'Edit': lambda: self.parent.create_endpoint_edit_form(act_on_this),
+                'Delete': lambda: _remove_endpoint(act_on_this)
+            },
+            name=action_popup_name,
+            show_at_x=self.relx,
+            show_at_y=self.rely + self.cursor_line,
+            columns=len(action_popup_name) + 6
+        )
+
+        action_popup.edit()
+
+    def display_value(self, vl: dict):
+        try:
+            return f'{vl["id"]}'
+        except KeyError:
+            return str(vl)
+
+class EndpointsViewerBoxTitle(BoxTitle):
+    """
+    Custom `BoxTitle` for displaying the main configuration endpoints values.
+    """
+    _contained_widget = EndpointsEditMultiLineAction
+
 class EndpointsSelectOne(SelectOne):
     """
     Custom single selection widget to display the main config's endpoint data.
@@ -185,7 +226,7 @@ class EndpointsSelectOne(SelectOne):
     """
     def display_value(self, vl: dict):
         try:
-            return f'{vl["chain"]} ({vl["url"]})'
+            return f'{vl.get("chain", "<UNKNOWN CHAIN>")} ({vl["url"]})'
         except KeyError:
             return str(vl)
 
@@ -302,7 +343,7 @@ class YesNoPopupWide(ActionPopupWide):
     def on_cancel(self):
         self.value = False #pylint: disable=attribute-defined-outside-init
 
-def notify_yes_no( #pylint: disable=too-many-arguments
+def notify_yes_no(
     message: str,
     title: str = 'Message',
     form_color: str = 'STANDOUT',
