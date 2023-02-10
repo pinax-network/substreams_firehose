@@ -4,6 +4,9 @@ SPDX-License-Identifier: MIT
 Forms used by the main config TUI app to display and edit configuration files.
 """
 
+import logging
+import os
+import os.path
 from typing import Any
 
 import hjson
@@ -13,7 +16,7 @@ from pygments.lexers.data import JsonLexer
 
 from pyfirehose.config.ui.forms.main_config_edit import MainConfigApiKeysForm, MainConfigEndpointsForm
 from pyfirehose.config.ui.forms.stub_config_edit import StubConfigEndpointsForm
-from pyfirehose.config.ui.widgets.custom import CodeHighlightedTitlePager
+from pyfirehose.config.ui.widgets.custom import CodeHighlightedTitlePager, notify_yes_no
 
 class MainForm(FormWithMenus):
     """
@@ -41,9 +44,35 @@ class MainForm(FormWithMenus):
             notify_confirm(self.parentApp.display_main_popup, title='Information')
             self.parentApp.display_main_popup = None
 
-        # TODO: Figure out color display bug when updating main config file
-        # Update the main configuration view text
-        self.ml_main_config_view.values = hjson.dumpsJSON(self.parentApp.main_config, indent=4).split('\n')
+        if self.parentApp.has_main_config_changed():
+            overwrite_confirm = notify_yes_no(
+                'Overwrite main configuration file with the updated values ?',
+                title=f'Changes detected for "{self.parentApp.main_config_file}"'
+            )
+
+            if not overwrite_confirm:
+                return
+
+            try:
+                os.makedirs(os.path.dirname(self.parentApp.main_config_file), exist_ok=True)
+                with open(self.parentApp.main_config_file, 'w+', encoding='utf8') as config_file:
+                    hjson.dumpJSON(self.parentApp.main_config, config_file, indent=4)
+            except OSError as error:
+                logging.error('Could not write out file to "%s": %s', self.parentApp.main_config_file, error)
+                notify_confirm(
+                    f'Could not write output file to "{self.parentApp.main_config_file}" : {error}',
+                    title='Error'
+                )
+                return
+            else:
+                notify_confirm(
+                    f'Main configuration file successfully saved at :\n{self.parentApp.main_config_file}',
+                    title='Success'
+                )
+
+            # TODO: Figure out color display bug when updating main config file
+            # Update the main configuration view text
+            self.ml_main_config_view.values = hjson.dumpsJSON(self.parentApp.main_config, indent=4).split('\n')
 
     def create(self):
         main_menu = self.new_menu(name='Main menu')

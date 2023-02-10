@@ -136,7 +136,7 @@ class MainConfigEndpointsForm(ActionFormDiscard):
         Check that the item identified by the `item_id` is not already present in the displayed values.
 
         Args:
-            item_id: An identifier.
+            item_id: An identifier supposed to be unique for each item.
 
         Returns:
             A boolean indicating if the identifier is already present.
@@ -297,7 +297,7 @@ class MainConfigEndpointEditForm(ActionFormV2):
             elif not is_empty_input:
                 self._endpoint[endpoint_field.name] = endpoint_field.value
 
-        # Update the endpoints list display to move the edited endpoint to its corresponding `BoxTitle`
+        # Update the endpoints list display to move the edited endpoint to its new corresponding `BoxTitle`
         if self._endpoint['auth'] != previous_auth:
             endpoints_form.move_to_boxtitle(self._endpoint, previous_auth)
         endpoints_form.select_endpoint(self._endpoint)
