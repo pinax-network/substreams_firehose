@@ -6,7 +6,7 @@ Forms specifying the workflow for editing stub config files.
 
 import logging
 from dataclasses import dataclass, field
-from typing import Type
+from typing import Any, Type
 
 from npyscreen import ActionFormV2
 from npyscreen import OptionList
@@ -17,6 +17,14 @@ from pyfirehose.config.parser import Config
 from pyfirehose.config.ui.forms.generic import ActionFormDiscard
 from pyfirehose.config.ui.widgets.custom import EndpointsViewerBoxTitle, notify_yes_no
 from pyfirehose.config.ui.widgets.inputs import InputEnum, InputFile, InputGeneric, InputListDisplay, InputSingleEnum, InputString
+
+'''
+    TODO: Generalize the endpoints editing form to also use it for auth providers
+        - Don't work with `dict`, work with the underlying values
+        - Provide a list of categories, a 'category' key (e.g. 'auth') and identify values by their display value (e.g. 'id')
+        - Also provide main config key to override ? Or overload `on_ok` method ? Or call a validation function that does that ?
+        - Need to provide the fields list description (see `EndpointField` object) for the items.
+'''
 
 class MainConfigApiKeysForm(ActionFormV2):
     """
@@ -122,6 +130,24 @@ class MainConfigEndpointsForm(ActionFormDiscard):
         Override the default 'discard' behavior to create an new endpoint entry.
         """
         self.create_endpoint_edit_form({})
+
+    def is_unique(self, item_id: Any) -> bool:
+        """
+        Check that the item identified by the `item_id` is not already present in the displayed values.
+
+        Args:
+            item_id: An identifier.
+
+        Returns:
+            A boolean indicating if the identifier is already present.
+
+        Raises:
+            ValueError: If the `item_id` is `None`.
+        """
+        if item_id is None:
+            raise ValueError('Item id cannot be `None`')
+
+        return item_id not in [v.get('id') for w in self.w_endpoints_boxtitle for v in w.values]
 
     def move_to_boxtitle(self, endpoint: dict, previous_boxtitle: str | None = None) -> None:
         """
@@ -241,15 +267,15 @@ class MainConfigEndpointEditForm(ActionFormV2):
         )
 
     def on_ok(self):
-        existing_ids = [e['id'] for e in self.parentApp.main_config['grpc'] if e['id'] != self._endpoint.get('id')]
         previous_auth = self._endpoint.get('auth')
+        endpoints_form = self.parentApp.getForm(self.parentApp.MAIN_CONFIG_ENDPOINTS_FORM)
 
         for endpoint_field in self.w_inputs.values:
             if endpoint_field.required and not endpoint_field.value:
                 notify_confirm(f'A value is required for "{endpoint_field.name}"', title='Error: no value set for required field')
                 return
 
-            if endpoint_field.name == 'id' and endpoint_field.value in existing_ids:
+            if endpoint_field.name == 'id' and not endpoints_form.is_unique(endpoint_field.value):
                 notify_confirm(
                     f'The "{endpoint_field.value}" id already exists. Please choose another identifier.',
                     title='Error: identifier not unique'
@@ -270,8 +296,6 @@ class MainConfigEndpointEditForm(ActionFormV2):
                 del self._endpoint[endpoint_field.name]
             elif not is_empty_input:
                 self._endpoint[endpoint_field.name] = endpoint_field.value
-
-        endpoints_form = self.parentApp.getForm(self.parentApp.MAIN_CONFIG_ENDPOINTS_FORM)
 
         # Update the endpoints list display to move the edited endpoint to its corresponding `BoxTitle`
         if self._endpoint['auth'] != previous_auth:
