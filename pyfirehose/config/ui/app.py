@@ -5,6 +5,8 @@ Main app for the config TUI application.
 """
 
 import logging
+from copy import deepcopy
+from typing import BinaryIO, TextIO
 
 import hjson
 from npyscreen import NPSAppManaged
@@ -62,6 +64,21 @@ class ConfigApp(NPSAppManaged):
         """
         return self.main_config != self.main_config_backup
 
+    def create_main_config_backup(self, config_file: BinaryIO | TextIO) -> None:
+        """
+        Loads the main configuration from the `config_file` as a backup.
+
+        Args:
+            config_file: A file descriptor of the main configuration file.
+        """
+        self.main_config_backup = hjson.load(config_file, object_pairs_hook=dict)
+
+    def restore_main_config_backup(self) -> None:
+        """
+        Replace the main configuration file used for display with the one saved as a backup.
+        """
+        self.main_config = deepcopy(self.main_config_backup)
+
     def onStart(self):
         setTheme(DefaultTheme)
 
@@ -74,7 +91,7 @@ class ConfigApp(NPSAppManaged):
 
                         # Go back to start of file to also load backup config
                         config_file.seek(0)
-                        self.main_config_backup = hjson.load(config_file, object_pairs_hook=dict)
+                        self.create_main_config_backup(config_file)
                     except hjson.HjsonDecodeError as error:
                         logging.exception('Error decoding main config file (%s): %s', self.main_config_file, error)
                         raise

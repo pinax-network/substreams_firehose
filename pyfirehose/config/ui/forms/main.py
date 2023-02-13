@@ -7,6 +7,7 @@ Forms used by the main config TUI app to display and edit configuration files.
 import logging
 import os
 import os.path
+from copy import deepcopy
 from typing import Any
 
 import hjson
@@ -51,12 +52,17 @@ class MainForm(FormWithMenus):
             )
 
             if not overwrite_confirm:
+                self.parentApp.restore_main_config_backup()
                 return
 
             try:
                 os.makedirs(os.path.dirname(self.parentApp.main_config_file), exist_ok=True)
                 with open(self.parentApp.main_config_file, 'w+', encoding='utf8') as config_file:
                     hjson.dumpJSON(self.parentApp.main_config, config_file, indent=4)
+
+                    # Go back to start of file to reload backup config
+                    config_file.seek(0)
+                    self.parentApp.create_main_config_backup(config_file)
             except OSError as error:
                 logging.error('Could not write out file to "%s": %s', self.parentApp.main_config_file, error)
                 notify_confirm(

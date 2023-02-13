@@ -88,6 +88,10 @@ class MainConfigEndpointsForm(ActionFormDiscard):
     # Needed so that `self.editw` (controlling the focused widget in the form) doesn't get reset when starting to edit the form
     PRESERVE_SELECTED_WIDGET_DEFAULT = True
 
+    # def beforeEditing(self):
+    # 	for boxtitle_widget in self.w_endpoints_boxtitle:
+    # 		boxtitle_widget.values = [e for e in self.parentApp.main_config['grpc'] if e['auth'] == boxtitle_widget.name]
+
     def create(self):
         self.w_endpoints_boxtitle = []
 
@@ -123,6 +127,7 @@ class MainConfigEndpointsForm(ActionFormDiscard):
         self.parentApp.setNextFormPrevious()
 
     def on_cancel(self):
+        self.parentApp.restore_main_config_backup()
         self.parentApp.setNextFormPrevious()
 
     def on_discard(self):
