@@ -268,6 +268,7 @@ class MainConfigEndpointEditForm(ActionFormV2):
 
     def on_ok(self):
         previous_auth = self._endpoint.get('auth')
+        previous_id = self._endpoint.get('id')
         endpoints_form = self.parentApp.getForm(self.parentApp.MAIN_CONFIG_ENDPOINTS_FORM)
 
         for endpoint_field in self.w_inputs.values:
@@ -275,7 +276,8 @@ class MainConfigEndpointEditForm(ActionFormV2):
                 notify_confirm(f'A value is required for "{endpoint_field.name}"', title='Error: no value set for required field')
                 return
 
-            if endpoint_field.name == 'id' and not endpoints_form.is_unique(endpoint_field.value):
+            # Flag duplicate ids only when renaming
+            if endpoint_field.name == 'id' and endpoint_field.value != previous_id and not endpoints_form.is_unique(endpoint_field.value):
                 notify_confirm(
                     f'The "{endpoint_field.value}" id already exists. Please choose another identifier.',
                     title='Error: identifier not unique'
