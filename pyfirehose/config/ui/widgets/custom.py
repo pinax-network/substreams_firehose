@@ -209,7 +209,7 @@ class ItemEditMultiLineAction(MultiLineAction):
 
     def display_value(self, vl: MutableMapping):
         try:
-            return f'{vl["id"]}' # TODO: How to specifiy the id key ?
+            return f'{vl[self.parent.identifier_key]}'
         except KeyError:
             return str(vl)
 

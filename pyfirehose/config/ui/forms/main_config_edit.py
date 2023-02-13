@@ -43,6 +43,7 @@ class MainConfigApiKeysForm(ActionFormV2):
             scroll_exit=True
         )
 
+    # TODO: Move this to new form
     def on_ok(self):
         for auth_option in self.w_inputs.values:
             if self.parentApp.main_config['auth'][auth_option.name]['api_key'] != auth_option.value:
@@ -126,8 +127,9 @@ class MainConfigEndpointsForm(CategorizedItemDisplayForm):
             item_fields=[
                 ItemField('id', InputString, required=True, documentation=['Unique identifier for the endpoint.']),
                 # Must select one of the available authentication providers
-                ItemField('auth', InputSingleEnum, {'choices': list(self.parentApp.main_config['auth'].keys())}, True,
-                    ['Authentication provider to use for making secure gRPC connections.']
+                ItemField('auth', InputSingleEnum, {'choices': sorted(list({entry['id'] for entry in self.parentApp.main_config['auth']}))},
+                    required=True,
+                    documentation=['Authentication provider to use for making secure gRPC connections.']
                 ),
                 ItemField('chain', InputString, documentation=['Blockchain that the endpoint\'s data relates to.']),
                 # Allow one or none of the options to be chosen with `InputEnum`
