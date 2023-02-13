@@ -7,7 +7,6 @@ Forms used by the main config TUI app to display and edit configuration files.
 import logging
 import os
 import os.path
-from copy import deepcopy
 from typing import Any
 
 import hjson

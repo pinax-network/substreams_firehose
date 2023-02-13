@@ -32,6 +32,9 @@ class ConfigApp(NPSAppManaged):
         main_config: A dictionary representing the loaded main configuration file at the start of the session.
         main_config_file: The filepath to the main configuration file.
     """
+    # Generic editing forms
+    CATEGORIZED_ITEM_EDIT_FORM = 'CATEGORIZED_ITEM_EDIT_FORM'
+
     # Main configuration editing forms
     MAIN_CONFIG_API_KEYS_FORM = 'MAIN_CONFIG_API_KEYS_FORM'
     MAIN_CONFIG_ENDPOINTS_FORM = 'MAIN_CONFIG_ENDPOINTS_FORM'

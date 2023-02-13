@@ -1,7 +1,7 @@
 """
 SPDX-License-Identifier: MIT
 
-Widgets used by forms to display and edit configuration files.
+Custom widgets built on the `npyscreen` library and used by forms to display and edit configuration files.
 
 --- Cansi library (https://github.com/tslight/cansi) ---
 Copyright (c) 2018, Toby Slight
@@ -21,6 +21,8 @@ THIS SOFTWARE.
 --- Cansi library (https://github.com/tslight/cansi) ---
 """
 
+from collections.abc import MutableMapping
+
 import curses
 from npyscreen import BoxTitle, MultiLineAction, Pager, SelectOne, Textfield, TitlePager, TitleSelectOne
 from npyscreen import MLTreeMultiSelectAnnotated, TreeData, TreeLineSelectableAnnotated
@@ -30,7 +32,7 @@ from pygments import highlight
 from pygments.formatters import TerminalFormatter #pylint: disable=no-name-in-module
 from pygments.lexer import RegexLexer
 
-from pyfirehose.config.ui.forms.generic import ActionButtonPopup
+from pyfirehose.config.ui.forms.custom import ActionButtonPopup
 
 def colorize(default_color: int, string: str) -> list[tuple[int, int]]:
     """
@@ -179,23 +181,23 @@ class CodeHighlightedTitlePager(TitlePager):
     """
     _entry_type = CodeHighlightedPager
 
-class EndpointsEditMultiLineAction(MultiLineAction):
+class ItemEditMultiLineAction(MultiLineAction):
     """
-    Custom multiline display popping up a menu on selection for editing or deleting a main configuration endpoint.
+    Custom multiline display popping up a menu on selection for editing or deleting an item.
 
-    Used by the `EndpointsViewerBoxTitle` widget.
+    Used by the `CategorizedItemViewerBoxTitle` widget.
     """
     def actionHighlighted(self, act_on_this, key_press):
-        def _remove_endpoint(endpoint: dict):
-            if notify_yes_no(f'Confirm deletion of "{self.display_value(endpoint)}" entry ?', 'Warning'):
+        def _remove_item(item: MutableMapping):
+            if notify_yes_no(f'Confirm deletion of "{self.display_value(item)}" entry ?', 'Warning'):
                 del self.values[self.cursor_line]
                 self.display()
 
         action_popup_name = f'Choose an action for "{self.display_value(act_on_this)}"'
         action_popup = ActionButtonPopup(
             buttons={
-                'Edit': lambda: self.parent.create_endpoint_edit_form(act_on_this),
-                'Delete': lambda: _remove_endpoint(act_on_this)
+                'Edit': lambda: self.parent.create_item_edit_form(act_on_this),
+                'Delete': lambda: _remove_item(act_on_this)
             },
             name=action_popup_name,
             show_at_x=self.relx,
@@ -205,17 +207,17 @@ class EndpointsEditMultiLineAction(MultiLineAction):
 
         action_popup.edit()
 
-    def display_value(self, vl: dict):
+    def display_value(self, vl: MutableMapping):
         try:
-            return f'{vl["id"]}'
+            return f'{vl["id"]}' # TODO: How to specifiy the id key ?
         except KeyError:
             return str(vl)
 
-class EndpointsViewerBoxTitle(BoxTitle):
+class CategorizedItemViewerBoxTitle(BoxTitle):
     """
-    Custom `BoxTitle` for displaying the main configuration endpoints values.
+    Custom `BoxTitle` for displaying categorized item values.
     """
-    _contained_widget = EndpointsEditMultiLineAction
+    _contained_widget = ItemEditMultiLineAction
 
 class EndpointsSelectOne(SelectOne):
     """
