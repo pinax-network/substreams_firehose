@@ -59,7 +59,7 @@ class StubConfigEndpointsForm(ActionFormV2):
 
         self.parentApp.addForm(
             self.parentApp.STUB_CONFIG_SAVE_FILE_FORM,
-            StubConfigSaveFileForm, name='Stub config editing - Save file'
+            StubConfigSaveFileForm, name='Stub configuration editing - Save file'
         )
         self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_SAVE_FILE_FORM)
 
@@ -120,7 +120,7 @@ class StubConfigSaveFileForm(ActionFormV2):
 
         self.parentApp.addForm(
             self.parentApp.STUB_CONFIG_SERVICES_FORM,
-            StubConfigServicesForm, name='Stub config editing - Services'
+            StubConfigServicesForm, name='Stub configuration editing - Services'
         )
         self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_SERVICES_FORM)
 
@@ -165,7 +165,7 @@ class StubConfigServicesForm(ActionFormV2):
                 # TODO: Allow providing a service descriptor (?)
                 notify_confirm(
                     f'The endpoint "{Config.GRPC_ENDPOINT}" doesn\'t provide a gRPC reflection service.\n\n'
-                    f'Please select another one or fill the stub config file manually.',
+                    f'Please select another one or fill the stub configuration file manually.',
                     title='Error: no reflection service available'
                 )
                 self.on_ok = lambda *args, **kwargs: self.parentApp.setNextFormPrevious()
@@ -197,7 +197,7 @@ class StubConfigServicesForm(ActionFormV2):
 
         self.parentApp.addForm(
             self.parentApp.STUB_CONFIG_METHODS_FORM,
-            StubConfigMethodsForm, name='Stub config editing - Methods'
+            StubConfigMethodsForm, name='Stub configuration editing - Methods'
         )
         self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_METHODS_FORM)
 
@@ -246,7 +246,7 @@ class StubConfigMethodsForm(ActionFormV2):
 
         self.parentApp.addForm(
             self.parentApp.STUB_CONFIG_INPUTS_FORM,
-            StubConfigInputsForm, name='Stub config editing - Inputs'
+            StubConfigInputsForm, name='Stub configuration editing - Inputs'
         )
         self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_INPUTS_FORM)
 
@@ -491,7 +491,7 @@ class StubConfigInputsForm(ActionFormV2):
 
         self.parentApp.addForm(
             self.parentApp.STUB_CONFIG_OUTPUTS_FORM,
-            StubConfigOutputsForm, name='Stub config editing - Outputs'
+            StubConfigOutputsForm, name='Stub configuration editing - Outputs'
         )
         self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_OUTPUTS_FORM)
 
@@ -662,7 +662,7 @@ class StubConfigOutputsForm(SplitActionForm): #pylint: disable=too-many-ancestor
 
         self.parentApp.addForm(
             self.parentApp.STUB_CONFIG_CONFIRM_EDIT_FORM,
-            StubConfigConfirmEditForm, name='Stub config editing - Confirm'
+            StubConfigConfirmEditForm, name='Stub configuration editing - Confirm'
         )
         self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_CONFIRM_EDIT_FORM)
 
@@ -677,7 +677,7 @@ class StubConfigConfirmEditForm(ActionFormDiscard):
     def create(self):
         self.add(
             CodeHighlightedTitlePager,
-            name=f'Stub config recap (view only) - {self.parentApp.stub_save_file}',
+            name=f'Stub configuration recap (view only) - {self.parentApp.stub_save_file}',
             values=hjson.dumpsJSON(self.parentApp.stub_config, indent=4).split('\n'),
             lexer=JsonLexer()
         )
@@ -685,7 +685,7 @@ class StubConfigConfirmEditForm(ActionFormDiscard):
     def on_ok(self):
         if os.path.isfile(self.parentApp.stub_save_file):
             overwrite_confirm = notify_yes_no(
-                'Overwrite the previous stub config file ?',
+                'Overwrite the previous stub configuration file ?',
                 title=f'Overwrite "{self.parentApp.stub_save_file}" ?'
             )
 

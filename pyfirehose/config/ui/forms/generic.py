@@ -75,6 +75,7 @@ class ActionFormDiscard(ActionFormV2):
         """
         return False
 
+# TODO: Test genericity of class with other `MutableSequence` and items
 class CategorizedItemDisplayForm(ActionFormDiscard):
     """
     Display a list of items identified by a unique identifer, grouped by categories.

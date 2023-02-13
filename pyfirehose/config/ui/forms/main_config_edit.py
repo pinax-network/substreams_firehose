@@ -5,7 +5,6 @@ Forms specifying the workflow for editing stub config files.
 """
 
 import logging
-from collections.abc import MutableMapping, Sequence
 
 from npyscreen import ActionFormV2
 from npyscreen import OptionList
@@ -16,14 +15,6 @@ from pyfirehose.config.parser import Config
 from pyfirehose.config.ui.forms.generic import CategorizedItemDisplayForm
 from pyfirehose.config.ui.widgets.custom import notify_yes_no
 from pyfirehose.config.ui.widgets.inputs import InputEnum, InputFile, InputListDisplay, InputSingleEnum, InputString
-
-'''
-    TODO: Generalize the endpoints editing form to also use it for auth providers
-        - Don't work with `dict`, work with the underlying values
-        - Provide a list of categories, a 'category' key (e.g. 'auth') and identify values by their display value (e.g. 'id')
-        - Also provide main config key to override ? Or overload `on_ok` method ? Or call a validation function that does that ?
-        - Need to provide the fields list description (see `EndpointField` object) for the items.
-'''
 
 class MainConfigApiKeysForm(ActionFormV2):
     """
@@ -76,12 +67,50 @@ class MainConfigApiKeysForm(ActionFormV2):
     def on_cancel(self):
         self.parentApp.setNextFormPrevious()
 
+class MainConfigAuthProvidersForm(CategorizedItemDisplayForm):
+    """
+    Display the list of authentication providers from the main configuration file.
+
+    See `CategorizedItemDisplayForm` documentation for details.
+    """
+    def __init__(self, *args, **kwargs):
+        # Have to set `parentApp` manually for accessing main config values as parent constructor would also call `create()` form method.
+        try:
+            self.parentApp = kwargs['parentApp']
+        except KeyError as error:
+            logging.error('[MainConfigEndpointsForm] No parent app set, cannot access main config values : %s', error)
+            raise RuntimeError from error
+
+        ItemField = CategorizedItemDisplayForm.ItemField
+        super().__init__(*args,
+            items=self.parentApp.main_config['auth'],
+            item_fields=[
+                ItemField('id', InputString, required=True, documentation=[
+                    'WARNING: Changing the id will require to update all related gRPC endpoint entries in the main configuration file.',
+                    'Unique identifier for the authentication provider.'
+                ]),
+                ItemField('api_key', InputString, required=True, documentation=['Valid API key from the provider.']),
+                ItemField('endpoint', InputString, required=True, documentation=['Authentication endpoint url']),
+            ],
+            identifier_key='id',
+            category_key=None,
+            default_category='Authentication providers',
+            **kwargs
+        )
+
+    def on_ok(self):
+        # TODO: Warn when updating auth provider id for related entries in 'grpc' -> Propose to change them ?
+        self.parentApp.main_config['auth'] = super().on_ok()
+
+    def on_cancel(self):
+        super().on_cancel()
+        self.parentApp.restore_main_config_backup()
+
 class MainConfigEndpointsForm(CategorizedItemDisplayForm):
     """
     Display the list of endpoints from the main configuration files, grouped by their authentication endpoint id.
 
-    Selecting an endpoint will bring up an `ActionButtonPopup` menu to edit or delete the endpoint.
-    New endpoints can be added using the third `ActionForm` button at the bottom.
+    See `CategorizedItemDisplayForm` documentation for details.
     """
     def __init__(self, *args, **kwargs):
         # Have to set `parentApp` manually for accessing main config values as parent constructor would also call `create()` form method.
@@ -107,7 +136,7 @@ class MainConfigEndpointsForm(CategorizedItemDisplayForm):
                     'WARNING: Not all endpoint might support this feature',
                     'Compression method to use for exchanging data with the endpoint.'
                 ]),
-                ItemField('stub', InputFile, documentation=['Default stub config file to load when using the endpoint.']),
+                ItemField('stub', InputFile, documentation=['Default stub configuration file to load when using the endpoint.']),
                 ItemField('url', InputString, required=True, documentation=['Endpoint url in the format {url}:{port}']),
             ],
             identifier_key='id',

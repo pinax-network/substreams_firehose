@@ -9,16 +9,23 @@
 	"max_failed_block_retries": 2,
 
 	// Authentication endpoints for issuing JWT tokens
-	"auth": {
-		"eosnation": {
-			"api_key": "<YOUR_API_KEY>",
-			"endpoint": "https://auth.eosnation.io/v1/auth/issue"
-		},
-		"streamingfast": {
-			"api_key": "<YOUR_API_KEY>",
-			"endpoint": "https://auth.streamingfast.io/v1/auth/issue"
-		}
-	},
+	"auth": [
+        {
+            "id": "eosnation",
+            "api_key": "<YOUR_API_KEY>",
+            "endpoint": "https://auth.eosnation.io/v1/auth/issue"
+        },
+        {
+            "id": "pinax",
+            "api_key": "<YOUR_API_KEY>",
+            "endpoint": "https://auth.pinax.network/v1/auth/issue"
+        },
+        {
+            "id": "streamingfast",
+            "api_key": "<YOUR_API_KEY>",
+            "endpoint": "https://auth.streamingfast.io/v1/auth/issue"
+        }
+    ],
 
 	// GraphQL API only used to convert dates to block number
 	"graphql_endpoint": "https://eos.dfuse.eosnation.io/graphql",

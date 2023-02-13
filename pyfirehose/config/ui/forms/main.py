@@ -14,7 +14,7 @@ from npyscreen import FormWithMenus
 from npyscreen import notify_confirm
 from pygments.lexers.data import JsonLexer
 
-from pyfirehose.config.ui.forms.main_config_edit import MainConfigApiKeysForm, MainConfigEndpointsForm
+from pyfirehose.config.ui.forms.main_config_edit import MainConfigAuthProvidersForm, MainConfigEndpointsForm
 from pyfirehose.config.ui.forms.stub_config_edit import StubConfigEndpointsForm
 from pyfirehose.config.ui.widgets.custom import CodeHighlightedTitlePager, notify_yes_no
 
@@ -81,29 +81,29 @@ class MainForm(FormWithMenus):
 
     def create(self):
         main_menu = self.new_menu(name='Main menu')
-        main_config_submenu = main_menu.addNewSubmenu(name='Edit main config')
+        main_config_submenu = main_menu.addNewSubmenu(name='Edit main configuration')
 
         main_menu.addItem(
-            text='Edit stub config',
+            text='Edit stub configuration',
             onSelect=self.switch_form,
-            arguments=[self.parentApp.STUB_CONFIG_ENPOINTS_FORM, StubConfigEndpointsForm, 'Stub config editing - Endpoints']
+            arguments=[self.parentApp.STUB_CONFIG_ENPOINTS_FORM, StubConfigEndpointsForm, 'Stub configuration editing - Endpoints']
         )
 
         main_config_submenu.addItem(
-            text='Edit API keys',
+            text='Edit authentication providers',
             onSelect=self.switch_form,
-            arguments=[self.parentApp.MAIN_CONFIG_API_KEYS_FORM, MainConfigApiKeysForm, 'Main config editing - API keys']
+            arguments=[self.parentApp.MAIN_CONFIG_AUTH_PROVIDERS_FORM, MainConfigAuthProvidersForm, 'Main configuration editing - Auth providers']
         )
 
         main_config_submenu.addItem(
             text='Edit endpoints',
             onSelect=self.switch_form,
-            arguments=[self.parentApp.MAIN_CONFIG_ENDPOINTS_FORM, MainConfigEndpointsForm, 'Main config editing - Endpoints']
+            arguments=[self.parentApp.MAIN_CONFIG_ENDPOINTS_FORM, MainConfigEndpointsForm, 'Main configuration editing - Endpoints']
         )
 
         self.ml_main_config_view = self.add(
             CodeHighlightedTitlePager,
-            name=f'Main config (view only) - {self.parentApp.main_config_file}',
+            name=f'Main configuration (view only) - {self.parentApp.main_config_file}',
             values=hjson.dumpsJSON(self.parentApp.main_config, indent=4).split('\n'),
             lexer=JsonLexer()
         )

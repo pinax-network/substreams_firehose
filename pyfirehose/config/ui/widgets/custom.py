@@ -189,7 +189,7 @@ class ItemEditMultiLineAction(MultiLineAction):
     """
     def actionHighlighted(self, act_on_this, key_press):
         def _remove_item(item: MutableMapping):
-            if notify_yes_no(f'Confirm deletion of "{self.display_value(item)}" entry ?', 'Warning'):
+            if notify_yes_no(f'Confirm deletion of "{self.display_value(item)}" entry ?', title='Warning'):
                 del self.values[self.cursor_line]
                 self.display()
 
@@ -197,7 +197,7 @@ class ItemEditMultiLineAction(MultiLineAction):
         action_popup = ActionButtonPopup(
             buttons={
                 'Edit': lambda: self.parent.create_item_edit_form(act_on_this),
-                'Delete': lambda: _remove_item(act_on_this)
+                'Delete': lambda: _remove_item(act_on_this) # TODO: Move hook to parent ?
             },
             name=action_popup_name,
             show_at_x=self.relx,
