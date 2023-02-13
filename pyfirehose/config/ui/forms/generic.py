@@ -109,6 +109,7 @@ class CategorizedItemDisplayForm(ActionFormDiscard):
         REQUIRED_FIELD_COLOR = 'WARNING'
         OPTIONAL_FIELD_COLOR = 'GOOD'
 
+        # Using string type hinting to allow forward declarations
         def __init__(self, *args,
             item: MutableMapping,
             item_fields: Sequence['CategorizedItemDisplayForm.ItemField'],
@@ -201,6 +202,7 @@ class CategorizedItemDisplayForm(ActionFormDiscard):
         item_fields: Sequence[ItemField],
         identifier_key: Any,
         category_key: Any,
+        default_category: str = 'Unknown',
         sort_categories: Callable[[set[str]], set[str]] | None = sorted,
         **kwargs
     ):
@@ -208,19 +210,20 @@ class CategorizedItemDisplayForm(ActionFormDiscard):
         self.item_fields = item_fields
         self.identifier_key = identifier_key
         self.category_key = category_key
+        self.default_category = default_category
         self.sort_categories = sort_categories
         super().__init__(*args, **kwargs)
 
     def create(self):
         self.w_items_boxtitle = []
 
-        categories = self.sort_categories({entry.get(self.category_key) for entry in self.items})
+        categories = self.sort_categories({entry.get(self.category_key, self.default_category) for entry in self.items})
         n_items = len(categories)
         for category in categories:
             self.w_items_boxtitle.append(self.add(
                 CategorizedItemViewerBoxTitle,
                 name=category,
-                values=[entry for entry in self.items if entry.get(self.category_key) == category],
+                values=[entry for entry in self.items if entry.get(self.category_key, self.default_category) == category],
                 max_height=self.lines//n_items - 2,
                 scroll_exit=True,
             ))
@@ -295,7 +298,7 @@ class CategorizedItemDisplayForm(ActionFormDiscard):
             ValueError: If the item could not be found in the `previous_boxtitle`.
         """
         for boxtitle_widget in self.w_items_boxtitle:
-            if item.get(self.category_key) == boxtitle_widget.name:
+            if item.get(self.category_key, self.default_category) == boxtitle_widget.name:
                 boxtitle_widget.values.append(item)
             elif previous_boxtitle == boxtitle_widget.name:
                 try:
@@ -312,7 +315,7 @@ class CategorizedItemDisplayForm(ActionFormDiscard):
             item: The item to select.
         """
         for boxtitle_widget in self.w_items_boxtitle:
-            if item.get(self.category_key) == boxtitle_widget.name:
+            if item.get(self.category_key, self.default_category) == boxtitle_widget.name:
                 try:
                     # Update cursor position within the `BoxTitle` widget
                     boxtitle_widget.entry_widget.cursor_line = boxtitle_widget.values.index(item)
