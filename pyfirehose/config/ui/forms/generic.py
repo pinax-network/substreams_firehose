@@ -300,11 +300,7 @@ class CategorizedItemDisplayForm(ActionFormDiscard):
         """
         for boxtitle_widget in self.w_items_boxtitle:
             # Try to remove the item first
-            if previous_boxtitle == boxtitle_widget.name:
-                try:
-                    boxtitle_widget.values = [v for v in boxtitle_widget.values if v.get(self.identifier_key) != item.get(self.identifier_key)]
-                except ValueError:
-                    pass
+            boxtitle_widget.values = [v for v in boxtitle_widget.values if v.get(self.identifier_key) != item.get(self.identifier_key)]
 
             # Add it to the appropriate category
             if item.get(self.category_key, self.default_category) == boxtitle_widget.name:

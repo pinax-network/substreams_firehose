@@ -269,7 +269,7 @@ def get_auth_token(use_cache: bool = True) -> str:
     logging.info('Getting JWT token...')
 
     with session.cache_disabled() if not use_cache else nullcontext():
-        response = session.post(Config.AUTH_ENDPOINT, headers=headers, data=data)
+        response = session.post(Config.AUTH_ENDPOINT, headers=headers, data=data, timeout=10) # TODO: Make timeout part of main config
 
     if response.status_code == 200:
         logging.debug('JWT response: %s', response.json())
