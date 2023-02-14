@@ -255,6 +255,14 @@ class CategorizedItemDisplayForm(ActionFormDiscard): #pylint: disable=too-many-i
         self.parentApp.switchForm(self.parentApp.CATEGORIZED_ITEM_EDIT_FORM)
 
     def on_ok(self) -> list[MutableMapping]:
+        """
+        Hook for the `OK` button to return all the updated item values.
+
+        This can be used in overloaded methods to perform additional checks, transforms or store the updated data.
+
+        Returns:
+            The list of updated items.
+        """
         new_items = []
         for boxtitle in self.w_items_boxtitle:
             new_items.extend(boxtitle.values)

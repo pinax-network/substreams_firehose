@@ -26,7 +26,7 @@ class MainConfigAuthProvidersForm(CategorizedItemDisplayForm):
         try:
             self.parentApp = kwargs['parentApp']
         except KeyError as error:
-            logging.error('[MainConfigEndpointsForm] No parent app set, cannot access main config values : %s', error)
+            logging.error('[MainConfigAuthProvidersForm] No parent app set, cannot access main config values : %s', error)
             raise RuntimeError from error
 
         ItemField = CategorizedItemDisplayForm.ItemField
@@ -42,6 +42,7 @@ class MainConfigAuthProvidersForm(CategorizedItemDisplayForm):
                 ItemField('endpoint', InputString, required=True, documentation=['Authentication endpoint url']),
             ],
             identifier_key='id',
+            # Using only one category, we set `category_key` to `None` and have every item fall into the default category
             category_key=None,
             default_category='Authentication providers',
             **kwargs

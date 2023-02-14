@@ -19,7 +19,7 @@ class ActionButtonPopup(FormBaseNew):
         *args,
         show_at_x: int = 10,
         show_at_y: int = 2,
-        lines: int = 6,
+        lines: int = 8,
         columns: int = 32,
         **kwargs
     ):
