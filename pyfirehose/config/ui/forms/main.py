@@ -101,6 +101,11 @@ class MainForm(FormWithMenus):
             arguments=[self.parentApp.MAIN_CONFIG_ENDPOINTS_FORM, MainConfigEndpointsForm, 'Main configuration editing - Endpoints']
         )
 
+        main_menu.addItem(
+            text='Return to main screen',
+            onSelect=lambda: None
+        )
+
         self.ml_main_config_view = self.add(
             CodeHighlightedTitlePager,
             name=f'Main configuration (view only) - {self.parentApp.main_config_file}',
