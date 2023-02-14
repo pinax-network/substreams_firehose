@@ -15,9 +15,6 @@ from npyscreen import notify_confirm
 from pyfirehose.config.ui.widgets.custom import CategorizedItemViewerBoxTitle
 from pyfirehose.config.ui.widgets.inputs import InputGeneric, InputListDisplay
 
-import curses
-from npyscreen import util_viewhelp
-
 class ActionFormDiscard(ActionFormV2):
     """
     Generic class for an action form with an additional *Discard* button.
