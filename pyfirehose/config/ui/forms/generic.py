@@ -151,7 +151,6 @@ class CategorizedItemDisplayForm(ActionFormDiscard):
             )
 
         def on_ok(self):
-            previous_category = self._item.get(self._items_form.category_key, self._items_form.default_category)
             previous_id = self._item.get(self._items_form.identifier_key)
 
             for item_field in self.w_inputs.values:
@@ -185,8 +184,7 @@ class CategorizedItemDisplayForm(ActionFormDiscard):
                     self._item[item_field.name] = item_field.value
 
             # Update the items list display to move the edited item to its new corresponding `BoxTitle`
-            if self._item.get(self._items_form.category_key) != previous_category:
-                self._items_form.move_to_boxtitle(self._item, previous_category)
+            self._items_form.move_to_boxtitle(self._item)
             self._items_form.select_item(self._item)
 
             self.parentApp.setNextFormPrevious()
@@ -284,8 +282,7 @@ class CategorizedItemDisplayForm(ActionFormDiscard):
 
         return item_id not in [v.get(self.identifier_key) for w in self.w_items_boxtitle for v in w.values]
 
-    # TODO: See if possible to remove the `previous_boxtitle` parameter
-    def move_to_boxtitle(self, item: MutableMapping, previous_boxtitle: str | None = None) -> None:
+    def move_to_boxtitle(self, item: MutableMapping) -> None:
         """
         Move the specified item from its previous `BoxTitle` to the new one defined in its category attribute.
 
