@@ -151,7 +151,7 @@ class CategorizedItemDisplayForm(ActionFormDiscard):
             )
 
         def on_ok(self):
-            previous_category = self._item.get(self._items_form.category_key)
+            previous_category = self._item.get(self._items_form.category_key, self._items_form.default_category)
             previous_id = self._item.get(self._items_form.identifier_key)
 
             for item_field in self.w_inputs.values:
@@ -299,14 +299,16 @@ class CategorizedItemDisplayForm(ActionFormDiscard):
             ValueError: If the item could not be found in the `previous_boxtitle`.
         """
         for boxtitle_widget in self.w_items_boxtitle:
-            if item.get(self.category_key, self.default_category) == boxtitle_widget.name:
-                boxtitle_widget.values.append(item)
-            elif previous_boxtitle == boxtitle_widget.name:
+            # Try to remove the item first
+            if previous_boxtitle == boxtitle_widget.name:
                 try:
                     boxtitle_widget.values = [v for v in boxtitle_widget.values if v.get(self.identifier_key) != item.get(self.identifier_key)]
                 except ValueError:
-                    logging.error('[%s] Item not found in %s widget : %s', self.name, boxtitle_widget.name, item)
-                    raise
+                    pass
+
+            # Add it to the appropriate category
+            if item.get(self.category_key, self.default_category) == boxtitle_widget.name:
+                boxtitle_widget.values.append(item)
 
     def select_item(self, item: MutableMapping) -> None:
         """
