@@ -82,7 +82,11 @@ def load_config(file: str, grpc_entry_id: str | None = None) -> bool:
             raise ArgumentTypeError from error
 
         default_grpc = options['grpc'][default_grpc_id]
-        default_auth = options['auth'][default_grpc['auth']]
+        default_auth = next(iter([o for o in options['auth'] if o['id'] == default_grpc['auth']]))
+        if not default_auth:
+            logging.exception('Could not find "%s" entry in auth providers array', default_grpc['auth'])
+            raise ArgumentTypeError
+
         default_stub = default_grpc['stub'] if 'stub' in default_grpc else ''
 
         Config.API_KEY 					= default_auth['api_key']
