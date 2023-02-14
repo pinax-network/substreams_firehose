@@ -76,12 +76,20 @@ class ActionFormDiscard(ActionFormV2):
         return False
 
 # TODO: Test genericity of class with other `MutableSequence` and items
-class CategorizedItemDisplayForm(ActionFormDiscard):
+class CategorizedItemDisplayForm(ActionFormDiscard): #pylint: disable=too-many-instance-attributes
     """
     Display a list of items identified by a unique identifer, grouped by categories.
 
     Selecting an item will bring up an `ActionButtonPopup` menu to edit or delete the item.
     New items can be added using the third `ActionForm` button at the bottom (`New`).
+
+    Attributes:
+        items: A container of items to display. Items must have *gettable* attributes.
+        item_fields: A list of `ItemField` describing the fields of an item for edition.
+        identifier_key: An attribute of an item uniquely identifying this item from the others. This value will also be used for display.
+        category_key: An attribute items share for grouping them by category (set of unique values of that attribute).
+        default_category: The default category for items that don't have the `category_key` attribute.
+        sort_categories: An optional function used to sort categories (alphabetical by default).
     """
     @dataclass
     class ItemField:
@@ -216,6 +224,7 @@ class CategorizedItemDisplayForm(ActionFormDiscard):
     def create(self):
         self.w_items_boxtitle = []
 
+        # Create a `BoxTitle` widget for each unique values of the `category` attribute
         categories = self.sort_categories({entry.get(self.category_key, self.default_category) for entry in self.items})
         n_items = len(categories)
         for category in categories:
@@ -223,7 +232,7 @@ class CategorizedItemDisplayForm(ActionFormDiscard):
                 CategorizedItemViewerBoxTitle,
                 name=category,
                 values=[entry for entry in self.items if entry.get(self.category_key, self.default_category) == category],
-                max_height=self.lines//n_items - 2,
+                max_height=self.lines//n_items - 4,
                 scroll_exit=True,
             ))
 
@@ -284,16 +293,10 @@ class CategorizedItemDisplayForm(ActionFormDiscard):
 
     def move_to_boxtitle(self, item: MutableMapping) -> None:
         """
-        Move the specified item from its previous `BoxTitle` to the new one defined in its category attribute.
-
-        If `previous_boxtitle` is `None`, the item is simply added to its corresponding `BoxTitle`.
+        Remove the specified item from its previous `BoxTitle` and add it to the new one defined in its category attribute.
 
         Args:
             item: The item to move.
-            previous_boxtitle: An optional string specifying the previous `BoxTitle` the item was present in.
-
-        Raises:
-            ValueError: If the item could not be found in the `previous_boxtitle`.
         """
         for boxtitle_widget in self.w_items_boxtitle:
             # Try to remove the item first
