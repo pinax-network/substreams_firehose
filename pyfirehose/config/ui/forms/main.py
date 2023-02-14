@@ -86,19 +86,50 @@ class MainForm(FormWithMenus):
         main_menu.addItem(
             text='Edit stub configuration',
             onSelect=self.switch_form,
-            arguments=[self.parentApp.STUB_CONFIG_ENPOINTS_FORM, StubConfigEndpointsForm, 'Stub configuration editing - Endpoints']
+            arguments=[self.parentApp.STUB_CONFIG_ENPOINTS_FORM, StubConfigEndpointsForm, 'Stub configuration editing - Endpoints'],
+            keywords={
+                'help':
+                'This screen shows a list of endpoints extracted from the main configuration file.\n'
+                'Each one is shown with the blockchain it is associated with as well as its URL.\n\n'
+                'Select one to start editing a new stub configuration that can then be used to extract relevant data from it.'
+            }
         )
 
         main_config_submenu.addItem(
-            text='Edit authentication providers',
+            text='Authentication providers',
             onSelect=self.switch_form,
-            arguments=[self.parentApp.MAIN_CONFIG_AUTH_PROVIDERS_FORM, MainConfigAuthProvidersForm, 'Main configuration editing - Auth providers']
+            arguments=[
+                self.parentApp.MAIN_CONFIG_AUTH_PROVIDERS_FORM,
+                MainConfigAuthProvidersForm,
+                'Main configuration editing - Authentication providers'
+            ],
+            keywords={
+                'help':
+                'This screen shows a list of authentication providers extracted from the main configuration file.\n\n'
+                'An authentication provider is an endpoint that can deliver authentication (JWT) tokens to communicate with the data endpoints.\n'
+                'These endpoints hold a reference to one of the authentication provider listed here by referencing their ID.\n\n'
+                'Therefore, the following warning must be disclosed :\n'
+                'IF YOU DELETE AN AUTHENTICATION PROVIDER, ANY ENDPOINT REFERING TO IT WON\'T BE ABLE TO PROPERLY FUNCTION.\n\n'
+                'You can always add more authentication providers by selecting the [New] button.\n'
+                'To edit or delete an existing one, move the cursor to it and press [ENTER] (or [SPACE]) to bring an action submenu.'
+            }
         )
 
         main_config_submenu.addItem(
-            text='Edit endpoints',
+            text='Endpoints',
             onSelect=self.switch_form,
-            arguments=[self.parentApp.MAIN_CONFIG_ENDPOINTS_FORM, MainConfigEndpointsForm, 'Main configuration editing - Endpoints']
+            arguments=[self.parentApp.MAIN_CONFIG_ENDPOINTS_FORM, MainConfigEndpointsForm, 'Main configuration editing - Endpoints'],
+            keywords={
+                'help':
+                'This screen shows a list of endpoints extracted from the main configuration file.\n\n'
+                'An endpoint in this context is a Firehose/Substreams-enabled server with a gRPC service allowing for data queries.\n'
+                'Endpoints must refer to an authentication provider in order for the application to be able to exchange data securely.\n\n'
+                'A unique identifier is also necessary to be able to select it later from the command-line data extraction tool.\n'
+                'Try to choose a name descriptive of the endpoint and its data. Additional information (such as the blockchain it indexes) '
+                'may also be supplied.\n\n'
+                'You can always add more data endpoints by selecting the [New] button.\n'
+                'To edit or delete an existing one, move the cursor to it and press [ENTER] (or [SPACE]) to bring an action submenu.'
+            }
         )
 
         main_menu.addItem(
@@ -113,7 +144,7 @@ class MainForm(FormWithMenus):
             lexer=JsonLexer()
         )
 
-    def switch_form(self, form: str, form_class: Any, form_display_name: str) -> None:
+    def switch_form(self, form: str, form_class: Any, form_display_name: str, **kwargs) -> None:
         """
         Helper function to set the next appropriate form when using the menu.
 
@@ -121,7 +152,8 @@ class MainForm(FormWithMenus):
             form: The form name identifier.
             form_class: The form class.
             form_display_name: The `name` attribute of the form that will be displayed at the top of the screen.
+            kwargs: Additional keywords arguments for the created form.
         """
         self.next_form = form #pylint: disable=attribute-defined-outside-init
-        self.parentApp.addForm(form, form_class, name=form_display_name)
+        self.parentApp.addForm(form, form_class, name=form_display_name, **kwargs)
         self.parentApp.switchForm(form)

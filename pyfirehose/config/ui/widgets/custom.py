@@ -147,7 +147,7 @@ class CodeHighlightedTextfield(Textfield):
 
         self._highlightingdata = self.parent.stored_highlights[substr]
 
-class CodeHighlightedPager(Pager):
+class CodeHighlightedPager(Pager): # TODO: Customize help widget popup with this widget for markdown support
     """
     Syntax highlight enabled [`Pager`](https://npyscreen.readthedocs.io/widgets-text.html#widgets-displaying-text)
     using `CodeHighlightedTextfield` as line display.

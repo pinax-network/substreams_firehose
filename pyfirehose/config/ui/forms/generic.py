@@ -15,6 +15,9 @@ from npyscreen import notify_confirm
 from pyfirehose.config.ui.widgets.custom import CategorizedItemViewerBoxTitle
 from pyfirehose.config.ui.widgets.inputs import InputGeneric, InputListDisplay
 
+import curses
+from npyscreen import util_viewhelp
+
 class ActionFormDiscard(ActionFormV2):
     """
     Generic class for an action form with an additional *Discard* button.
@@ -253,6 +256,16 @@ class CategorizedItemDisplayForm(ActionFormDiscard): #pylint: disable=too-many-i
             parent=self
         )
         self.parentApp.switchForm(self.parentApp.CATEGORIZED_ITEM_EDIT_FORM)
+
+    def display(self, clear: bool = True) -> None:
+        """
+        Overwrite `display` method to prevent widget showing blank after returning from the help message display.
+
+        See [`h_display_help()`](
+            https://github.com/npcole/npyscreen/blob/8ce31204e1de1fbd2939ffe2d8c3b3120e93a4d0/build/lib/npyscreen/fmForm.py#L208
+        ) in `npyscreen` code for reference.
+        """
+        super().display(clear)
 
     def on_ok(self) -> list[MutableMapping]:
         """
