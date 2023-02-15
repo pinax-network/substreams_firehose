@@ -2,121 +2,110 @@
 SPDX-License-Identifier: MIT
 
 Custom widgets built on the `npyscreen` library and used by forms to display and edit configuration files.
-
---- Cansi library (https://github.com/tslight/cansi) ---
-Copyright (c) 2018, Toby Slight
-All rights reserved.
-
-Permission to use, copy, modify, and/or distribute this software for any purpose
-with or without fee is hereby granted, provided that the above copyright notice
-and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
-FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
-OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
-TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
-THIS SOFTWARE.
---- Cansi library (https://github.com/tslight/cansi) ---
 """
 
+import re
 from collections.abc import MutableMapping
 
 import curses
-from npyscreen import BoxTitle, MultiLineAction, Pager, SelectOne, Textfield, TitlePager, TitleSelectOne
+from npyscreen import BoxTitle, Form, MultiLineAction, Pager, SelectOne, Textfield, TitlePager, TitleSelectOne
 from npyscreen import MLTreeMultiSelectAnnotated, TreeData, TreeLineSelectableAnnotated
 from npyscreen.fmPopup import ActionPopupWide
 from npyscreen.utilNotify import YesNoPopup, _prepare_message, _wrap_message_lines
 from pygments import highlight
-from pygments.formatters import TerminalFormatter #pylint: disable=no-name-in-module
+from pygments.formatters import Terminal256Formatter #pylint: disable=no-name-in-module
 from pygments.lexer import RegexLexer
+from pygments.lexers.markup import MarkdownLexer
+from pygments.style import Style
 
 from pyfirehose.config.ui.forms.custom import ActionButtonPopup
 
-def colorize(default_color: int, string: str) -> list[tuple[int, int]]:
+def colorize_256(text: str, default_color: int = 0) -> list[tuple[int, int]]:
     """
-    Convert a string containg ANSI escape codes to `curses` control characters for color display.
+    Parses a string containing ANSI code escape sequences for `curses` display.
 
-    Used by the `CodeHighlightedPager` to syntax highlight its content.
+    The ANSI code supported are the ones defined for the 256 color palette (see [here](
+        https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797#256-colors
+    ) for reference). Attributes such as bold, italic, etc. are also supported except for the strikethrough attribute.
 
-    Code is adapted from Cansi library (https://github.com/tslight/cansi). Some of the original comments kept in the code.
+    Background colors currently don't work.
+
+    This is used internally by the `CodeHighlightedPager` for coloring text.
 
     Args:
-        default_color: See `_mkcolor()` documentation for reference.
-        string: A string containing ANSI escape codes.
+        text: The text to colorize.
+        default_color: A default color for the *reset* escape sequences.
 
     Returns:
-        A list of pairs of `curses`' control character and their applicable length.
-
-    Example:
-        `[(2097152, 10)]` will color 10 characters bold (`curses.A_BOLD = 2097152`).
+        A list of tuples containing the `curses` attribute value and the number of character for which it applies.
     """
+    # Create the color map only once
+    if not hasattr(colorize_256, 'color_map'):
+        curses.use_default_colors()
 
-    def _mkcolor(default_color: int, offset: int = 49) -> dict[str, int]:
-        """
-        Initialize `curses` colors and mapping of ANSI escape codes.
+        colorize_256.color_map = {
+            '39': default_color,
+            '49': default_color,
+            '39;49': default_color
+        }
 
-        Adapted from Cansi library (https://github.com/tslight/cansi). Original comments kept in code.
+        # TODO: Figure out how to make backgrounds work
+        for i in range(curses.COLORS):
+            for j in range(curses.COLORS):
+                curses.init_pair(i + j * curses.COLORS + 1, i, j - 1)
+                colorize_256.color_map[f'38;5;{i};48;5;{j}'] = curses.color_pair(i + j * curses.COLORS + 1)
+            colorize_256.color_map[f'38;5;{i}'] = curses.color_pair(i + 1)
+            colorize_256.color_map[f'48;5;{i}'] = curses.color_pair(i * curses.COLORS + 1)
 
-        See [Wikipedia](https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters)
-        for ANSI escape codes reference.
+    # No escape code detected at all so print all text with the default color
+    if not '\x1b[' in text:
+        return [(default_color, len(text))]
 
-        Args:
-            default_color: A `curses` color pair index used for the default background and foreground ANSI escape codes (`39;49;00`).
-            offset: An offset for the `curses.init_pair` function to avoid overwriting predefined colors of `npyscreen`'s theme.
-
-        Returns:
-            A dictionary mapping of ANSI escape sequences to `curses`' control characters.
-        """
-        color = {}
-
-        curses.use_default_colors()  # https://stackoverflow.com/a/44015131
-        for i in range(1, 8):
-            curses.init_pair(i + offset, i, -1)  # color fg on black bg
-            curses.init_pair(i + offset + 7, curses.COLOR_WHITE, i)  # white fg on color bg
-            curses.init_pair(i + offset + 14, curses.COLOR_BLACK, i)  # black fg on color bg
-            color[str(i + 30)] = curses.color_pair(i + offset)
-            color[str(i + 40)] = curses.color_pair(i + offset + 7)
-            color["0;" + str(i + 30)] = curses.color_pair(i + offset)
-            color["0;" + str(i + 40)] = curses.color_pair(i + offset + 7)
-            color[str(i + 30) + ";0"] = curses.color_pair(i + offset)
-            color[str(i + 40) + ";0"] = curses.color_pair(i + offset + 7)
-            color[str(i + 90)] = curses.color_pair(i + offset) | curses.A_BOLD
-            color["1;" + str(i + 30)] = curses.color_pair(i + offset) | curses.A_BOLD
-            color["1;" + str(i + 40)] = curses.color_pair(i + offset + 7) | curses.A_BOLD
-            color[str(i + 30) + ";1"] = curses.color_pair(i + offset) | curses.A_BOLD
-            color[str(i + 40) + ";1"] = curses.color_pair(i + offset + 7) | curses.A_BOLD
-
-            color["39;49;00"] = default_color
-
-        return color
-
-    ansi_split = string.split("\x1b[")
-    color_pair = curses.color_pair(0)
-
-    color = _mkcolor(default_color)
-    attr = {
-        "1": curses.A_BOLD,
-        "4": curses.A_UNDERLINE,
-        "5": curses.A_BLINK,
-        "7": curses.A_REVERSE,
-    }
     colors = []
+    # See https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797#colors--graphics-mode for reference
+    attr = {
+        "00": curses.A_NORMAL,
+        "01": curses.A_BOLD,
+        "02": curses.A_DIM,
+        "03": curses.A_ITALIC,
+        "04": curses.A_UNDERLINE,
+        "05": curses.A_BLINK,
+        "07": curses.A_REVERSE,
+        "08": curses.A_INVIS,
+        # `ESC[9m` strikethrough is not available in Python curses (see https://docs.python.org/3/library/curses.html#curses.ncurses_version)
+        "09": curses.A_NORMAL
+    }
 
-    for substring in ansi_split[1:]:
-        if substring.startswith("0K"):
-            return colors # 0K = clrtoeol so we are done with this line
+    for substring in [sub for sub in text.split('\x1b[') if sub]:
+        try:
+            ansi_code, substring_text = substring.split('m', 1)
+        except ValueError:
+            # No ANSI code detected
+            colors.append((default_color, len(substring)))
+            continue
 
-        ansi_code = substring.split("m")[0]
-        substring = substring[len(ansi_code) + 1 :]
-        if ansi_code in ["1", "4", "5", "7", "8"]:
-            color_pair = color_pair | attr[ansi_code]
-        elif ansi_code not in ["0", "0;"]:
-            color_pair = color[ansi_code]
+        text_attribute = 0
 
-        if substring:
-            colors.append((color_pair, len(substring)))
+        # Validate ANSI code format or else its just plain text that happens to have an 'm' in it.
+        if not all(code.isdigit() for code in ansi_code.split(';')):
+            colors.append((default_color, len(substring_text)))
+            continue
+
+        codes = ansi_code.split(';')
+        ansi_code = ''
+
+        # Parses special attributes (bold, etc.) from the highlighted text and create a new ANSI code, keeping only the color attributes
+        for code in codes:
+            try:
+                text_attribute |= attr[code]
+            except KeyError:
+                ansi_code += (f'{code};')
+        ansi_code = ansi_code.rstrip(';')
+
+        if ansi_code:
+            colors.append((colorize_256.color_map[ansi_code] | text_attribute, len(substring_text)))
+        else:
+            colors.append((text_attribute, len(substring_text)))
 
     return colors
 
@@ -147,7 +136,7 @@ class CodeHighlightedTextfield(Textfield):
 
         self._highlightingdata = self.parent.stored_highlights[substr]
 
-class CodeHighlightedPager(Pager): # TODO: Customize help widget popup with this widget for markdown support
+class CodeHighlightedPager(Pager):
     """
     Syntax highlight enabled [`Pager`](https://npyscreen.readthedocs.io/widgets-text.html#widgets-displaying-text)
     using `CodeHighlightedTextfield` as line display.
@@ -157,20 +146,39 @@ class CodeHighlightedPager(Pager): # TODO: Customize help widget popup with this
     """
     _contained_widgets = CodeHighlightedTextfield
 
-    def __init__(self, *args, lexer: RegexLexer, **kwargs):
+    def __init__(self, *args, lexer: RegexLexer, style: str | Style = 'github-dark', **kwargs):
         super().__init__(*args, **kwargs)
 
-        text = '\n'.join(self.values)
-        highlighted_text_split = highlight(text, lexer, TerminalFormatter()).split('\n')
+        # TODO: Move highlighting logic to separate function for dynamic update + add style chooser along side main menu
+        # TODO: Sanitize text for escaping ANSI code in it ?
+        text = self._wrap_message_lines(list(self.values), self.width - 1)
+        # Removes the markdown markups from the output text
+        if isinstance(lexer, MarkdownLexer):
+            self.values = [self.unmark_markdown(t) for t in text]
+
+        # TODO: Check color support for TrueColor, 256, or 16 (hint: `curses.has_extended_color_support` for TrueColor)
+        highlighted_text_split = highlight('\n'.join(text), lexer, Terminal256Formatter(style=style)).splitlines()
 
         self.parent.stored_highlights = {}
-        for i in range(len(highlighted_text_split) - 1):
+        for i in range(len(highlighted_text_split)):
             self.parent.stored_highlights[self.values[i]] = [
-                c for color, length in colorize(
-                    self.parent.theme_manager.findPair(self, 'DEFAULT'),
-                    highlighted_text_split[i]
+                c for color, length in colorize_256( # TODO: Extend the function to work with all modes described above
+                    self.unmark_markdown(highlighted_text_split[i]) if isinstance(lexer, MarkdownLexer) else highlighted_text_split[i],
+                    self.parent.theme_manager.findPair(self, 'DEFAULT')
                 ) for c in [color] * length
             ]
+
+    def unmark_markdown(self, text: str) -> str:
+        """
+        Removes the **bold**, _italics_ and `code` markups from the input text.
+
+        Args:
+            text: The text to parse.
+
+        Returns:
+            The text stripped of the markup symbols.
+        """
+        return re.sub(r'((\*\*|__)|(\*|_)|(\`))(.*?)\1', r'\5', text)
 
 class CodeHighlightedTitlePager(TitlePager):
     """
@@ -386,3 +394,28 @@ def notify_yes_no(
     popup_form.edit()
 
     return popup_form.value
+
+def view_help(message: str, title: str = "Message", form_color: str = "STANDOUT", scroll_exit: bool = True, autowrap: bool = False) -> None:
+    """
+    Reimplement the `view_help` method from `npyscreen` library to add markdown support using the `CodeHighlightedPager`.
+
+    Args:
+        message: The content of the help message.
+        title: The title of the help message box.
+        form_color: The default color for text in the form. See [`npyscreen` documentation](https://npyscreen.readthedocs.io/color.html)
+        for the available values.
+        scroll_exit: A boolean indicating if scrolling past the end of the help message exits the widget.
+        autowrap: A boolean indicating if the message text should autowrap.
+    """
+    help_form = Form(name=title, color=form_color)
+    markdown_pager = help_form.add(
+        CodeHighlightedPager,
+        values=message.splitlines(),
+        lexer=MarkdownLexer(),
+        scroll_exit=scroll_exit,
+        autowrap=autowrap
+    )
+    help_form.edit()
+
+    del markdown_pager
+    del help_form

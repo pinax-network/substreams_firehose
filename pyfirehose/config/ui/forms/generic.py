@@ -5,17 +5,49 @@ Generic forms used as base class for other widget-holding forms.
 """
 
 import logging
+from curses import KEY_F1, flushinp
 from collections.abc import Callable, MutableMapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Type
 
 from npyscreen import ActionFormV2, MiniButtonPress, OptionList, SplitForm
 from npyscreen import notify_confirm
+from npyscreen.fmForm import _FormBase
 
-from pyfirehose.config.ui.widgets.custom import CategorizedItemViewerBoxTitle
+from pyfirehose.config.ui.widgets.custom import CategorizedItemViewerBoxTitle, view_help
 from pyfirehose.config.ui.widgets.inputs import InputGeneric, InputListDisplay
 
-class ActionFormDiscard(ActionFormV2):
+class MarkdownEnabledHelpForm(_FormBase):
+    """
+    Allow markdown support for the help text and fix a display bug when returning from the help message display.
+    """
+    def __init__(self, *args, markdown_support: bool = True, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if markdown_support and self.help:
+            def h_display_help(_input: int) -> bool:
+                flushinp()
+                view_help(self.help, f'{self.name} | Help', autowrap=self.WRAP_HELP)
+                return True
+
+            # Overwrite previous help handlers with the new one
+            self.handlers = {
+                KEY_F1: h_display_help,
+                "KEY_F(1)": h_display_help,
+                "^O": h_display_help,
+            }
+
+    def display(self, clear: bool = True) -> None:
+        """
+        Overwrite `display` method to prevent widgets showing blank after returning from the help message display.
+
+        See [`h_display_help()`](
+            https://github.com/npcole/npyscreen/blob/8ce31204e1de1fbd2939ffe2d8c3b3120e93a4d0/build/lib/npyscreen/fmForm.py#L208
+        ) in `npyscreen` code for reference.
+        """
+        super().display(clear)
+
+class ActionFormDiscard(ActionFormV2, MarkdownEnabledHelpForm):
     """
     Generic class for an action form with an additional *Discard* button.
 
@@ -76,7 +108,7 @@ class ActionFormDiscard(ActionFormV2):
         return False
 
 # TODO: Test genericity of class with other `MutableSequence` and items
-class CategorizedItemDisplayForm(ActionFormDiscard): #pylint: disable=too-many-instance-attributes
+class CategorizedItemDisplayForm(ActionFormDiscard, MarkdownEnabledHelpForm): #pylint: disable=too-many-instance-attributes
     """
     Display a list of items identified by a unique identifer, grouped by categories.
 
@@ -109,7 +141,7 @@ class CategorizedItemDisplayForm(ActionFormDiscard): #pylint: disable=too-many-i
         required: bool = False
         documentation: list[str] = field(default_factory=list)
 
-    class _CategorizedItemEditForm(ActionFormV2):
+    class _CategorizedItemEditForm(ActionFormV2, MarkdownEnabledHelpForm):
         """
         Edit an item fields.
 
@@ -250,19 +282,15 @@ class CategorizedItemDisplayForm(ActionFormDiscard): #pylint: disable=too-many-i
             name='Main config editing - Edit item',
             item=item,
             item_fields=self.item_fields,
-            parent=self
+            parent=self,
+            help=
+            'This screen shows a list of editable fields related to the selected item.\n\n'
+            f'Each field is marked as either **{InputGeneric.REQUIRED_DISPLAY_STRING}** `required` (value cannot be empty) '
+            f'or **{InputGeneric.OPTIONAL_DISPLAY_STRING}** `optional`.\n'
+            'Fields can be edited through different mediums such as a simple textbox, a single-choice checkbox, a file-selection, etc.\n\n'
+            'When you\'re done editing fields, press **[OK]** to validate your changes or **[CANCEL]** to go back to the previous screen.'
         )
         self.parentApp.switchForm(self.parentApp.CATEGORIZED_ITEM_EDIT_FORM)
-
-    def display(self, clear: bool = True) -> None:
-        """
-        Overwrite `display` method to prevent widget showing blank after returning from the help message display.
-
-        See [`h_display_help()`](
-            https://github.com/npcole/npyscreen/blob/8ce31204e1de1fbd2939ffe2d8c3b3120e93a4d0/build/lib/npyscreen/fmForm.py#L208
-        ) in `npyscreen` code for reference.
-        """
-        super().display(clear)
 
     def on_ok(self) -> list[MutableMapping]:
         """
@@ -343,7 +371,7 @@ class CategorizedItemDisplayForm(ActionFormDiscard): #pylint: disable=too-many-i
                     logging.error('[%s] Item not found in %s widget : %s', self.name, boxtitle_widget.name, item)
                     raise
 
-class SplitActionForm(ActionFormV2, SplitForm): #pylint: disable=too-many-ancestors
+class SplitActionForm(ActionFormV2, MarkdownEnabledHelpForm, SplitForm): #pylint: disable=too-many-ancestors
     """
     Combine `ActionFormV2` buttons with `SplitForm` horizontal line display.
 

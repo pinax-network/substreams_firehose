@@ -32,6 +32,8 @@ class ConfigApp(NPSAppManaged):
         main_config: A dictionary representing the loaded main configuration file at the start of the session.
         main_config_file: The filepath to the main configuration file.
     """
+    # TODO: Load names, titles, help messages for each form through external resource file (YAML ?) ?
+
     # Generic editing forms
     CATEGORIZED_ITEM_EDIT_FORM = 'CATEGORIZED_ITEM_EDIT_FORM'
 
@@ -110,12 +112,14 @@ class ConfigApp(NPSAppManaged):
         self.addForm('MAIN', MainForm, name='Configuration editor', help=
             'CONTROLS\n'
             '========\n'
-            'Press [TAB] to focus the next widget, [SHIFT+TAB] to go to the previous one.\n\n'
+            'Press **[TAB]** to focus the next widget, **[SHIFT+TAB]** to go to the previous one.\n\n'
             'Most widgets displaying lists also allows to focus the next or previous one by scrolling all the way to the bottom or top.\n'
-            'They also allow for filtering the displayed values using [l] to popup a filter input.\n'
-            'Press [n] (next) and [N] or [p] (previous) to cycle through the results. [L] will clear the highlighted results from the display.\n\n'
+            'They also allow for filtering the displayed values using **[l]** to popup a filter input.\n'
+            'Press **[n]** (next) and **[N]** or **[p]** (previous) to cycle through the results. **[L]** will clear the highlighted results from '
+            'the display.\n\n'
             'Standard VI-like bindings also applies for navigating the application :\n'
-            '[j] (up) and [k] (down), [h] (left) and [l] (right) and [g] (start) and [G] (end).\n\n'
-            'Shortcuts may be displayed at the bottom left or the top right of the screen, with the \'^\' character standing for the [CTRL] key.\n'
-            'So, for example, you can press [CTRL+X] to bring up the main menu on the starting screen.\n\n'
+            '**[j]** (up) and **[k]** (down), **[h]** (left) and **[l]** (right) and **[g]** (start) and **[G]** (end).\n\n'
+            '*Shortcuts* may be displayed at the bottom left or the top right of the screen, with the \'^\' character standing for the '
+            '**[CTRL]** key.\n'
+            'So, for example, you can press **[CTRL+X]** to bring up the main menu on the starting screen.\n\n'
         )

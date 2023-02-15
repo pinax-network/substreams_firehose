@@ -59,7 +59,7 @@ class InputListDisplay(OptionListDisplay):
             except AttributeError:
                 pass
 
-class InputGeneric(Option):
+class InputGeneric(Option): # TODO: Add markdown support for `documentation` field ?
     """
     Generic class allowing an input to be specified as required or optional.
 
@@ -103,7 +103,7 @@ class InputValidator(InputGeneric):
 
         See `on_ok_input_validation_hook`.
         """
-        return self.set(vl.split('\n') if self.multiline else vl)
+        return self.set(vl.splitlines() if self.multiline else vl)
 
     def _set_up_widget_values(self, option_form, main_option_widget):
         """

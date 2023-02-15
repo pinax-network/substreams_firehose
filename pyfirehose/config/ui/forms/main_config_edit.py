@@ -15,7 +15,7 @@ from pyfirehose.config.ui.forms.generic import CategorizedItemDisplayForm
 from pyfirehose.config.ui.widgets.custom import notify_yes_no
 from pyfirehose.config.ui.widgets.inputs import InputEnum, InputFile, InputSingleEnum, InputString
 
-class MainConfigAuthProvidersForm(CategorizedItemDisplayForm):
+class MainConfigAuthProvidersForm(CategorizedItemDisplayForm): #pylint: disable=too-many-ancestors
     """
     Display the list of authentication providers from the main configuration file.
 
@@ -74,7 +74,7 @@ class MainConfigAuthProvidersForm(CategorizedItemDisplayForm):
         super().on_cancel()
         self.parentApp.restore_main_config_backup()
 
-class MainConfigEndpointsForm(CategorizedItemDisplayForm):
+class MainConfigEndpointsForm(CategorizedItemDisplayForm): #pylint: disable=too-many-ancestors
     """
     Display the list of endpoints from the main configuration files, grouped by their authentication endpoint id.
 

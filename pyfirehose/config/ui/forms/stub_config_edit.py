@@ -13,8 +13,7 @@ from google.protobuf.descriptor import Descriptor, FieldDescriptor
 from google.protobuf.descriptor_pool import DescriptorPool
 from grpc_reflection.v1alpha.proto_reflection_descriptor_database import ProtoReflectionDescriptorDatabase
 from npyscreen import ActionFormV2
-from npyscreen import TitleFilenameCombo, TitleSelectOne
-from npyscreen import OptionList
+from npyscreen import OptionList, TitleFilenameCombo, TitleSelectOne
 from npyscreen import notify, notify_confirm, notify_yes_no
 from pygments.lexers.data import JsonLexer
 
@@ -22,12 +21,12 @@ import pyfirehose.config.ui.widgets.inputs as input_options
 from pyfirehose.utils import get_auth_token, open_file_from_package
 from pyfirehose.config.parser import Config, StubConfig
 from pyfirehose.config.parser import load_config, load_substream_package, load_stub_config
-from pyfirehose.config.ui.forms.generic import ActionFormDiscard, SplitActionForm
+from pyfirehose.config.ui.forms.generic import ActionFormDiscard, MarkdownEnabledHelpForm, SplitActionForm
 from pyfirehose.config.ui.widgets.custom import CodeHighlightedTitlePager, EndpointsTitleSelectOne, \
                                                 OutputSelectionMLTreeMultiSelectAnnotated, OutputTypesTitleSelectOne, \
                                                 OutputSelectionTreeData
 
-class StubConfigEndpointsForm(ActionFormV2):
+class StubConfigEndpointsForm(ActionFormV2, MarkdownEnabledHelpForm):
     """
     Choose an endpoint to edit or create a new stub config for.
 
@@ -59,7 +58,14 @@ class StubConfigEndpointsForm(ActionFormV2):
 
         self.parentApp.addForm(
             self.parentApp.STUB_CONFIG_SAVE_FILE_FORM,
-            StubConfigSaveFileForm, name='Stub configuration editing - Save file'
+            StubConfigSaveFileForm,
+            name='Stub configuration editing - Save file',
+            help=
+            'This screen allow you to pick the destination for the output file.\n\n'
+            'You can navigate your local file system using the arrow keys or VI-like **[hjkl]** and pressing **[ENTER]** or **[SPACE]** '
+            'to make a selection.\n'
+            'You can also edit the path manually in the bottom textfield. Any non-existing file or folders will be created at the end.\n\n'
+            '**WARNING: Make sure you have write permission to the selected location as you might lose all your changes at the end.**'
         )
         self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_SAVE_FILE_FORM)
 
@@ -67,7 +73,7 @@ class StubConfigEndpointsForm(ActionFormV2):
         del self.previous_value
         self.parentApp.setNextFormPrevious()
 
-class StubConfigSaveFileForm(ActionFormV2):
+class StubConfigSaveFileForm(ActionFormV2, MarkdownEnabledHelpForm):
     """
     Choose the save file location for the stub config.
 
@@ -120,14 +126,33 @@ class StubConfigSaveFileForm(ActionFormV2):
 
         self.parentApp.addForm(
             self.parentApp.STUB_CONFIG_SERVICES_FORM,
-            StubConfigServicesForm, name='Stub configuration editing - Services'
+            StubConfigServicesForm,
+            name='Stub configuration editing - Services',
+            help=
+            'This screen displays the list of services exposed by the gRPC endpoint.\n\n'
+            'You should select a service related to Firehose or Substreams depending on the capabilities of the endpoint '
+            'and what you want to achieve.\n'
+            'Below are some of the most common services that you will encounter. Note that a service can have basically any name '
+            'but those are the ones served currently by the leading infrastructure providers (Pinax, StreamingFast, etc.).\n\n'
+            'Dfuse services (legacy system, deprecated)\n'
+            '==============\n'
+            '	- *dfuse.bstream.v1.BlockStreamV2*: A block stream allowing data filters to be passed as inputs.\n\n'
+            'Firehose services\n'
+            '=================\n'
+            '	- *sf.firehose.v1.Stream*: A block stream using the previous version of Firehose (with filters similar to Dfuse).\n'
+            '	- *sf.firehose.v2.Fetch*: A single block request using the new version of Firehose.\n'
+            '	- *sf.firehose.v2.Stream*: A block stream using the new version of Firehose.\n\n'
+            'Substreams services\n'
+            '===================\n'
+            '	- *sf.substreams.v1.Stream*: A block stream using the Substreams technology to more precisely describe the extracted data '
+            'through the use of package files.'
         )
         self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_SERVICES_FORM)
 
     def on_cancel(self):
         self.parentApp.setNextFormPrevious()
 
-class StubConfigServicesForm(ActionFormV2):
+class StubConfigServicesForm(ActionFormV2, MarkdownEnabledHelpForm):
     """
     Choose a service from the services available on the specified endpoint.
 
@@ -197,7 +222,11 @@ class StubConfigServicesForm(ActionFormV2):
 
         self.parentApp.addForm(
             self.parentApp.STUB_CONFIG_METHODS_FORM,
-            StubConfigMethodsForm, name='Stub configuration editing - Methods'
+            StubConfigMethodsForm,
+            name='Stub configuration editing - Methods',
+            help=
+            'This screen allow you to select the gRPC method call used to initiate data transfers from the previously selected service.\n\n'
+            'All Firehose/Substreams related services currently implements only one method called `Blocks` to execute a query.\n'
         )
         self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_METHODS_FORM)
 
@@ -205,7 +234,7 @@ class StubConfigServicesForm(ActionFormV2):
         del self.previous_value
         self.parentApp.setNextFormPrevious()
 
-class StubConfigMethodsForm(ActionFormV2):
+class StubConfigMethodsForm(ActionFormV2, MarkdownEnabledHelpForm):
     """
     Choose a gRPC method from the specified service.
 
@@ -246,7 +275,40 @@ class StubConfigMethodsForm(ActionFormV2):
 
         self.parentApp.addForm(
             self.parentApp.STUB_CONFIG_INPUTS_FORM,
-            StubConfigInputsForm, name='Stub configuration editing - Inputs'
+            StubConfigInputsForm,
+            name='Stub configuration editing - Inputs',
+            help=
+            'This screen allow you to specify the request parameters that will be sent along with the data query to the endpoint.\n\n'
+            'The input fields will differ depending on the service selected. Each input field will also have different requirements '
+            'in order to be filled (integer value, single-choice from a list of value, file path, etc.).\n'
+            'Below is a list of the most useful parameters for each technology.\n\n'
+            'Dfuse (legacy system, deprecated) and Firehose V1\n'
+            '=================================================\n'
+            ' - *fork_steps*: filters the blocks depending on their state in the blockchain.\n'
+            '`STEP_NEW` refers to new blocks, `STEP_UNDO` to reverted blocks and `STEP_IRREVERSIBLE` to confirmed blocks (chain-dependent).\n'
+            ' - *include_filter_expr*: string expression using the [CEL](https://github.com/google/cel-spec/blob/master/doc/langdef.md) '
+            'language that will **include** matching blocks to the output.\n'
+            ' - *exclude_filter_expr*: same as the previous one except that it will **exclude** matching blocks from the output.\n\n'
+            'See the [proto/dfuse/bstream/v1/bstream.proto#BlockRequestV2](.) file for more details on other parameters and '
+            'StreamingFast\'s [documentation](https://github.com/streamingfast/playground-firehose-eosio-go#query-language) '
+            'for filter expressions.\n\n'
+            'Firehose V2 (fetch)\n'
+            '===================\n'
+            ' - *block_number*: specify the block to fetch with block number.\n'
+            ' - *block_hash_and_number*: specify the block to fetch with block number and hash.\n\n'
+            'See the [proto/sf/firehose/v2/firehose.proto#SingleBlockRequest](.) file for more details on other parameters.\n\n'
+            'Firehose V2 (stream)\n'
+            '====================\n'
+            ' - *final_blocks_only*: only receives confirmed blocks (chain-dependent) by activating this option.\n\n'
+            'See the [proto/sf/firehose/v2/firehose.proto#Request](.) file for more details on other parameters.\n\n'
+            'Substreams\n'
+            '==========\n'
+            ' - *fork_steps*: same as Firehose V1.\n'
+            ' - *production_mode*: activating this option will remove any debug or log information from the output as well trigger a more efficient '
+            'pipeline for extracting data on the server.\n'
+            ' - *modules*: a package file (.spkg) describing the substream to use on the endpoint.\n'
+            ' - *output_module*: one of the available output modules as determined from the package file.\n\n'
+            'See the [proto/sf/substreams/v1/substreams.proto#Request](.) file for more details on other parameters.\n\n'
         )
         self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_INPUTS_FORM)
 
@@ -254,7 +316,7 @@ class StubConfigMethodsForm(ActionFormV2):
         del self.previous_value
         self.parentApp.setNextFormPrevious()
 
-class StubConfigInputsForm(ActionFormV2):
+class StubConfigInputsForm(ActionFormV2, MarkdownEnabledHelpForm):
     """
     Edit the request parameters sent to the gRPC endpoint.
 
@@ -342,6 +404,8 @@ class StubConfigInputsForm(ActionFormV2):
                     value_type=input_type.lower(),
                 )
 
+            # TODO: Handle `oneof` option for FirehoseV2 `Fetch`
+
             # Add or modify arguments based on the input type (`documentation`, etc.)
             if input_parameter.cpp_type == FieldDescriptor.CPPTYPE_BOOL:
                 option_args.update(
@@ -358,7 +422,7 @@ class StubConfigInputsForm(ActionFormV2):
                     choices=enum_choices
                 )
             elif input_parameter.cpp_type == FieldDescriptor.CPPTYPE_MESSAGE:
-                if input_parameter.name.lower() == 'modules':
+                if input_parameter.name.lower() == 'modules': # TODO: Add Firehose V2 `Fetch` message parsing
                     option_type = getattr(input_options, 'InputPackage')
                     option_args.update(
                         documentation=option_args['documentation'] + [
@@ -491,7 +555,16 @@ class StubConfigInputsForm(ActionFormV2):
 
         self.parentApp.addForm(
             self.parentApp.STUB_CONFIG_OUTPUTS_FORM,
-            StubConfigOutputsForm, name='Stub configuration editing - Outputs'
+            StubConfigOutputsForm,
+            name='Stub configuration editing - Outputs',
+            help=
+            'This screen allows to select exactly what fields from the output data to keep in the final output.\n\n'
+            'For Firehose based endpoints, you will have to select the right block type according to the blockchain indexed by the endpoint.\n'
+            'For Substreams, the output type is determined from the package file.\n\n'
+            'In both cases, the bottom tree display allows for exploring the different fields available from the output and select the ones that '
+            'are relevant to your use case.\n'
+            'You can navigate it using the VI-like bindings **[hjkl]**, **[UP]** and **[DOWN]** arrow keys, **[<]** and **[>]** to collapse or '
+            'expand the tree.\n\n'
         )
         self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_OUTPUTS_FORM)
 
@@ -662,7 +735,12 @@ class StubConfigOutputsForm(SplitActionForm): #pylint: disable=too-many-ancestor
 
         self.parentApp.addForm(
             self.parentApp.STUB_CONFIG_CONFIRM_EDIT_FORM,
-            StubConfigConfirmEditForm, name='Stub configuration editing - Confirm'
+            StubConfigConfirmEditForm,
+            name='Stub configuration editing - Confirm',
+            help=
+            'This screen summarize the edited stub configuration, showing how it will look like in the output file.\n\n'
+            'You can validate the changes by pressing **[OK]** (a confirmation prompt will show up on overriding an existing configuration), '
+            'go back to the previous screen with **[CANCEL]** or discard the whole stub using the **[DISCARD]** button.'
         )
         self.parentApp.setNextForm(self.parentApp.STUB_CONFIG_CONFIRM_EDIT_FORM)
 
@@ -678,7 +756,7 @@ class StubConfigConfirmEditForm(ActionFormDiscard):
         self.add(
             CodeHighlightedTitlePager,
             name=f'Stub configuration recap (view only) - {self.parentApp.stub_save_file}',
-            values=hjson.dumpsJSON(self.parentApp.stub_config, indent=4).split('\n'),
+            values=hjson.dumpsJSON(self.parentApp.stub_config, indent=4).splitlines(),
             lexer=JsonLexer()
         )
 

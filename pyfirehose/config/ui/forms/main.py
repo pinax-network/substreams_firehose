@@ -15,16 +15,16 @@ from npyscreen import notify_confirm
 from pygments.lexers.data import JsonLexer
 
 from pyfirehose.config.ui.forms.main_config_edit import MainConfigAuthProvidersForm, MainConfigEndpointsForm
+from pyfirehose.config.ui.forms.generic import MarkdownEnabledHelpForm
 from pyfirehose.config.ui.forms.stub_config_edit import StubConfigEndpointsForm
 from pyfirehose.config.ui.widgets.custom import CodeHighlightedTitlePager, notify_yes_no
 
-class MainForm(FormWithMenus):
+class MainForm(FormWithMenus, MarkdownEnabledHelpForm):
     """
     Main form presenting the main config file with a menu for accessing the edit functions.
 
     Attributes:
         next_form: The next form to be loaded after exiting the main form (`None` exits the application).
-        stored_highlights: A dictionary containing the highlighted text content for the `CodeHighlightedTitlePager` widget.
     """
     OK_BUTTON_TEXT = 'Quit'
 
@@ -75,9 +75,9 @@ class MainForm(FormWithMenus):
                     title='Success'
                 )
 
-            # TODO: Figure out color display bug when updating main config file
+            # TODO: Figure out color display bug when updating main config file -> Colors not updated dynamically
             # Update the main configuration view text
-            self.ml_main_config_view.values = hjson.dumpsJSON(self.parentApp.main_config, indent=4).split('\n')
+            self.ml_main_config_view.values = hjson.dumpsJSON(self.parentApp.main_config, indent=4).splitlines()
 
     def create(self):
         main_menu = self.new_menu(name='Main menu')
@@ -109,9 +109,9 @@ class MainForm(FormWithMenus):
                 'An authentication provider is an endpoint that can deliver authentication (JWT) tokens to communicate with the data endpoints.\n'
                 'These endpoints hold a reference to one of the authentication provider listed here by referencing their ID.\n\n'
                 'Therefore, the following warning must be disclosed :\n'
-                'IF YOU DELETE AN AUTHENTICATION PROVIDER, ANY ENDPOINT REFERING TO IT WON\'T BE ABLE TO PROPERLY FUNCTION.\n\n'
-                'You can always add more authentication providers by selecting the [New] button.\n'
-                'To edit or delete an existing one, move the cursor to it and press [ENTER] (or [SPACE]) to bring an action submenu.'
+                '**If you delete an authentication provider, any endpoint refering to it won\'t be able to properly function.**\n\n'
+                'You can always add more authentication providers by selecting the **[New]** button.\n'
+                'To edit or delete an existing one, move the cursor to it and press **[ENTER]** (or **[SPACE]**) to bring an action submenu.'
             }
         )
 
@@ -127,8 +127,8 @@ class MainForm(FormWithMenus):
                 'A unique identifier is also necessary to be able to select it later from the command-line data extraction tool.\n'
                 'Try to choose a name descriptive of the endpoint and its data. Additional information (such as the blockchain it indexes) '
                 'may also be supplied.\n\n'
-                'You can always add more data endpoints by selecting the [New] button.\n'
-                'To edit or delete an existing one, move the cursor to it and press [ENTER] (or [SPACE]) to bring an action submenu.'
+                'You can always add more data endpoints by selecting the **[New]** button.\n'
+                'To edit or delete an existing one, move the cursor to it and press **[ENTER]** (or **[SPACE]**) to bring an action submenu.'
             }
         )
 
@@ -140,7 +140,7 @@ class MainForm(FormWithMenus):
         self.ml_main_config_view = self.add(
             CodeHighlightedTitlePager,
             name=f'Main configuration (view only) - {self.parentApp.main_config_file}',
-            values=hjson.dumpsJSON(self.parentApp.main_config, indent=4).split('\n'),
+            values=hjson.dumpsJSON(self.parentApp.main_config, indent=4).splitlines(),
             lexer=JsonLexer()
         )
 
