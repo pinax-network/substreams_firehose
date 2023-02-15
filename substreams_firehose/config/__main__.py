@@ -7,7 +7,7 @@ Entry point for the config TUI application.
 import argparse
 import logging
 
-from pyfirehose.config.ui.app import ConfigApp
+from substreams_firehose.config.ui.app import ConfigApp
 
 def main() -> int:
     """

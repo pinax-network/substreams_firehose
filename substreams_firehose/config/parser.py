@@ -16,7 +16,7 @@ from google.protobuf.json_format import MessageToJson
 from grpc import Compression
 
 # Prevent circular import between utils and config modules
-import pyfirehose.utils as utils #pylint: disable=consider-using-from-import
+import substreams_firehose.utils as utils #pylint: disable=consider-using-from-import
 
 @dataclass
 class StubConfig:

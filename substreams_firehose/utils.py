@@ -22,7 +22,7 @@ from google.protobuf.descriptor_pb2 import FileDescriptorSet #pylint: disable=no
 from google.protobuf.message_factory import _FACTORY, GetMessages
 from requests_cache import CachedSession
 
-from pyfirehose.config.parser import Config
+from substreams_firehose.config.parser import Config
 
 def date_to_block_num(date: datetime) -> int:
     """
@@ -163,7 +163,7 @@ def filter_keys(input_: dict, keys_filter: dict) -> dict:
 
     return output
 
-def generate_proto_messages_classes(path: str = 'pyfirehose/proto/generated/protos.desc'):
+def generate_proto_messages_classes(path: str = 'substreams_firehose/proto/generated/protos.desc'):
     """
     Generate a mapping of services and messages full name to their class object and populates the default descriptor pool
     with the loaded `.proto` definitions.
@@ -179,8 +179,8 @@ def generate_proto_messages_classes(path: str = 'pyfirehose/proto/generated/prot
     Example:
     ```python
     {
-        'dfuse.bstream.v1.BlockStream': <class 'pyfirehose.proto.generated.dfuse.bstream.v1.bstream_pb2_grpc.BlockStreamStub'>,
-        'dfuse.bstream.v1.BlockStreamV2': <class 'pyfirehose.proto.generated.dfuse.bstream.v1.bstream_pb2_grpc.BlockStreamV2Stub'>,
+        'dfuse.bstream.v1.BlockStream': <class 'substreams_firehose.proto.generated.dfuse.bstream.v1.bstream_pb2_grpc.BlockStreamStub'>,
+        'dfuse.bstream.v1.BlockStreamV2': <class 'substreams_firehose.proto.generated.dfuse.bstream.v1.bstream_pb2_grpc.BlockStreamV2Stub'>,
         'dfuse.bstream.v1.BlockRequest': <class 'BlockRequest'>,
         'dfuse.bstream.v1.IrreversibleBlocksRequestV2': <class 'IrreversibleBlocksRequestV2'>,
         'dfuse.bstream.v1.BlocksRequestV2': <class 'BlocksRequestV2'>,
@@ -204,7 +204,7 @@ def generate_proto_messages_classes(path: str = 'pyfirehose/proto/generated/prot
             for service_name in [s.name for s in proto_file_desc.service]:
                 service_key = f'{proto_file_desc.package}.{service_name}'
 
-                for module in import_all_from_module(f'pyfirehose.proto.generated.{proto_file_desc.package}'):
+                for module in import_all_from_module(f'substreams_firehose.proto.generated.{proto_file_desc.package}'):
                     try:
                         results.update({service_key: getattr(module, f'{service_name}Stub')})
                         logging.debug('[MODULE_LOAD] Loaded %s from %s', f'{service_name}Stub', module)

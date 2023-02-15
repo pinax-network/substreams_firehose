@@ -14,8 +14,8 @@ from npyscreen import ActionFormV2, MiniButtonPress, OptionList, SplitForm
 from npyscreen import notify_confirm
 from npyscreen.fmForm import _FormBase
 
-from pyfirehose.config.ui.widgets.custom import CategorizedItemViewerBoxTitle, view_help
-from pyfirehose.config.ui.widgets.inputs import InputGeneric, InputListDisplay
+from substreams_firehose.config.ui.widgets.custom import CategorizedItemViewerBoxTitle, view_help
+from substreams_firehose.config.ui.widgets.inputs import InputGeneric, InputListDisplay
 
 class MarkdownEnabledHelpForm(_FormBase):
     """

@@ -18,7 +18,7 @@ from pygments.lexer import RegexLexer
 from pygments.lexers.markup import MarkdownLexer
 from pygments.style import Style
 
-from pyfirehose.config.ui.forms.custom import ActionButtonPopup
+from substreams_firehose.config.ui.forms.custom import ActionButtonPopup
 
 def colorize_256(text: str, default_color: int = 0) -> list[tuple[int, int]]:
     """

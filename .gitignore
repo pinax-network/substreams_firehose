@@ -76,7 +76,7 @@ typings/
 .env.test
 
 # Custom JSON config file
-pyfirehose/config.hjson
+substreams_firehose/config.hjson
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache

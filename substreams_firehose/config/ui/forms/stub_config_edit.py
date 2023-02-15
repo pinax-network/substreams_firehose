@@ -17,12 +17,12 @@ from npyscreen import OptionList, TitleFilenameCombo, TitleSelectOne
 from npyscreen import notify, notify_confirm, notify_yes_no
 from pygments.lexers.data import JsonLexer
 
-import pyfirehose.config.ui.widgets.inputs as input_options
-from pyfirehose.utils import get_auth_token, open_file_from_package
-from pyfirehose.config.parser import Config, StubConfig
-from pyfirehose.config.parser import load_config, load_substream_package, load_stub_config
-from pyfirehose.config.ui.forms.generic import ActionFormDiscard, MarkdownEnabledHelpForm, SplitActionForm
-from pyfirehose.config.ui.widgets.custom import CodeHighlightedTitlePager, EndpointsTitleSelectOne, \
+import substreams_firehose.config.ui.widgets.inputs as input_options
+from substreams_firehose.utils import get_auth_token, open_file_from_package
+from substreams_firehose.config.parser import Config, StubConfig
+from substreams_firehose.config.parser import load_config, load_substream_package, load_stub_config
+from substreams_firehose.config.ui.forms.generic import ActionFormDiscard, MarkdownEnabledHelpForm, SplitActionForm
+from substreams_firehose.config.ui.widgets.custom import CodeHighlightedTitlePager, EndpointsTitleSelectOne, \
                                                 OutputSelectionMLTreeMultiSelectAnnotated, OutputTypesTitleSelectOne, \
                                                 OutputSelectionTreeData
 
@@ -89,7 +89,7 @@ class StubConfigSaveFileForm(ActionFormV2, MarkdownEnabledHelpForm):
         except KeyError:
             logging.error('[%s] Could not get id from endpoint : %s', self.name, self.parentApp.selected_endpoint)
 
-        default_stub_save_path = 'pyfirehose/config/new.hjson'
+        default_stub_save_path = 'substreams_firehose/config/new.hjson'
         self.stub_loaded = load_config(self.parentApp.main_config_file, endpoint_id)
         try:
             saved_stub = next(

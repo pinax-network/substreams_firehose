@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "pyfirehose"
-description = 'Extract any data from the blockchain using gRPC-enabled endpoints'
+name = "substreams_firehose"
+description = 'Extract any data from the blockchain using gRPC-enabled endpoints powered by Substreams and Firehose.'
 readme = "README.md"
 requires-python = ">=3.7"
 license = "MIT"
@@ -39,12 +39,12 @@ dependencies = [
 dynamic = ["version"]
 
 [project.urls]
-Documentation = "https://github.com/pinax-network/pyfirehose/tree/main/docs"
-Issues = "https://github.com/pinax-network/pyfirehose/issues"
-Source = "https://github.com/pinax-network/pyfirehose"
+Documentation = "https://github.com/pinax-network/substreams_firehose/tree/main/docs"
+Issues = "https://github.com/pinax-network/substreams_firehose/issues"
+Source = "https://github.com/pinax-network/substreams_firehose"
 
 [tool.hatch.version]
-path = "pyfirehose/__about__.py"
+path = "substreams_firehose/__about__.py"
 
 [tool.hatch.envs.default]
 dependencies = [
@@ -52,7 +52,7 @@ dependencies = [
   "pytest-cov",
 ]
 [tool.hatch.envs.default.scripts]
-cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=pyfirehose --cov=tests {args}"
+cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=substreams_firehose --cov=tests {args}"
 no-cov = "cov --no-cov {args}"
 
 [[tool.hatch.envs.test.matrix]]
@@ -62,7 +62,7 @@ python = ["37", "38", "39", "310", "311"]
 branch = true
 parallel = true
 omit = [
-  "pyfirehose/__about__.py",
+  "substreams_firehose/__about__.py",
 ]
 
 [tool.coverage.report]
@@ -84,7 +84,7 @@ exclude = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["pyfirehose/"]
+packages = ["substreams_firehose/"]
 
 [tool.hatch.build.targets.wheel.force-include]
-"pyfirehose/sample.config.hjson" = "pyfirehose/config.hjson"
+"substreams_firehose/sample.config.hjson" = "substreams_firehose/config.hjson"

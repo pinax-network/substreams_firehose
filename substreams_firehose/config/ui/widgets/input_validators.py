@@ -8,7 +8,7 @@ from collections.abc import Sequence
 
 from google.protobuf.message import DecodeError
 
-from pyfirehose.config.parser import load_substream_package
+from substreams_firehose.config.parser import load_substream_package
 
 def integer_validator(value: str, **kwargs) -> bool: #pylint: disable=unused-argument
     """

@@ -15,8 +15,8 @@ from npyscreen import OptionListDisplay, OptionListDisplayLine
 from npyscreen import notify_confirm
 from npyscreen.apOptions import Option
 
-import pyfirehose.config.ui.widgets.input_validators as validators
-from pyfirehose.config.ui.widgets.custom import EnumTitleSelectOneOrNone
+import substreams_firehose.config.ui.widgets.input_validators as validators
+from substreams_firehose.config.ui.widgets.custom import EnumTitleSelectOneOrNone
 
 class InputListDisplayLine(OptionListDisplayLine):
     """

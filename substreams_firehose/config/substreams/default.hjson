@@ -9,7 +9,7 @@
         "object": "Request",
         "params": {
             "output_module": "map_action_traces",
-            "modules": "pyfirehose/proto/packages/common.spkg",
+            "modules": "substreams_firehose/proto/packages/common.spkg",
             "fork_steps": [
                 "STEP_IRREVERSIBLE"
             ],

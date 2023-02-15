@@ -12,10 +12,10 @@ import grpc
 from google.protobuf.json_format import ParseDict
 from google.protobuf.message import Message
 
-from pyfirehose.config.parser import Config, StubConfig
-from pyfirehose.exceptions import BlockStreamException
-from pyfirehose.utils import get_auth_token
-from pyfirehose.utils import get_current_task_name
+from substreams_firehose.config.parser import Config, StubConfig
+from substreams_firehose.exceptions import BlockStreamException
+from substreams_firehose.utils import get_auth_token
+from substreams_firehose.utils import get_current_task_name
 
 @asynccontextmanager
 async def get_secure_channel() -> Generator[grpc.aio.Channel, None, None]:

@@ -14,10 +14,10 @@ from npyscreen import FormWithMenus
 from npyscreen import notify_confirm
 from pygments.lexers.data import JsonLexer
 
-from pyfirehose.config.ui.forms.main_config_edit import MainConfigAuthProvidersForm, MainConfigEndpointsForm
-from pyfirehose.config.ui.forms.generic import MarkdownEnabledHelpForm
-from pyfirehose.config.ui.forms.stub_config_edit import StubConfigEndpointsForm
-from pyfirehose.config.ui.widgets.custom import CodeHighlightedTitlePager, notify_yes_no
+from substreams_firehose.config.ui.forms.main_config_edit import MainConfigAuthProvidersForm, MainConfigEndpointsForm
+from substreams_firehose.config.ui.forms.generic import MarkdownEnabledHelpForm
+from substreams_firehose.config.ui.forms.stub_config_edit import StubConfigEndpointsForm
+from substreams_firehose.config.ui.widgets.custom import CodeHighlightedTitlePager, notify_yes_no
 
 class MainForm(FormWithMenus, MarkdownEnabledHelpForm):
     """

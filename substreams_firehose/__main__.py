@@ -17,11 +17,11 @@ from pprint import pformat
 
 from hjson import HjsonDecodeError
 
-from pyfirehose.args import check_period, parse_arguments
-from pyfirehose.block_extractors.common import process_blocks
-from pyfirehose.config.parser import Config, StubConfig
-from pyfirehose.config.parser import load_config, load_stub_config
-from pyfirehose.utils import get_auth_token
+from substreams_firehose.args import check_period, parse_arguments
+from substreams_firehose.block_extractors.common import process_blocks
+from substreams_firehose.config.parser import Config, StubConfig
+from substreams_firehose.config.parser import load_config, load_stub_config
+from substreams_firehose.utils import get_auth_token
 
 CONSOLE_HANDLER = logging.StreamHandler()
 
@@ -108,7 +108,7 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
     try:
         block_extractor = getattr(
             importlib.import_module(
-                f'pyfirehose.block_extractors.async_{args.extractor + ("_channel" if args.extractor != "optimized" else "")}'
+                f'substreams_firehose.block_extractors.async_{args.extractor + ("_channel" if args.extractor != "optimized" else "")}'
             ),
             'asyncio_main'
         )
@@ -116,7 +116,7 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
         logging.critical('Could not load block extractor function: %s', exception)
         raise
 
-    module, function = ('pyfirehose.block_processors.processors', args.custom_processor)
+    module, function = ('substreams_firehose.block_processors.processors', args.custom_processor)
 
     try:
         block_processor = getattr(importlib.import_module(module), function)

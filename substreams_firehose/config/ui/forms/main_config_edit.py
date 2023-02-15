@@ -9,11 +9,11 @@ import logging
 from npyscreen import notify
 from requests.exceptions import RequestException
 
-from pyfirehose.utils import get_auth_token
-from pyfirehose.config.parser import Config
-from pyfirehose.config.ui.forms.generic import CategorizedItemDisplayForm
-from pyfirehose.config.ui.widgets.custom import notify_yes_no
-from pyfirehose.config.ui.widgets.inputs import InputEnum, InputFile, InputSingleEnum, InputString
+from substreams_firehose.utils import get_auth_token
+from substreams_firehose.config.parser import Config
+from substreams_firehose.config.ui.forms.generic import CategorizedItemDisplayForm
+from substreams_firehose.config.ui.widgets.custom import notify_yes_no
+from substreams_firehose.config.ui.widgets.inputs import InputEnum, InputFile, InputSingleEnum, InputString
 
 class MainConfigAuthProvidersForm(CategorizedItemDisplayForm): #pylint: disable=too-many-ancestors
     """

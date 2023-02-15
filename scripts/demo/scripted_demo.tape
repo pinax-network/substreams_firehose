@@ -24,7 +24,7 @@ Enter
 Show
 
 # === Entering config UI ===
-Type "python -m pyfirehose.config"
+Type "python -m substreams_firehose.config"
 Sleep 1.5s
 Enter
 
@@ -55,7 +55,7 @@ Enter
 # === Save file ===
 Sleep 1s
 Enter
-# --- 'Pyfirehose' folder ---
+# --- 'substreams_firehose' folder ---
 Sleep 1s
 Down@150ms 2
 Right
@@ -217,7 +217,7 @@ Enter
 
 # === Show help page ===
 Sleep 1s
-Type "python -m pyfirehose -h"
+Type "python -m substreams_firehose -h"
 Sleep 1.5s
 Enter 2
 
@@ -230,12 +230,12 @@ Type "LAST_ETH_BLOCK=$(curl -s https://api.blockcypher.com/v1/eth/main | jq .hei
 Sleep 1.5s
 Enter
 
-# === Starting PyFirehose ===
+# === Starting substreams_firehose ===
 Sleep 1s
-Type "# Starting PyFirehose using the previously created stub configuration file"
+Type "# Starting substreams_firehose using the previously created stub configuration file"
 Sleep 500ms
 Enter
-Type "python -m pyfirehose $(($LAST_ETH_BLOCK - 200)) $(($LAST_ETH_BLOCK - 100)) -g eth_mainnet -s pyfirehose/config/firehose/eth.hjson -o jsonl/eth.jsonl"
+Type "python -m substreams_firehose $(($LAST_ETH_BLOCK - 200)) $(($LAST_ETH_BLOCK - 100)) -g eth_mainnet -s substreams_firehose/config/firehose/eth.hjson -o jsonl/eth.jsonl"
 Sleep 1.5s
 Enter
 

@@ -16,8 +16,8 @@ then
 	source .venv/bin/activate
 
 	# Uses Bash expansion to add the list of accounts as a JSON-like array to the filter, excluding those accounts from transactions destination.
-	time python3 -m pyfirehose $YESTERDAY $TODAY \
-		-s pyfirehose/config/dfuse/producerpay.hjson \
+	time python3 -m substreams_firehose $YESTERDAY $TODAY \
+		-s substreams_firehose/config/dfuse/producerpay.hjson \
 		-o "$OUTFILE" \
 		"$@"
 else

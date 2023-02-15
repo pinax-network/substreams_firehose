@@ -13,8 +13,8 @@ from npyscreen import NPSAppManaged
 from npyscreen import notify_confirm, selectFile, setTheme
 from npyscreen.npysThemes import DefaultTheme
 
-from pyfirehose.utils import open_file_from_package
-from pyfirehose.config.ui.forms.main import MainForm
+from substreams_firehose.utils import open_file_from_package
+from substreams_firehose.config.ui.forms.main import MainForm
 
 class ConfigApp(NPSAppManaged):
     """
@@ -58,7 +58,7 @@ class ConfigApp(NPSAppManaged):
         self.main_config = None
         self.main_config_backup = None
         # TODO: Allow changing the default path of the main config file -> CLI argument
-        self.main_config_file = 'pyfirehose/config.hjson'
+        self.main_config_file = 'substreams_firehose/config.hjson'
 
     def has_main_config_changed(self) -> bool:
         """

@@ -11,8 +11,8 @@ from datetime import datetime
 from google.protobuf.json_format import MessageToJson
 from google.protobuf.message import Message
 
-from pyfirehose.config.parser import StubConfig
-from pyfirehose.utils import filter_keys
+from substreams_firehose.config.parser import StubConfig
+from substreams_firehose.utils import filter_keys
 
 def _filter_data(data: Message, _filter: dict) -> dict:
     """

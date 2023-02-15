@@ -21,11 +21,11 @@ import time
 
 from google.protobuf.message import Message
 
-from pyfirehose.block_extractors.common import get_secure_channel
-from pyfirehose.block_extractors.common import stream_blocks
-from pyfirehose.config.parser import Config
-from pyfirehose.exceptions import BlockStreamException
-from pyfirehose.utils import get_current_task_name
+from substreams_firehose.block_extractors.common import get_secure_channel
+from substreams_firehose.block_extractors.common import stream_blocks
+from substreams_firehose.config.parser import Config
+from substreams_firehose.exceptions import BlockStreamException
+from substreams_firehose.utils import get_current_task_name
 
 TRIGGER_CHANNEL_CREATION_LOCK = asyncio.Lock()
 

@@ -7,7 +7,7 @@ Argument parsing and checking for the main script.
 import argparse
 from datetime import datetime
 
-from pyfirehose.utils import date_to_block_num
+from substreams_firehose.utils import date_to_block_num
 
 def check_period(arg_period: str) -> int:
     """
@@ -48,7 +48,7 @@ def parse_arguments() -> argparse.Namespace:
                             help='period start as a date (iso-like format) or a block number')
     arg_parser.add_argument('end', type=str,
                             help='period end as a date (iso-like format) or a block number')
-    arg_parser.add_argument('-c', '--config', type=str, default='pyfirehose/config.hjson',
+    arg_parser.add_argument('-c', '--config', type=str, default='substreams_firehose/config.hjson',
                             help='config file path in HJSON or JSON format')
     arg_parser.add_argument('-s', '--stub', type=str,
                             help='stub config file path in HJSON or JSON format')

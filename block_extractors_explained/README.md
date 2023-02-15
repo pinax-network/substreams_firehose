@@ -47,7 +47,7 @@ The next step is to recognize that what limits the speed of block processing is 
 
 This allows for maximum throughput from the gRPC channel as only raw received blocks are stored and will be processed later, when all the data has been gathered from the network. We can also use *worker scaling* to adjust the workload dynamically and restart failed tasks immediately by using a *block pool* holding the remaining blocks to be processed.
 
-Combined with the previous approach of maxing out the number of worker for the channel, this design seems like the most efficient and robust and is what is currently implemented as the [`async_optimized`](../pyfirehose/block_extractors/async_optimized.py) (fixed initial amount of workers) and [`async_single_channel`](../pyfirehose/block_extractors/async_single_channel.py) (autoscaling of workers) block extractors.
+Combined with the previous approach of maxing out the number of worker for the channel, this design seems like the most efficient and robust and is what is currently implemented as the [`async_optimized`](../substreams_firehose/block_extractors/async_optimized.py) (fixed initial amount of workers) and [`async_single_channel`](../substreams_firehose/block_extractors/async_single_channel.py) (autoscaling of workers) block extractors.
 
  **Advantages:**
 - Optimization of computation time by removing block processing allows for even faster throughput.
@@ -69,7 +69,7 @@ By scaling the previous design we can move the block pool a level higher and hav
 
 Unfortunately, even though opening new channels does seem to work on the client side, the Firehose endpoint won't allow for extracting more blocks out of them. It can be theorized that the gRPC server implementation still sees the two channels as coming from one client and thus killing any more attempts to open additional connections.
 
-An (almost) working PoC can be found as the [`async_multi_channel`](../pyfirehose/block_extractors/async_multi_channel.py) block extractor.
+An (almost) working PoC can be found as the [`async_multi_channel`](../substreams_firehose/block_extractors/async_multi_channel.py) block extractor.
 
 **Advantages:**
 - Same as previous, with theoretically more throughput.

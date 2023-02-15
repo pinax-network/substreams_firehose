@@ -40,28 +40,28 @@
 			"id": "antelope_firehose_v1",
 			"auth": "eosnation", // One of the entry in the "auth" object
 			"chain": "Antelope",
-			"stub": "pyfirehose/config/dfuse/default.hjson",
+			"stub": "substreams_firehose/config/dfuse/default.hjson",
 			"url": "eos.firehose.eosnation.io:9000",
 		},
 		{
 			"id": "wax_firehose_v1",
 			"auth": "eosnation",
 			"chain": "WAX",
-			"stub": "pyfirehose/config/dfuse/default.hjson",
+			"stub": "substreams_firehose/config/dfuse/default.hjson",
 			"url": "wax.firehose.eosnation.io:9000"
 		},
 		{
 			"id": "kylin_firehose_v1",
 			"auth": "eosnation",
 			"chain": "Kylin",
-			"stub": "pyfirehose/config/dfuse/default.hjson",
+			"stub": "substreams_firehose/config/dfuse/default.hjson",
 			"url": "kylin.firehose.eosnation.io:9000"
 		},
 		{
 			"id": "jungle4_firehose_v1",
 			"auth": "eosnation",
 			"chain": "Jungle4",
-			"stub": "pyfirehose/config/dfuse/default.hjson",
+			"stub": "substreams_firehose/config/dfuse/default.hjson",
 			"url": "jungle4.firehose.eosnation.io:9000"
 		},
 		// Substream-enabled Firehose
@@ -70,7 +70,7 @@
 			"auth": "eosnation",
 			"chain": "Antelope",
 			"compression": "gzip", // Must be one of 'gzip' or 'deflate' if specified (no compression by default)
-			"stub": "pyfirehose/config/substreams/default.hjson",
+			"stub": "substreams_firehose/config/substreams/default.hjson",
 			"url": "eos.firehose.eosnation.io:9001"
 		},
 		{
@@ -78,7 +78,7 @@
 			"auth": "eosnation",
 			"chain": "WAX",
 			"compression": "gzip",
-			"stub": "pyfirehose/config/substreams/default.hjson",
+			"stub": "substreams_firehose/config/substreams/default.hjson",
 			"url": "waxtest.firehose.eosnation.io:9001"
 		},
 		// See https://substreams.streamingfast.io/reference-and-specs/chains-and-endpoints
