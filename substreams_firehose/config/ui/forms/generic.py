@@ -121,7 +121,7 @@ class CategorizedItemDisplayForm(ActionFormDiscard, MarkdownEnabledHelpForm): #p
         identifier_key: An attribute of an item uniquely identifying this item from the others. This value will also be used for display.
         category_key: An attribute items share for grouping them by category (set of unique values of that attribute).
         default_category: The default category for items that don't have the `category_key` attribute.
-        sort_categories: An optional function used to sort categories (alphabetical by default).
+        sort_category: An optional function used to sort the categories (alphabetical by default).
     """
     @dataclass
     class ItemField:
@@ -263,7 +263,10 @@ class CategorizedItemDisplayForm(ActionFormDiscard, MarkdownEnabledHelpForm): #p
             self.w_items_boxtitle.append(self.add(
                 CategorizedItemViewerBoxTitle,
                 name=category,
-                values=[entry for entry in self.items if entry.get(self.category_key, self.default_category) == category],
+                values=sorted(
+                    [entry for entry in self.items if entry.get(self.category_key, self.default_category) == category],
+                    key=lambda v: v.get(self.identifier_key)
+                ),
                 max_height=self.lines//n_items - 4,
                 scroll_exit=True,
             ))
@@ -351,6 +354,9 @@ class CategorizedItemDisplayForm(ActionFormDiscard, MarkdownEnabledHelpForm): #p
             # Add it to the appropriate category
             if item.get(self.category_key, self.default_category) == boxtitle_widget.name:
                 boxtitle_widget.values.append(item)
+                # Sort the entries back
+                boxtitle_widget.values = sorted(boxtitle_widget.values, key=lambda v: v.get(self.identifier_key))
+
 
     def select_item(self, item: MutableMapping) -> None:
         """
