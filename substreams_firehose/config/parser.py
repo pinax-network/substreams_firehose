@@ -38,8 +38,6 @@ class Config:
     AUTH_ENDPOINT: ClassVar[str]
     CHAIN: ClassVar[str]
     COMPRESSION: ClassVar[Compression]
-    GRAPHQL_ENDPOINT: ClassVar[str]
-    GRAPHQL_CACHE: ClassVar[int]
     GRPC_ENDPOINT: ClassVar[str]
     MAX_BLOCK_SIZE: ClassVar[int]
     MAX_FAILED_BLOCK_RETRIES: ClassVar[int]
@@ -91,8 +89,6 @@ def load_config(file: str, grpc_entry_id: str | None = None) -> bool:
         Config.API_KEY 					= default_auth['api_key']
         Config.AUTH_ENDPOINT 			= default_auth['endpoint']
         Config.CHAIN 					= default_grpc.get('chain', '<UNKNOWN CHAIN>')
-        Config.GRAPHQL_ENDPOINT 		= options['graphql_endpoint']
-        Config.GRAPHQL_CACHE 			= options['graphql_cache']
         Config.GRPC_ENDPOINT 			= default_grpc['url']
         Config.MAX_BLOCK_SIZE 			= options.get('max_block_size', 8388608) # 8MB default
         Config.MAX_FAILED_BLOCK_RETRIES = options.get('max_failed_block_retries', 3)

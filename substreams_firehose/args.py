@@ -22,8 +22,8 @@ def check_period(arg_period: str) -> int:
     try:
         arg_period = int(arg_period)
     except ValueError:
+        # TODO: Add date parsing
         arg_period = -1
-        # arg_period = date_to_block_num(datetime.fromisoformat(arg_period))
 
     if arg_period < 0:
         raise argparse.ArgumentTypeError(f'Invalid period: {arg_period} must be positive `int` or `datetime`-like object')
