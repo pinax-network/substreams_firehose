@@ -4,6 +4,7 @@ SPDX-License-Identifier: MIT
 Custom widgets built on the `npyscreen` library and used by forms to display and edit configuration files.
 """
 
+import logging
 import re
 from collections.abc import MutableMapping
 
@@ -148,6 +149,11 @@ class CodeHighlightedPager(Pager):
 
     def __init__(self, *args, lexer: RegexLexer, style: str | Style = 'github-dark', **kwargs):
         super().__init__(*args, **kwargs)
+        self.parent.stored_highlights = {}
+
+        if not curses.has_extended_color_support() or curses.COLORS < 256 or curses.COLOR_PAIRS < 65536:
+            logging.warning('Terminal doesn\'t support more than 256 color pairs, no syntax highlighting available')
+            return
 
         # TODO: Move highlighting logic to separate function for dynamic update + add style chooser along side main menu
         # TODO: Sanitize text for escaping ANSI code in it ?
@@ -159,7 +165,6 @@ class CodeHighlightedPager(Pager):
         # TODO: Check color support for TrueColor, 256, or 16 (hint: `curses.has_extended_color_support` for TrueColor)
         highlighted_text_split = highlight('\n'.join(text), lexer, Terminal256Formatter(style=style)).splitlines()
 
-        self.parent.stored_highlights = {}
         for i in range(len(highlighted_text_split)):
             self.parent.stored_highlights[self.values[i]] = [
                 c for color, length in colorize_256( # TODO: Extend the function to work with all modes described above
