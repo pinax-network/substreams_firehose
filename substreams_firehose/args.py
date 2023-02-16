@@ -5,9 +5,6 @@ Argument parsing and checking for the main script.
 """
 
 import argparse
-from datetime import datetime
-
-from substreams_firehose.utils import date_to_block_num
 
 def check_period(arg_period: str) -> int:
     """
@@ -25,7 +22,8 @@ def check_period(arg_period: str) -> int:
     try:
         arg_period = int(arg_period)
     except ValueError:
-        arg_period = date_to_block_num(datetime.fromisoformat(arg_period))
+        arg_period = -1
+        # arg_period = date_to_block_num(datetime.fromisoformat(arg_period))
 
     if arg_period < 0:
         raise argparse.ArgumentTypeError(f'Invalid period: {arg_period} must be positive `int` or `datetime`-like object')
@@ -40,14 +38,14 @@ def parse_arguments() -> argparse.Namespace:
         A `Namespace` object containing the parsed arguments.
     """
     arg_parser = argparse.ArgumentParser(
-        description=('Extract any data from the blockchain. '
+        description=('Extract any data from the blockchain using gRPC-enabled endpoints.'
                      'Powered by Firehose (https://firehose.streamingfast.io/) and Substreams (https://substreams.streamingfast.io).'),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     arg_parser.add_argument('start', type=str,
-                            help='period start as a date (iso-like format) or a block number')
+                            help='starting block number')
     arg_parser.add_argument('end', type=str,
-                            help='period end as a date (iso-like format) or a block number')
+                            help='ending block number')
     arg_parser.add_argument('-c', '--config', type=str, default='substreams_firehose/config.hjson',
                             help='config file path in HJSON or JSON format')
     arg_parser.add_argument('-s', '--stub', type=str,
