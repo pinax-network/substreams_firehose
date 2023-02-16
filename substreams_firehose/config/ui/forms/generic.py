@@ -20,6 +20,9 @@ from substreams_firehose.config.ui.widgets.inputs import InputGeneric, InputList
 class MarkdownEnabledHelpForm(_FormBase):
     """
     Allow markdown support for the help text and fix a display bug when returning from the help message display.
+
+    Attributes:
+        help: The help text to display (can contain markdown markups to render).
     """
     def __init__(self, *args, markdown_support: bool = True, **kwargs):
         super().__init__(*args, **kwargs)
@@ -312,7 +315,6 @@ class CategorizedItemDisplayForm(ActionFormDiscard, MarkdownEnabledHelpForm): #p
         return new_items
 
     def on_cancel(self):
-        # self.parentApp.restore_main_config_backup()
         self.parentApp.setNextFormPrevious()
 
     def on_discard(self) -> bool:

@@ -1,7 +1,7 @@
 """
 SPDX-License-Identifier: MIT
 
-Forms used by the main config TUI app to display and edit configuration files.
+Starting screen for the configuration files TUI application.
 """
 
 import logging
@@ -21,7 +21,7 @@ from substreams_firehose.config.ui.widgets.custom import CodeHighlightedTitlePag
 
 class MainForm(FormWithMenus, MarkdownEnabledHelpForm):
     """
-    Main form presenting the main config file with a menu for accessing the edit functions.
+    Main form presenting the main configuration file with a menu for accessing the edit functions.
 
     Attributes:
         next_form: The next form to be loaded after exiting the main form (`None` exits the application).

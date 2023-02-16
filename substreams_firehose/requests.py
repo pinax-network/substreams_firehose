@@ -7,7 +7,7 @@ Functions for network related operations.
 import json
 import logging
 from contextlib import nullcontext
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from requests_cache import CachedSession
 

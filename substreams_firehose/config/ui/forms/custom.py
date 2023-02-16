@@ -1,7 +1,7 @@
 """
 SPDX-License-Identifier: MIT
 
-Custom forms built on the `npyscreen` library.
+Custom forms built on the [`npyscreen`](https://npyscreen.readthedocs.io) library.
 """
 
 from collections.abc import Callable

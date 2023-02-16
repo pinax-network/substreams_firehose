@@ -1,7 +1,7 @@
 """
 SPDX-License-Identifier: MIT
 
-Forms specifying the workflow for editing stub config files.
+Forms reprensenting the workflow for editing stub configuration files.
 """
 
 import logging
@@ -576,7 +576,7 @@ class StubConfigOutputsForm(SplitActionForm): #pylint: disable=too-many-ancestor
     """
     Select and filter fields that will be received from the gRPC stream.
 
-    The top selection widget presents a list of compatible output types while the bottom tree widget list the
+    The top selection widget presents a list of compatible output types while the bottom tree widget list the \
     available fields that can be selected to be kept from the response.
 
     Attributes:

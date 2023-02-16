@@ -8,7 +8,7 @@ import argparse
 
 def check_period(arg_period: str) -> int:
     """
-    Convert the specified period argument, from an integer or a date, to a block number.
+    Convert the specified period argument from an integer to a block number.
 
     Args:
         arg_period: A period argument from the ArgumentParser.

@@ -28,9 +28,9 @@ def colorize_256(text: str, default_color: int = 0) -> list[tuple[int, int]]:
         https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797#256-colors
     ) for reference). Attributes such as bold, italic, etc. are also supported except for the strikethrough attribute.
 
-    Background colors currently don't work.
-
     This is used internally by the `CodeHighlightedPager` for coloring text.
+
+    *Note: background colors currently don't work.*
 
     Args:
         text: The text to colorize.
@@ -111,7 +111,7 @@ def colorize_256(text: str, default_color: int = 0) -> list[tuple[int, int]]:
 
 class CodeHighlightedTextfield(Textfield):
     """
-    Syntax highlight enabled [`Textfield`](https://npyscreen.readthedocs.io/widgets-text.html#widgets-displaying-text)
+    Syntax highlight enabled [`Textfield`](https://npyscreen.readthedocs.io/widgets-text.html#widgets-displaying-text) \
     for displaying JSON config files.
 
     Attributes:
@@ -138,10 +138,10 @@ class CodeHighlightedTextfield(Textfield):
 
 class CodeHighlightedPager(Pager):
     """
-    Syntax highlight enabled [`Pager`](https://npyscreen.readthedocs.io/widgets-text.html#widgets-displaying-text)
+    Syntax highlight enabled [`Pager`](https://npyscreen.readthedocs.io/widgets-text.html#widgets-displaying-text) \
     using `CodeHighlightedTextfield` as line display.
 
-    It can syntax highlight any language currently supported by the `pygments` library by passing the appropriate
+    It can syntax highlight any language currently supported by the `pygments` library by passing the appropriate \
     [lexer](https://pygments.org/docs/lexers/#) to the constructor.
     """
     _contained_widgets = CodeHighlightedTextfield
@@ -184,8 +184,7 @@ class CodeHighlightedTitlePager(TitlePager):
     """
     Titled version of the `CodeHighlightedPager` widget.
 
-    See [npyscreen's documentation](https://npyscreen.readthedocs.io/widgets-title.html#widgets-titled-widgets)
-    for reference.
+    See [npyscreen's documentation](https://npyscreen.readthedocs.io/widgets-title.html#widgets-titled-widgets) for reference.
     """
     _entry_type = CodeHighlightedPager
 
@@ -232,8 +231,7 @@ class EndpointsSelectOne(SelectOne):
     """
     Custom single selection widget to display the main config's endpoint data.
 
-    See [npyscreen's documentation](https://npyscreen.readthedocs.io/widgets-multiline.html#widgets-picking-options)
-    for reference.
+    See [npyscreen's documentation](https://npyscreen.readthedocs.io/widgets-multiline.html#widgets-picking-options) for reference.
     """
     def display_value(self, vl: dict):
         try:
@@ -245,8 +243,7 @@ class EndpointsTitleSelectOne(TitleSelectOne):
     """
     Title version of the `EndpointsSelectOne` widget.
 
-    See [npyscreen's documentation](https://npyscreen.readthedocs.io/widgets-title.html#widgets-titled-widgets)
-    for reference.
+    See [npyscreen's documentation](https://npyscreen.readthedocs.io/widgets-title.html#widgets-titled-widgets) for reference.
     """
     _entry_type = EndpointsSelectOne
 
@@ -266,8 +263,7 @@ class EnumTitleSelectOneOrNone(TitleSelectOne):
     """
     Title version of the `EnumSelectOneOrNone` widget.
 
-    See [npyscreen's documentation](https://npyscreen.readthedocs.io/widgets-title.html#widgets-titled-widgets)
-    for reference.
+    See [npyscreen's documentation](https://npyscreen.readthedocs.io/widgets-title.html#widgets-titled-widgets) for reference.
     """
     _entry_type = EnumSelectOneOrNone
 
@@ -303,8 +299,7 @@ class OutputTypesSelectOne(SelectOne, MultiLineAction):
     """
     Custom single selection widget to display gRPC output types and link them to the output field selection widget.
 
-    See [npyscreen's documentation](https://npyscreen.readthedocs.io/widgets-multiline.html#widgets-picking-options)
-    for reference.
+    See [npyscreen's documentation](https://npyscreen.readthedocs.io/widgets-multiline.html#widgets-picking-options) for reference.
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -331,8 +326,7 @@ class OutputTypesTitleSelectOne(TitleSelectOne):
     """
     Title version of the `OutputTypesSelectOne` widget.
 
-    See [npyscreen's documentation](https://npyscreen.readthedocs.io/widgets-title.html#widgets-titled-widgets)
-    for reference.
+    See [npyscreen's documentation](https://npyscreen.readthedocs.io/widgets-title.html#widgets-titled-widgets) for reference.
     """
     _entry_type = OutputTypesSelectOne
 
@@ -402,7 +396,7 @@ def view_help(message: str, title: str = "Message", form_color: str = "STANDOUT"
     Args:
         message: The content of the help message.
         title: The title of the help message box.
-        form_color: The default color for text in the form. See [`npyscreen` documentation](https://npyscreen.readthedocs.io/color.html)
+        form_color: The default color for text in the form. See [`npyscreen` documentation](https://npyscreen.readthedocs.io/color.html) \
         for the available values.
         scroll_exit: A boolean indicating if scrolling past the end of the help message exits the widget.
         autowrap: A boolean indicating if the message text should autowrap.

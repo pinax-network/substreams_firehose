@@ -10,7 +10,7 @@ This concept, while theoretically possible, isn't fully supported right now by t
 by the servers and new channels fails to create any new workers. Prefer to use `async_single_channel` or
 `async_optimized` for block extraction.
 
-Diagram: see ['asynchronous_dream_block_streaming.jpg'](block_extractors_explained/asynchronous_dream_block_streaming.jpg)
+Diagram: see ['asynchronous_dream_block_streaming.jpg'](../../block_extractors_explained/asynchronous_dream_block_streaming.jpg)
 """
 
 import asyncio
@@ -35,8 +35,8 @@ async def asyncio_main(period_start: int, period_end: int, #pylint: disable=too-
     """
     Extract blocks from a gRPC channel as raw blocks for later processing.
 
-    Using asynchronous directives, a number of workers will be periodically spawned to
-    extract data from *multiple* gRPC channels until all blocks have been retrieved.
+    Using asynchronous directives, a number of workers will be periodically spawned to \
+    extract data from *multiple* gRPC channels until all blocks have been retrieved. \
     The returned list can then be parsed for extracting relevant data from the blocks.
 
     Args:
@@ -44,14 +44,14 @@ async def asyncio_main(period_start: int, period_end: int, #pylint: disable=too-
         period_end: The last block number of the targeted period.
         initial_tasks: The initial number of concurrent tasks to start for streaming blocks.
         workload: The number of blocks to extract for each task.
-        auto_adjust_frequency: Enable the task spawner to auto adjust the task spawning frequency based on the tasks' average
+        auto_adjust_frequency: Enable the task spawner to auto adjust the task spawning frequency based on the tasks' average \
         runtime.
-        spawn_frequency: The sleep time (in seconds) for the spawner to wait before trying to spawn a new task.
+        spawn_frequency: The sleep time (in seconds) for the spawner to wait before trying to spawn a new task. \
         Will be overridden if `auto_adjust_frequency` is enabled.
-        kwargs: Additional keyword arguments to pass to the gRPC request (must match .proto file definition).
+        kwargs: Additional keyword arguments to pass to the gRPC request (must match `.proto` file definition).
 
     Returns:
-        A list of raw blocks (google.protobuf.any_pb2.Any objects) that can later be processed.
+        A list of raw blocks (`google.protobuf.any_pb2.Any` objects) that can later be processed.
     """
     async def _spawner(token):
         data = []

@@ -23,7 +23,7 @@ async def get_secure_channel() -> Generator[grpc.aio.Channel, None, None]:
     Instantiate a secure gRPC channel as an asynchronous context manager for use by block extractors.
 
     Yields:
-        A grpc.aio.Channel as an asynchronous context manager.
+        A `grpc.aio.Channel` as an asynchronous context manager.
     """
     jwt = get_auth_token()
     creds = grpc.composite_channel_credentials(
@@ -47,7 +47,7 @@ def process_blocks(raw_blocks: Sequence[Message], block_processor: Callable[[Mes
     Parse data using the given block processor, feeding it previously extracted raw blocks from a gRPC stream.
 
     Args:
-        raw_blocks: A sequence of packed blocks (google.protobuf.any_pb2.Any objects) extracted from a gRPC stream.
+        raw_blocks: A sequence of packed blocks (`google.protobuf.any_pb2.Any` objects) extracted from a gRPC stream.
         block_processor: A generator function extracting relevant data from a block.
 
     Returns:
@@ -71,13 +71,13 @@ async def stream_blocks(start: int, end: int, secure_channel: grpc.aio.Channel,
         start: The stream's starting block.
         end: The stream's ending block.
         secure_channel: The gRPC secure channel (SSL/TLS) to extract block from.
-        block_processor: An optional block processing function for directly parsing raw blocks.
-        The function will then return the parsed blocks instead.
-        Discouraged as it might cause congestion issues for the gRPC channel if the block processing takes too long.
+        block_processor: An optional block processing function for directly parsing raw blocks. \
+        The function will then return the parsed blocks instead. \
+        Discouraged as it might cause congestion issues for the gRPC channel if the block processing takes too long. \
         Parsing the blocks *after* extraction allows for maximum throughput from the gRPC stream.
 
     Returns:
-        A list of raw blocks (google.protobuf.any_pb2.Any objects) or parsed data if a block processor is supplied.
+        A list of raw blocks (`google.protobuf.any_pb2.Any` objects) or parsed data if a block processor is supplied.
 
     Raises:
         BlockStreamException: If an rpc error is encountered. Contains the start, end, and failed block number.

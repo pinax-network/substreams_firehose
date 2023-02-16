@@ -2,7 +2,7 @@
 SPDX-License-Identifier: MIT
 
 Parses the main config and stub config files for use by the application.
-Refer to the README.md and comments within the config files for more details about each parameters.
+Refer to the [`README.md`](../../../README.md) and comments within the config files for more details about each parameters.
 """
 
 import logging
@@ -20,7 +20,7 @@ from substreams_firehose.utils import generate_proto_messages_classes, open_file
 @dataclass
 class StubConfig:
     """
-    Holds the stub config.
+    Holds the stub configuration.
     """
     RESPONSE_PARAMETERS: ClassVar[dict | list]
     REQUEST_OBJECT: ClassVar[Any]
@@ -32,7 +32,7 @@ class StubConfig:
 @dataclass
 class Config:
     """
-    Holds the main config.
+    Holds the main configuration.
     """
     API_KEY: ClassVar[str]
     AUTH_ENDPOINT: ClassVar[str]

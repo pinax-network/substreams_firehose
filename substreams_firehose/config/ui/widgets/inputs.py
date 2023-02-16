@@ -32,8 +32,7 @@ class InputListDisplay(OptionListDisplay):
     """
     Custom option list display for increased option title width.
 
-    See [npyscreen's documentation](https://npyscreen.readthedocs.io/options.html#options-and-option-lists)
-    for reference.
+    See [npyscreen's documentation](https://npyscreen.readthedocs.io/options.html#options-and-option-lists) for reference.
     """
     ANNOTATE_WIDTH_PADDING = 10
 

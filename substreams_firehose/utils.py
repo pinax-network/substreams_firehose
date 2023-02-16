@@ -107,7 +107,7 @@ def filter_keys(input_: dict, keys_filter: dict) -> dict:
 
 def generate_proto_messages_classes(path: str = 'substreams_firehose/proto/generated/protos.desc'):
     """
-    Generate a mapping of services and messages full name to their class object and populates the default descriptor pool
+    Generate a mapping of services and messages full name to their class object and populates the default descriptor pool \
     with the loaded `.proto` definitions.
 
     Should only be called once for different descriptor sets.
@@ -259,16 +259,14 @@ def patch_get_messages(self, files):
 
     Gets all the messages from a specified file.
 
-    This will find and resolve dependencies, failing if the descriptor
-    pool cannot satisfy them.
+    This will find and resolve dependencies, failing if the descriptor pool cannot satisfy them.
 
     Args:
-    files: The file names to extract messages from.
+        files: The file names to extract messages from.
 
     Returns:
-    A dictionary mapping proto names to the message classes. This will include
-    any dependent messages as well as any messages defined in the same file as
-    a specified message.
+        A dictionary mapping proto names to the message classes. This will include any dependent messages as well as any \
+        messages defined in the same file as a specified message.
     """
     result = {}
     for file_name in files:

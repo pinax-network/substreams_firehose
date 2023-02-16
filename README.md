@@ -37,7 +37,7 @@ A [`.pylintrc`](.pylintrc) file is provided if you want to run [Pylint](https://
 (.venv) $ pylint substreams_firehose --rcfile=.pylintrc
 ```
 
-Auto-generated documentation can be browsed [here](https://pinax-network.github.io/substreams_firehose/docs).
+Auto-generated documentation can be browsed [here](https://github.com/pinax-network/substreams_firehose/tree/main/docs).
 
 **Important: see the next section for how to setup your API keys.**
 
@@ -50,7 +50,7 @@ A TUI (Terminal User Interface) is available to manage (almost) all aspects of t
 (.venv) $ python -m substreams_firehose.config
 ```
 
-Press `F1` on any screen of the TUI to access a help menu. For starter, you can bring the main menu on the starting sceen by pressing `CTRL+X`.
+Press `F1` on any screen of the TUI to access a help menu. For starter, you can bring the main menu on the starting screen by pressing `CTRL+X`.
 
 *Note: the TUI requires your terminal emulator to support a 256 colors palette. Check [here](https://github.com/termstandard/colors) if you're not sure that's the case.*
 
@@ -58,7 +58,7 @@ You can also edit any configuration file manually (stored under `.venv/lib/{PYTH
 
 ### *Main* configuration file
 
-This file holds the list of endpoints serving data using either *Firehose*, *Substreams* or both. It specifies which *authentication* endpoint to use and adds a few details describing each endpoint as well as some other settings like the requests' cache duration, etc (see comments).
+This file holds the list of endpoints serving data using either *Firehose*, *Substreams* or both. It specifies which *authentication* endpoint to use and adds a few details describing each endpoint as well as some other settings like the number of retries for failed blocks, etc. (see comments).
 
 It is available in `.venv/lib/{PYTHON_VERSION}/site-packages/substreams_firehose/config.hjson` in the PyPI install. From source, you will want to copy the [`sample.config.hjson`](substreams_firehose/sample.config.hjson) file and rename it.
 
@@ -114,10 +114,12 @@ To extract data for a given block range, simply specify the `id` of an endpoint 
 (.venv) $ LAST_ETH_BLOCK=$(curl -s https://api.blockcypher.com/v1/eth/main | jq .height) && echo $LAST_ETH_BLOCK
 (.venv) $ python -m substreams_firehose $(($LAST_ETH_BLOCK - 100)) $LAST_ETH_BLOCK --grpc-entry eth_mainnet --out-file jsonl/eth.jsonl
 ```
-
-All the 100 latest block data will be stored in the `jsonl/eth.jsonl` file with one row for each block.
-
 *Note: there is work-in-progress to allow specifying a date range instead of block numbers for the query, stay tuned !*
+
+All the 100 latest block data will be stored in the `jsonl/eth.jsonl` file with one row for each block. If you have [`jq`](https://stedolan.github.io/jq/) installed, you can then preview the output with the following command :
+```console
+$ cat jsonl/eth.json | jq --color-output | less --RAW-CONTROL-CHARS
+```
 
 To see all available options for the tool, run :
 ```console
@@ -130,7 +132,7 @@ For even more control over the data extracted, the extraction process uses a mod
 
 Several [block processors](substreams_firehose/block_processors/processors.py) are available by default:
 - `default_processor` will output *all* the data (filtered according to the stub config) from the gRPC response.
-- `default_substream_processor` should be used with a substream and will output the data (filtered according to the stub config) from each of the output module in the gRPC response.
+- `default_substream_processor` should be used with a **substream** and will output the data (filtered according to the stub config) from each of the output module in the gRPC response.
 - `filtered_block_processor` will output the data (filtered according to the stub config) using the legacy [FirehoseV1](https://github.com/streamingfast/playground-firehose-eosio-go#query-language) filtering system.
 
 All three will output the response data in JSON, with the final data being compiled in a JSONL file (one line for each response parsed). 
@@ -146,6 +148,6 @@ In order to write custom block processing functions, some conditions must be res
 
 You can use the `_filter_data` function to apply the filters defined in the stub config to the output and process it further from here. Or you can directly get all the content from the response using the `MessageToJson` function. See other block processors in the [`processors.py`](substreams_firehose/block_processors/processors.py) file for details and instructions.
 
-You can then use a custom block processor through the command-line using the `--custom-processor` (or `-p`) argument and providing the name of the function.
+You can then use a custom block processor through the command-line using the `--custom-processor` (or `-p`) argument and providing the name of the function. Also, if you do not want the final output to be converted to JSON before being sent to the output file, you can pass the `--no-json-output` flag.
 
 For example, let's say you've implemented a custom function `my_block_processor` in `processors.py`. You would then pass the argument as `--custom-processor my_block_processor`. The script will locate it inside the `processors.py` module and use the `my_block_processor` function to parse block data and extract it to the output file.

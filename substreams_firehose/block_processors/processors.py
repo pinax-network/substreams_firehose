@@ -43,10 +43,10 @@ def default_processor(data: Message) -> dict:
 
 def default_substream_processor(data: Message) -> dict:
     """
-    Yield filtered output data from a Substream-enabled gRPC endpoint.
+    Yield filtered output data from a Substreams-enabled gRPC endpoint.
 
     Args:
-        data: The output message from the Substream.
+        data: The output message from the substream.
 
     Yields:
         The filtered data according to the output modules present.
@@ -58,7 +58,7 @@ def filtered_block_processor(raw_block: Message) -> dict:
     """
     Yield all transactions from a Firehose V1 gRPC filtered block, returning a subset of relevant properties.
 
-    See the `README.md` file for more information on building filtered stream.
+    See the [`README.md`](../../../README.md) file for more information on building filtered stream.
 
     Args:
         raw_block: A raw block received from the gRPC stream.

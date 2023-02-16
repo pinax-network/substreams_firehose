@@ -20,11 +20,10 @@ class ConfigApp(NPSAppManaged):
     """
     Main app containing the forms for the config TUI.
 
-    It acts as a medium of communication for getting value between forms, storing data as instance attributes
+    It acts as a medium of communication for getting value between forms, storing data as instance attributes \
     (via the `self.parentApp` variable available in child forms).
 
-    See [npyscreen's documentation](https://npyscreen.readthedocs.io/application-objects.html#in-detail)
-    for reference.
+    See [npyscreen's documentation](https://npyscreen.readthedocs.io/application-objects.html#in-detail) for reference.
 
     Attributes:
         display_main_popup: A string that the main form displays as an information message when created, if not empty.

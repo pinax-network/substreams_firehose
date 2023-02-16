@@ -1,7 +1,7 @@
 """
 SPDX-License-Identifier: MIT
 
-Entry point for the config TUI application.
+Entry point for the configuration files TUI application.
 """
 
 import argparse
@@ -11,10 +11,10 @@ from substreams_firehose.config.ui.app import ConfigApp
 
 def main() -> int:
     """
-    Main function for starting the config TUI application.
+    Main function for starting the configuration files TUI application.
     """
     arg_parser = argparse.ArgumentParser(
-        description=('Configuration file manager TUI'),
+        description=('Configuration files manager TUI'),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
@@ -44,9 +44,7 @@ def main() -> int:
     logging.addLevelName(logging.ERROR, '[ERROR]')
     logging.addLevelName(logging.CRITICAL, '[CRITICAL]')
 
-    ConfigApp().run()
-
-    return 0
+    return ConfigApp().run()
 
 if __name__ == '__main__':
     main()
