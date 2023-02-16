@@ -14,7 +14,7 @@ from google.protobuf.message import Message
 
 from substreams_firehose.config.parser import Config, StubConfig
 from substreams_firehose.exceptions import BlockStreamException
-from substreams_firehose.utils import get_auth_token
+from substreams_firehose.requests import get_auth_token
 from substreams_firehose.utils import get_current_task_name
 
 @asynccontextmanager

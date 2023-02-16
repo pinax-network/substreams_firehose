@@ -21,7 +21,7 @@ from substreams_firehose.args import check_period, parse_arguments
 from substreams_firehose.block_extractors.common import process_blocks
 from substreams_firehose.config.parser import Config, StubConfig
 from substreams_firehose.config.parser import load_config, load_stub_config
-from substreams_firehose.utils import get_auth_token
+from substreams_firehose.requests import get_auth_token
 
 CONSOLE_HANDLER = logging.StreamHandler()
 

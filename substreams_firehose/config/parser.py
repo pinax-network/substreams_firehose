@@ -15,8 +15,7 @@ import hjson
 from google.protobuf.json_format import MessageToJson
 from grpc import Compression
 
-# Prevent circular import between utils and config modules
-import substreams_firehose.utils as utils #pylint: disable=consider-using-from-import
+from substreams_firehose.utils import generate_proto_messages_classes, open_file_from_package
 
 @dataclass
 class StubConfig:
@@ -64,7 +63,7 @@ def load_config(file: str, grpc_entry_id: str | None = None) -> bool:
         ImportError: If the stub configuration file fails to import the specified modules.
         KeyError: If a required key is missing from the configuration file.
     """
-    with utils.open_file_from_package(file, 'r') as config_file:
+    with open_file_from_package(file, 'r') as config_file:
         try:
             options = hjson.load(config_file)
         except hjson.HjsonDecodeError as error:
@@ -111,7 +110,7 @@ def load_config(file: str, grpc_entry_id: str | None = None) -> bool:
     except KeyError as error:
         Config.COMPRESSION = Compression.NoCompression
 
-    Config.PROTO_MESSAGES_CLASSES = utils.generate_proto_messages_classes()
+    Config.PROTO_MESSAGES_CLASSES = generate_proto_messages_classes()
 
     if default_stub:
         load_stub_config(default_stub)
@@ -135,7 +134,7 @@ def load_substream_package(url: str) -> dict:
         FileNotFoundError: If the file specified by `url` doesn't exists.
         IsADirectoryError: If the file specified by `url` is a directory.
     """
-    with utils.open_file_from_package(url, 'rb') as package_file:
+    with open_file_from_package(url, 'rb') as package_file:
         pkg = StubConfig.SUBSTREAMS_PACKAGE_OBJECT()
         pkg.ParseFromString(package_file.read())
 
@@ -156,7 +155,7 @@ def load_stub_config(stub: str | dict) -> None:
     stub_config = stub
     # Load stub config from external file
     if isinstance(stub, str):
-        with utils.open_file_from_package(stub, 'r') as stub_config_file:
+        with open_file_from_package(stub, 'r') as stub_config_file:
             try:
                 stub_config = hjson.load(stub_config_file)
             except hjson.HjsonDecodeError as error:

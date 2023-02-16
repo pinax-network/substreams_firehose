@@ -18,7 +18,8 @@ from npyscreen import notify, notify_confirm, notify_yes_no
 from pygments.lexers.data import JsonLexer
 
 import substreams_firehose.config.ui.widgets.inputs as input_options
-from substreams_firehose.utils import get_auth_token, open_file_from_package
+from substreams_firehose.requests import get_auth_token
+from substreams_firehose.utils import open_file_from_package
 from substreams_firehose.config.parser import Config, StubConfig
 from substreams_firehose.config.parser import load_config, load_substream_package, load_stub_config
 from substreams_firehose.config.ui.forms.generic import ActionFormDiscard, MarkdownEnabledHelpForm, SplitActionForm
