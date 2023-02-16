@@ -52,21 +52,22 @@ class MainConfigAuthProvidersForm(CategorizedItemDisplayForm): #pylint: disable=
         new_auth_providers = super().on_ok()
 
         for auth_provider in new_auth_providers:
-            Config.AUTH_ENDPOINT = auth_provider['endpoint']
-            Config.API_KEY = auth_provider['api_key']
+            if auth_provider['api_key'] != '<YOUR_API_KEY>': # Don't check validity for initial placeholder value
+                Config.AUTH_ENDPOINT = auth_provider['endpoint']
+                Config.API_KEY = auth_provider['api_key']
 
-            notify(f'Testing JWT authentication token fetch from "{Config.AUTH_ENDPOINT}"...', title='Please wait')
-            try:
-                get_auth_token()
-            except (RequestException, RuntimeError) as error:
-                if not notify_yes_no(
-                    f'There was an error fetching the authentication token from the endpoint :\n{error}\n'
-                    f'{"-"*39}\nIgnore the error and save the API key ?',
-                    title=f'Error: could not fetch JWT token from "{Config.AUTH_ENDPOINT}"',
-                    wide=True
-                ):
-                    self.parentApp.setNextForm(self.parentApp.MAIN_CONFIG_AUTH_PROVIDERS_FORM)
-                    return
+                notify(f'Testing JWT authentication token fetch from "{Config.AUTH_ENDPOINT}"...', title='Please wait')
+                try:
+                    get_auth_token()
+                except (RequestException, RuntimeError) as error:
+                    if not notify_yes_no(
+                        f'There was an error fetching the authentication token from the endpoint :\n{error}\n'
+                        f'{"-"*39}\nIgnore the error and save the API key ?',
+                        title=f'Error: could not fetch JWT token from "{Config.AUTH_ENDPOINT}"',
+                        wide=True
+                    ):
+                        self.parentApp.setNextForm(self.parentApp.MAIN_CONFIG_AUTH_PROVIDERS_FORM)
+                        return
 
         self.parentApp.main_config['auth'] = new_auth_providers
 
