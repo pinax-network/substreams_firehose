@@ -62,7 +62,7 @@ class MainConfigAuthProvidersForm(CategorizedItemDisplayForm): #pylint: disable=
                 except (RequestException, RuntimeError) as error:
                     if not notify_yes_no(
                         f'There was an error fetching the authentication token from the endpoint :\n{error}\n'
-                        f'{"-"*39}\nIgnore the error and save the API key ?',
+                        f'{"-"*39}\nIgnore the error and save the API key for "{auth_provider["id"]}" ?',
                         title=f'Error: could not fetch JWT token from "{Config.AUTH_ENDPOINT}"',
                         wide=True
                     ):

@@ -109,7 +109,11 @@ class MainForm(FormWithMenus, MarkdownEnabledHelpForm):
                 'An authentication provider is an endpoint that can deliver authentication (JWT) tokens to communicate with the data endpoints.\n'
                 'These endpoints hold a reference to one of the authentication provider listed here by referencing their ID.\n\n'
                 'Therefore, the following warning must be disclosed :\n'
-                '**If you delete an authentication provider, any endpoint refering to it won\'t be able to properly function.**\n\n'
+                '**If you delete an authentication provider, any data endpoint refering to it won\'t be able to properly function.**\n\n'
+                'To setup API keys for the default providers, you can go to the following links :\n'
+                '	- *eosnation*: https://dfuse.eosnation.io/\n'
+                '	- *pinax*: https://pinax.network/\n'
+                '	- *streamingfast*: https://app.streamingfast.io/\n\n'
                 'You can always add more authentication providers by selecting the **[New]** button.\n'
                 'To edit or delete an existing one, move the cursor to it and press **[ENTER]** (or **[SPACE]**) to bring an action submenu.'
             }
