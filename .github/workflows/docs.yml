@@ -27,6 +27,7 @@ jobs:
         run: |
           pip install -r requirements.txt
           pip install pdoc
+          pip install hatch
       
       - name: Build docs
         run: ./scripts/build_docs.sh
