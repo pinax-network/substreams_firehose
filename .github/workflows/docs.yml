@@ -23,9 +23,13 @@ jobs:
         with:
           python-version: '3.11'
 
-      - run: |
-        pip install -r requirements.txt
-        ./scripts/build_docs.sh
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pdoc
+      
+      - name: Build docs
+        run: ./scripts/build_docs.sh
 
       - uses: actions/upload-pages-artifact@v1
         with:
