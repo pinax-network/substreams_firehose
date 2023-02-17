@@ -37,7 +37,7 @@ A [`.pylintrc`](.pylintrc) file is provided if you want to run [Pylint](https://
 (.venv) $ pylint substreams_firehose --rcfile=.pylintrc
 ```
 
-Auto-generated documentation can be browsed [here](https://github.com/pinax-network/substreams_firehose/tree/main/docs).
+Auto-generated documentation can be browsed [here](https://pinax-network.github.io/substreams_firehose).
 
 **Important: see the next section for how to setup your API keys.**
 
