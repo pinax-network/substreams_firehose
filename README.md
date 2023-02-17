@@ -67,7 +67,7 @@ The most important part is to fill the `api_key` setting by registering an API k
 - For using [**Pinax**](https://pinax.network/) based endpoints, go to https://pinax.network/.
 - For using [**StreamingFast**](https://www.streamingfast.io/) based endpoints, go to https://app.streamingfast.io/.
 
-You can run the TUI configuration tool for setting your API keys :
+You can run the TUI configuration tool for setting your API keys. The tool will check that they are valid against the specified endpoint (hence why the `dummy` key used in the video below will fail to pass):
 ![video]()
 
 The TUI also allows you to add your own authentication providers and manage the list of data endpoints that you can query. 
@@ -100,7 +100,7 @@ Here's an example of a stub config dedicated to a substream:
 
 Stub configuration files can be easily managed and edited using the TUI configuration tool. A step-by-step approach allows for easily filling all the required information to end up with a stub completely describing the extraction process for a given endpoint.
 
-Here's a demo on how to setup ... :
+Here's a demo on how to setup a stub configuration for extracting gas prices data on the Ethereum mainnet and run it with the tool :
 ![video]()
 
 ## Running the tool

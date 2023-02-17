@@ -1,4 +1,4 @@
-Output scripts/demo/demo.mp4
+Output scripts/demo/stub_config.mp4
 
 Set FontFamily "Space Mono"
 Set Theme {
@@ -6,10 +6,10 @@ Set Theme {
 	"background":"#000000",
 	"foreground":"#ffffff",
 	"black":"#000000",
-	"blue":"#ef758c",
-	"brightBlue":"#6923ea",
-	"green":"#8fffe9",
-	"yellow":"#8fffe9"
+	"blue":"#6923ea",
+	"green":"#6923ea",
+	"yellow":"#ef758c",
+	"brightYellow":"#8fffe9"
 }
 Set FontSize 24
 Set Width 2400
@@ -28,8 +28,13 @@ Type "python -m substreams_firehose.config"
 Sleep 1.5s
 Enter
 
+# === Hide API keys from showing ===
+Hide
+Down 24
+Show
+
 # === Showcase main config ===
-Sleep 2s
+Sleep 2.5s
 Down@100ms 20
 Sleep 1s
 Down@75ms 30
@@ -44,11 +49,11 @@ Enter
 
 # === Endpoint selection ===
 Sleep 2s
-Down@250ms 5
+Down@250ms 6
 Sleep 500ms
 Space
 Sleep 500ms
-Down@125ms 11
+Down@125ms 15
 Sleep 1s
 Enter
 
@@ -58,7 +63,7 @@ Enter
 # --- 'substreams_firehose' folder ---
 Sleep 1s
 Down@150ms 2
-Right
+Right@150ms 2
 Sleep 500ms
 Enter
 # --- 'config' folder ---
@@ -240,7 +245,7 @@ Sleep 1.5s
 Enter
 
 # === Showing the results ===
-Sleep 20s
+Sleep 21s
 Type "cat jsonl/eth.jsonl | jq --color-output | less --RAW-CONTROL-CHARS"
 Sleep 1s
 Enter
