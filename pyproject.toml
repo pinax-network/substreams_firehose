@@ -1,0 +1,90 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "substreams_firehose"
+description = 'Extract any data from the blockchain using gRPC-enabled endpoints powered by Substreams and Firehose.'
+readme = "README.md"
+requires-python = ">=3.7"
+license = "MIT"
+keywords = ["analytics", "blockchain", "grpc", "firehose", "substreams", "thegraph", "streamingfast", "pinax"]
+authors = [
+  { name = "Krow10", email = "23462475+Krow10@users.noreply.github.com" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "grpcio",
+  "grpcio-reflection",
+  "grpcio-tools",
+  "hjson",
+  "npyscreen",
+  "protobuf==4.21.12",
+  "protoletariat",
+  "pygments",
+  "pylint",
+  "python-dotenv",
+  "requests_cache"
+]
+dynamic = ["version"]
+
+[project.urls]
+Documentation = "https://github.com/pinax-network/substreams_firehose/tree/main/docs"
+Issues = "https://github.com/pinax-network/substreams_firehose/issues"
+Source = "https://github.com/pinax-network/substreams_firehose"
+
+[tool.hatch.version]
+path = "substreams_firehose/__about__.py"
+
+[tool.hatch.envs.default]
+dependencies = [
+  "pytest",
+  "pytest-cov",
+]
+[tool.hatch.envs.default.scripts]
+cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=substreams_firehose --cov=tests {args}"
+no-cov = "cov --no-cov {args}"
+
+[[tool.hatch.envs.test.matrix]]
+python = ["37", "38", "39", "310", "311"]
+
+[tool.coverage.run]
+branch = true
+parallel = true
+omit = [
+  "substreams_firehose/__about__.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
+
+[tool.hatch.build]
+exclude = [
+  "/.github",
+  "/.venv",
+  "/docs",
+  "/logs",
+  "/block_extractors_explained",
+  "/scripts",
+  ".gitignore",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["substreams_firehose/"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"substreams_firehose/sample.config.hjson" = "substreams_firehose/config.hjson"

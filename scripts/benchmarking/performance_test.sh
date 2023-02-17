@@ -5,9 +5,9 @@ sort_jsonl_output(){
 	mv jsonl/sorted.jsonl $1
 }
 
-# Generic function to run Pyfirehose
+# Generic function to run substreams_firehose
 run_test(){
-	python -m pyfirehose $1 $2 \
+	python -m substreams_firehose $1 $2 \
 	--grpc-entry $3 \
 	--stub scripts/benchmarking/test_configs/$4.hjson \
 	--out-file jsonl/$4.jsonl \
@@ -219,5 +219,5 @@ esac
 # Move temporary output to named file in `results/` folder
 mv scripts/benchmarking/results/tmp scripts/benchmarking/results/$(date +"%d-%m-%Y")_$(echo -e "${TEST_MODE}" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]').txt
 
-# Cleanup Pyfirehose output files
+# Cleanup substreams_firehose output files
 rm -rf jsonl/

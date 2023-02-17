@@ -1,0 +1,195 @@
+{
+	// Id for default grpc endpoint taken from the "grpc" array-object
+	"default": "antelope_firehose_v2",
+
+	// Maximum block size (in KB) allowed for streaming block in the gRPC channel
+	"max_block_size": 67108864, // 64MB
+
+	// Maximum number of retries for extracting failed blocks (set to 0 to disable)
+	"max_failed_block_retries": 2,
+
+	// Authentication endpoints for issuing JWT tokens
+	"auth": [
+        {
+            "id": "eosnation",
+            "api_key": "<YOUR_API_KEY>",
+            "endpoint": "https://auth.eosnation.io/v1/auth/issue"
+        },
+        {
+            "id": "pinax",
+            "api_key": "<YOUR_API_KEY>",
+            "endpoint": "https://auth.pinax.network/v1/auth/issue"
+        },
+        {
+            "id": "streamingfast",
+            "api_key": "<YOUR_API_KEY>",
+            "endpoint": "https://auth.streamingfast.io/v1/auth/issue"
+        }
+    ],
+
+	// List of gRPC endpoints  
+	"grpc": [
+		// EOSNation Dfuse (deprecated)
+		// See https://docs.dfuse.eosnation.io/eosio/public-apis/reference/network-endpoints/
+		{
+			"id": "eos_dfuse",
+			"auth": "eosnation", // One of the entry in the "auth" object
+			"chain": "EOS",
+			"stub": "substreams_firehose/config/dfuse/default.hjson",
+			"url": "eos.firehose.eosnation.io:9000",
+		},
+		{
+			"id": "wax_dfuse",
+			"auth": "eosnation",
+			"chain": "WAX",
+			"stub": "substreams_firehose/config/dfuse/default.hjson",
+			"url": "wax.firehose.eosnation.io:9000"
+		},
+		{
+			"id": "kylin_dfuse",
+			"auth": "eosnation",
+			"chain": "Kylin",
+			"stub": "substreams_firehose/config/dfuse/default.hjson",
+			"url": "kylin.firehose.eosnation.io:9000"
+		},
+		{
+			"id": "jungle4_dfuse",
+			"auth": "eosnation",
+			"chain": "Jungle4",
+			"stub": "substreams_firehose/config/dfuse/default.hjson",
+			"url": "jungle4.firehose.eosnation.io:9000"
+		},
+		// EOSNation Firehose/Substreams
+		{
+			"id": "eos_firehose",
+			"auth": "eosnation",
+			"chain": "EOS",
+			"compression": "gzip", // Must be one of 'gzip' or 'deflate' if specified (no compression by default)
+			"stub": "substreams_firehose/config/substreams/default.hjson",
+			"url": "eos.firehose.eosnation.io:9001"
+		},
+		{
+			"id": "wax_firehose",
+			"auth": "eosnation",
+			"chain": "WAX",
+			"compression": "gzip",
+			"stub": "substreams_firehose/config/firehose/default.hjson",
+			"url": "waxtest.firehose.eosnation.io:9001"
+		},
+		// Pinax Firehose/Substreams
+		{
+            "id": "cosmos_hub",
+            "auth": "pinax",
+            "chain": "ATOM",
+			"compression": "gzip",
+			"stub": "substreams_firehose/config/firehose/default.hjson",
+            "url": "cosmoshub.firehose.pinax.network:9000"
+        },
+        {
+            "id": "juno_network",
+            "auth": "pinax",
+            "chain": "JUNO",
+			"compression": "gzip",
+			"stub": "substreams_firehose/config/firehose/default.hjson",
+            "url": "juno.firehose.pinax.network:9000"
+        },
+        {
+            "id": "osmosis",
+            "auth": "pinax",
+            "chain": "OSMO",
+			"compression": "gzip",
+			"stub": "substreams_firehose/config/firehose/default.hjson",
+            "url": "osmosis.firehose.pinax.network:9000"
+        },
+        {
+            "id": "theta_network",
+            "auth": "pinax",
+            "chain": "THETA",
+			"compression": "gzip",
+			"stub": "substreams_firehose/config/firehose/default.hjson",
+            "url": "theta.firehose.pinax.network:9000"
+        },
+        {
+            "id": "eth_rinkeby",
+            "auth": "pinax",
+            "chain": "Rinkeby",
+			"compression": "gzip",
+			"stub": "substreams_firehose/config/firehose/default.hjson",
+            "url": "rinkeby.firehose.pinax.network:9000"
+        },
+        // StreamingFast Firehose/Substreams
+		// See https://substreams.streamingfast.io/reference-and-specs/chains-and-endpoints
+		{
+			"id": "eth_mainnet",
+			"auth": "streamingfast",
+			"chain": "Ethereum Mainnet",
+			"compression": "gzip",
+			"stub": "substreams_firehose/config/firehose/default.hjson",
+			"url": "mainnet.eth.streamingfast.io:443"
+		},
+		{
+			"id": "eth_gorli",
+			"auth": "streamingfast",
+			"chain": "Görli",
+			"compression": "gzip",
+			"stub": "substreams_firehose/config/firehose/default.hjson",
+			"url": "goerli.eth.streamingfast.io:443"
+		},
+		{
+			"id": "polygon_mainnet",
+			"auth": "streamingfast",
+			"chain": "Polygon Mainnet",
+			"compression": "gzip",
+			"stub": "substreams_firehose/config/firehose/default.hjson",
+			"url": "polygon.streamingfast.io:443"
+		},
+		{
+			"id": "bnb_mainnet",
+			"auth": "streamingfast",
+			"chain": "BNB",
+			"compression": "gzip",
+			"stub": "substreams_firehose/config/firehose/default.hjson",
+			"url": "bnb.streamingfast.io:443"
+		},
+		{
+			"id": "near_mainnet",
+			"auth": "streamingfast",
+			"chain": "Near Mainnet",
+			"compression": "gzip",
+			"stub": "substreams_firehose/config/firehose/default.hjson",
+			"url": "mainnet.near.streamingfast.io:443"
+		},
+		{
+			"id": "near_testnet",
+			"auth": "streamingfast",
+			"chain": "Near Testnet",
+			"compression": "gzip",
+			"stub": "substreams_firehose/config/firehose/default.hjson",
+			"url": "testnet.near.streamingfast.io:443"
+		},
+		{
+			"id": "solana_mainnet",
+			"auth": "streamingfast",
+			"chain": "Solana Mainnet-beta",
+			"compression": "gzip",
+			"stub": "substreams_firehose/config/firehose/default.hjson",
+			"url": "mainnet.sol.streamingfast.io:443"
+		},
+		{
+			"id": "arweave_mainnet",
+			"auth": "streamingfast",
+			"chain": "Arweave Mainnet",
+			"compression": "gzip",
+			"stub": "substreams_firehose/config/firehose/default.hjson",
+			"url": "mainnet.arweave.streamingfast.io:443"
+		},
+		{
+			"id": "aptos_testnet",
+			"auth": "streamingfast",
+			"chain": "Aptos Testnet",
+			"compression": "gzip",
+			"stub": "substreams_firehose/config/firehose/default.hjson",
+			"url": "testnet.aptos.streamingfast.io:443"
+		}
+	]
+}

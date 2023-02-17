@@ -3,7 +3,7 @@
 # Activate python environnement
 source .venv/bin/activate
 
-PROTO_DIR="pyfirehose/proto"
+PROTO_DIR="substreams_firehose/proto"
 cd $PROTO_DIR
 
 OUT_DIR="generated"

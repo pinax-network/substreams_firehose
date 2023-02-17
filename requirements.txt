@@ -4,8 +4,8 @@ grpcio-tools==1.51.1
 hjson==3.1.0
 npyscreen==4.10.5
 protobuf==4.21.12
-protoletariat==2.0.0
+protoletariat==2.1.0
 pygments==2.14.0
-pylint==2.15.10
-python-dotenv==0.21.0
-requests_cache==0.9.7
+pylint==2.16.2
+python-dotenv==0.21.1
+requests_cache==0.9.8

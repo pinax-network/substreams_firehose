@@ -9,7 +9,7 @@
                 "STEP_IRREVERSIBLE"
             ],
             "production_mode": false,
-            "modules": "pyfirehose/proto/packages/common.spkg",
+            "modules": "substreams_firehose/proto/packages/common.spkg",
             "output_module": "map_transaction_traces"
         }
     },
