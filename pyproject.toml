@@ -29,7 +29,7 @@ dependencies = [
   "grpcio-tools",
   "hjson",
   "npyscreen",
-  "protobuf",
+  "protobuf==4.21.12",
   "protoletariat",
   "pygments",
   "pylint",
