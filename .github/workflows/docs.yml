@@ -2,6 +2,7 @@ name: docs
 
 # build the documentation whenever there are new commits on main
 on:
+  workflow_dispatch:
   push:
     branches: ["main"]
     paths: ["substreams_firehose/**"]
