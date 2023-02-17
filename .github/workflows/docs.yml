@@ -3,8 +3,8 @@ name: docs
 # build the documentation whenever there are new commits on main
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
+    paths: ["substreams_firehose/**"]
     # Alternative: only build for tags.
     # tags:
     #   - '*'
