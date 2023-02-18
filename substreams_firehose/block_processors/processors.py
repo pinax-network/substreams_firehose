@@ -7,6 +7,7 @@ Provides block processors to parse information from the extracted blocks of a gR
 import json
 import logging
 from datetime import datetime
+from typing import Iterator
 
 from google.protobuf.json_format import MessageToJson
 from google.protobuf.message import Message
@@ -29,7 +30,7 @@ def _filter_data(data: Message, _filter: dict) -> dict:
     json_data = json.loads(MessageToJson(data, preserving_proto_field_name=True))
     return filter_keys(json_data, _filter) if _filter else json_data
 
-def default_processor(data: Message) -> dict:
+def default_processor(data: Message) -> Iterator[dict]:
     """
     Yield the filtered output of a gRPC response.
 
@@ -41,7 +42,7 @@ def default_processor(data: Message) -> dict:
     """
     yield _filter_data(data, StubConfig.RESPONSE_PARAMETERS)
 
-def default_substream_processor(data: Message) -> dict:
+def default_substream_processor(data: Message) -> Iterator[dict]:
     """
     Yield filtered output data from a Substreams-enabled gRPC endpoint.
 
@@ -54,7 +55,7 @@ def default_substream_processor(data: Message) -> dict:
     for output in data.outputs:
         yield _filter_data(output.map_output, StubConfig.RESPONSE_PARAMETERS[output.name])
 
-def filtered_block_processor(raw_block: Message) -> dict:
+def filtered_block_processor(raw_block: Message) -> Iterator[dict]:
     """
     Yield all transactions from a Firehose V1 gRPC filtered block, returning a subset of relevant properties.
 
