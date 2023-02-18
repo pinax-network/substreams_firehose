@@ -120,7 +120,7 @@ To extract data for a given block range, simply specify the `id` of an endpoint 
 
 All the 100 latest block data will be stored in the `jsonl/eth.jsonl` file with one row for each block. If you have [`jq`](https://stedolan.github.io/jq/) installed, you can then preview the output with the following command :
 ```console
-$ cat jsonl/eth.json | jq --color-output | less --RAW-CONTROL-CHARS
+$ cat jsonl/eth.jsonl | jq --color-output | less --RAW-CONTROL-CHARS
 ```
 
 To see all available options for the tool, run :
