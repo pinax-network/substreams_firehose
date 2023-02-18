@@ -1,6 +1,6 @@
 {
 	// Id for default grpc endpoint taken from the "grpc" array-object
-	"default": "antelope_firehose_v2",
+	"default": "eos_firehose",
 
 	// Maximum block size (in KB) allowed for streaming block in the gRPC channel
 	"max_block_size": 67108864, // 64MB
