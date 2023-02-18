@@ -150,6 +150,11 @@ def main() -> int: #pylint: disable=too-many-statements, too-many-branches, too-
 
     try:
         os.makedirs(os.path.dirname(out_file), exist_ok=True)
+    except FileNotFoundError:
+        # File is not found if is not inside a folder and doesn't exists yet
+        pass
+
+    try:
         with open(out_file, 'w', encoding='utf8') as out:
             for entry in data:
                 if args.no_json_output:
