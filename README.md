@@ -52,7 +52,7 @@ A TUI (Terminal User Interface) is available to manage (almost) all aspects of t
 
 Press `F1` on any screen of the TUI to access a help menu. For starter, you can bring the main menu on the starting screen by pressing `CTRL+X`.
 
-*Note: the TUI requires your terminal emulator to support a 256 colors palette. Check [here](https://github.com/termstandard/colors) if you're not sure that's the case.*
+*Note: the TUI requires your terminal emulator to support a 256 colors palette for syntax highlighting (if not, the tool still works you won't just see the pretty colors !). Check [here](https://github.com/termstandard/colors) if you're not sure that's the case.*
 
 You can also edit any configuration file manually (stored under `.venv/lib/{PYTHON_VERSION}/site-packages/substreams_firehose/` with PyPI install) with the editor of your choice but beware it might break the application if edited incorrectly.
 
