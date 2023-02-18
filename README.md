@@ -78,7 +78,7 @@ The TUI also allows you to add your own authentication providers and manage the 
 A stub configuration file describe a particular way to run a gRPC stream for querying blockchain data from an endpoint. They specify the objects that will be manipulated, the request parameters to send as well as the data to filter into the final output. As such, you can have *multiple* stub configs for an endpoint, each dedicated to extract some particular data.
 
 Here's an example of a stub config dedicated to a substream:
-```json
+```json5
 {
   "base": "sf.substreams.v1", // Package of the protofile holding the gRPC objects
   "service": "Stream", // Service to use on the gRPC endpoint
