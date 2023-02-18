@@ -52,7 +52,7 @@ A TUI (Terminal User Interface) is available to manage (almost) all aspects of t
 
 Press `F1` on any screen of the TUI to access a help menu. For starter, you can bring the main menu on the starting screen by pressing `CTRL+X`.
 
-*Note: the TUI requires your terminal emulator to support a 256 colors palette. Check [here](https://github.com/termstandard/colors) if you're not sure that's the case.*
+*Note: the TUI requires your terminal emulator to support a 256 colors palette for syntax highlighting (if not, the tool still works you won't just see the pretty colors !). Check [here](https://github.com/termstandard/colors) if you're not sure that's the case.*
 
 You can also edit any configuration file manually (stored under `.venv/lib/{PYTHON_VERSION}/site-packages/substreams_firehose/` with PyPI install) with the editor of your choice but beware it might break the application if edited incorrectly.
 
@@ -78,7 +78,7 @@ The TUI also allows you to add your own authentication providers and manage the 
 A stub configuration file describe a particular way to run a gRPC stream for querying blockchain data from an endpoint. They specify the objects that will be manipulated, the request parameters to send as well as the data to filter into the final output. As such, you can have *multiple* stub configs for an endpoint, each dedicated to extract some particular data.
 
 Here's an example of a stub config dedicated to a substream:
-```json
+```json5
 {
   "base": "sf.substreams.v1", // Package of the protofile holding the gRPC objects
   "service": "Stream", // Service to use on the gRPC endpoint
