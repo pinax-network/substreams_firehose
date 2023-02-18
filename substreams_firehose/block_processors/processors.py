@@ -17,11 +17,11 @@ from substreams_firehose.utils import filter_keys
 
 def _filter_data(data: Message, _filter: dict) -> dict:
     """
-    Return the output of a gRPC response as JSON data using the stub config's output filter.
+    Return the output of a gRPC response as JSON data using the given output filter.
 
     Args:
         data: The output message from a gRPC service.
-        _filter: The nested dictionary filter.
+        _filter: A nested dictionary filter.
 
     Returns:
         A dictionary representing the filtered output data as JSON.

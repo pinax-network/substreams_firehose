@@ -8,7 +8,7 @@
 
 *substreams_firehose* is a data extraction tool leveraging the power of [**Firehose**](https://firehose.streamingfast.io/) and [**Substreams**](https://substreams.streamingfast.io) innovative technologies for accessing any blockchain-related data. It acts as an easy-to-use interface to communicate with gRPC endpoints, simplifying the process of extracting data that matters to *you*. 
 
-Using a flexible approach, you can review and select which information to extract in the final output (JSONL is the default but it's entierly up to you how the data looks like at the end). You can then use this data to power other applications or for your own purpose.  
+Using a flexible approach, you can review and select which information to extract in the final output (JSONL is the default but it's entierly up to you how the data looks like at the end). You can then use this data to power other applications or for your own purpose.
 
 ## Quickstart
 
