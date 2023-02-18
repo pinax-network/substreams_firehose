@@ -2,7 +2,7 @@
 
 > Extract any data from the blockchain using gRPC-enabled endpoints (powered by [**Firehose**](https://firehose.streamingfast.io/) and [**Substreams**](https://substreams.streamingfast.io))
 
-[![Pylint](https://github.com/pinax-network/substreams_firehose/actions/workflows/pylint.yml/badge.svg)](https://github.com/pinax-network/substreams_firehose/actions/workflows/pylint.yml)
+[![docs](https://github.com/pinax-network/substreams_firehose/actions/workflows/docs.yml/badge.svg)](https://github.com/pinax-network/substreams_firehose/actions/workflows/docs.yml) [![Pylint](https://github.com/pinax-network/substreams_firehose/actions/workflows/pylint.yml/badge.svg)](https://github.com/pinax-network/substreams_firehose/actions/workflows/pylint.yml)
 
 ## Overview
 
