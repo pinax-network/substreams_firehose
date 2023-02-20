@@ -65,8 +65,8 @@ that includes all that information (and more for use by the server-side componen
 with a substream you must first provide the right package file for that substream** (which is usually bundled in the releases \
 of the source code repo).
 
-In both cases, you still need to have the `.proto` files definitions to be able to make requests and parse responses when communicating \
-with an endpoint. A set of default *protobufs* are included with the tool to be used with the default endpoints provided \
+In *Firehose*'s case, you still need to have the `.proto` files definitions to be able to make requests and parse responses when \
+communicating with an endpoint. A set of default *protobufs* are included with the tool to be used with the default endpoints provided \
 (see [`substreams_firehose/proto`](https://github.com/pinax-network/substreams_firehose/tree/main/substreams_firehose/proto)).
 
 # Using the substreams_firehose CLI tool
@@ -266,7 +266,13 @@ parsed data.
 A utility function called `_filter_data` is available for applying the output fields filter set in the stub configuration file passed \
 as CLI argument.
 
-Finally, we get the data that we want with the following format:
+To use our new block processor function with the tool, simply pass its name with the `--custom-processor` or `-p` argument:
+```console
+(.venv) $ python -m substreams_firehose 14128200 14128299 -g eth_mainnet -o eth.jsonl -s substreams_firehose/config/firehose/eth.hjson \
+-p ethereum_processor
+```
+
+Finally, we get the data that we want in our `eth.jsonl` with the following format:
 ```json
 {
     "hash": "0x953ea1d1f6a0cf140b66645379859c6766f1a863eb75aa6b4c4045dfa434c6f3",
@@ -295,7 +301,9 @@ on that story [here](https://www.certik.com/resources/blog/1kDYgyBcisoD2EqiBpHE5
 [here](https://cointelegraph.com/news/wormhole-hacker-moves-another-46m-of-stolen-funds) \
 if you're interested ;)*
 
+// TODO: talk about turning block processors into substreams
+
 # Using substreams_firehose as a library
 
-*TODO: talk about block extractors / processors*
+// TODO: talk about block extractors / processors
 """
