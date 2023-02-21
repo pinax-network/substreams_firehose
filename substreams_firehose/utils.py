@@ -31,7 +31,7 @@ def filter_keys(input_: dict, keys_filter: dict) -> dict:
 
     Examples:
     #### Input
-    ```json
+    ```python
     {
         'a': 'value',
         'b': {
@@ -52,7 +52,7 @@ def filter_keys(input_: dict, keys_filter: dict) -> dict:
     }
     ```
     #### Filter
-    ```json
+    ```python
     {
         'a': True,
         'b': {
@@ -68,7 +68,7 @@ def filter_keys(input_: dict, keys_filter: dict) -> dict:
     }
     ```
     #### Output
-    ```json
+    ```python
     {
         'a': 'value',
         'b': {

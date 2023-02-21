@@ -302,6 +302,9 @@ on that story [here](https://www.certik.com/resources/blog/1kDYgyBcisoD2EqiBpHE5
 if you're interested ;)*
 
 // TODO: talk about turning block processors into substreams
+//          -> Add section 'Using the right endpoints for the right job'
+//          -> Take the same previous example and query substreams for transactions
+//          -> Compare performances ?
 
 # Using substreams_firehose as a library
 
