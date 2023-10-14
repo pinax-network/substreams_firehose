@@ -8,4 +8,4 @@ protoletariat==2.1.0
 pygments==2.14.0
 pylint==2.16.2
 python-dotenv==0.21.1
-requests_cache==0.9.8
+requests_cache==1.1.0
