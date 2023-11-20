@@ -3,7 +3,7 @@ grpcio-reflection==1.51.1
 grpcio-tools==1.51.1
 hjson==3.1.0
 npyscreen==4.10.5
-protobuf==4.21.12
+protobuf==4.25.1
 protoletariat==2.1.0
 pygments==2.15.0
 pylint==2.16.2
